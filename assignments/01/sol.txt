@@ -1,0 +1,38 @@
+SWEBOOK
+UML
+Use case diagram
+Class diagram
+Seqeunce diagram
+Level of abstraction
+Architectural design
+High-level design
+Detailed design
+Top-down approach
+Bottom-up approach
+Model
+Informal model
+Semiformal model
+Architecture
+Architecture viewpoints
+Architecture views
+4+1 Architectural view
+C4 Model
+Functional requirement
+Non-functional requirement
+ADL (Architecture Description Language)
+AADL
+Wright
+Acme
+xADL
+Darwin
+ArchC
+Trade-off
+Risk
+FMEA
+Architectureal Style
+Client server
+Event drive architecture
+Message broker
+Microservice
+ADR (Architectural Decision Record)
+Event souring
