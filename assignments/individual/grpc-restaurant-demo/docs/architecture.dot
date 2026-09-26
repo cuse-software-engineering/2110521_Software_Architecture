@@ -1,0 +1,49 @@
+// Architecture of the gRPC restaurant demo after the assignment (MongoDB-backed gRPC server)
+// Render: dot -Tpng -Gdpi=130 docs/architecture.dot -o docs/architecture.png
+digraph Architecture {
+  graph [rankdir=LR, fontname="Helvetica", bgcolor="white", nodesep=0.6, ranksep=1.0, newrank=true,
+         label="gRPC restaurant demo — architecture (assignment: gRPC server + MongoDB)", labelloc=t, fontsize=14];
+  node  [fontname="Helvetica", fontsize=11, style="filled,rounded", shape=box, penwidth=1.2];
+  edge  [fontname="Helvetica", fontsize=9, color="#444444"];
+
+  subgraph cluster_browser {
+    label="Browser"; style="rounded,dashed"; color="#888888"; fontsize=12;
+    browser [label="Web page\nhttp://localhost:3000\nBootstrap table + modals\n(Add / Edit / Remove forms)", fillcolor="#e8f0fe", color="#1f5f8b"];
+  }
+
+  subgraph cluster_web {
+    label="Web Application Server  (Node.js, port 3000)"; style="rounded,dashed"; color="#888888"; fontsize=12;
+    index  [label="client/index.js\nExpress routes\nGET /   POST /save  /update  /remove\nrenders views/menu.hbs", fillcolor="#fff4d6", color="#c98b1e"];
+    stub   [label="client/client.js\ngRPC client stub\nRestaurantService @ localhost:30043", fillcolor="#fff4d6", color="#c98b1e"];
+  }
+
+  subgraph cluster_grpc {
+    label="gRPC Server  (Node.js, port 30043)"; style="rounded,dashed"; color="#888888"; fontsize=12;
+    server [label="server/server.js\nRestaurantService handlers (async/await)\ngetAllMenu · get · insert · update · remove\nerrors → NOT_FOUND / INVALID_ARGUMENT", fillcolor="#e3f4e3", color="#5aa35a"];
+    model  [label="models/Menu.js\nmongoose schema { name, price }\ntoMenuItem(): _id → id", fillcolor="#e3f4e3", color="#5aa35a"];
+    env    [label=".env\nDATABASE_URL\nGRPC_ADDRESS", shape=note, fillcolor="#f5f5f5", color="#888888"];
+  }
+
+  proto [label="restaurant.proto\nservice RestaurantService\nMenuItem { id, name, price }\nMenuList · MenuId · Empty", shape=note, fillcolor="#f3e6f5", color="#7b4f9d"];
+
+  subgraph cluster_data {
+    label="Data  (Docker)"; style="rounded,dashed"; color="#888888"; fontsize=12;
+    mongo   [label="MongoDB 7\ncontainer restaurant-mongo\n127.0.0.1:27017\ndb restaurant · collection menus", shape=cylinder, fillcolor="#e6f2f2", color="#2a7f7f"];
+    compass [label="MongoDB Compass\nshows menus changing\nduring the video", fillcolor="#f3e6f5", color="#7b4f9d"];
+  }
+
+  { rank=same; index; stub; }
+  { rank=same; server; model; env; }
+  { rank=same; mongo; compass; }
+
+  browser -> index  [dir=both, label="HTTP\nform POST → 302 redirect\n← HTML (Handlebars)"];
+  index   -> stub   [label="client.insert(...)\ncallback(err, data)"];
+  stub    -> server [dir=both, label="gRPC over HTTP/2\nProtocol Buffers (unary RPCs)"];
+  server  -> model  [label="Menu.find / findById\ncreate / save / findByIdAndDelete"];
+  env     -> server [style=dotted, arrowhead=vee, label="dotenv"];
+  model   -> mongo  [dir=both, label="mongoose\nMongoDB wire protocol"];
+  compass -> mongo  [style=dashed, label="reads"];
+
+  proto -> stub   [style=dotted, arrowhead=vee, label="proto-loader\n(client side)"];
+  proto -> server [style=dotted, arrowhead=vee, label="proto-loader\n(server side)"];
+}

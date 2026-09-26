@@ -1,0 +1,33 @@
+<p><a href="/floorplans">&larr; All floor plans</a></p>
+<h1>{{plan.name}} <span class="badge {{plan.status}}">{{plan.status}}</span></h1>
+<p><small>{{plan.venue}} &middot; id: {{plan._id}} &middot; {{plan.tableCount}} tables &middot; capacity {{plan.totalCapacity}} &middot; extra person {{plan.extraPersonFee}} THB</small></p>
+{{#if plan.landmarks.length}}
+<p>Landmarks: {{#each plan.landmarks}}<strong>{{name}}</strong> ({{position.x}}, {{position.y}}){{#unless @last}}, {{/unless}}{{/each}}</p>
+{{/if}}
+
+{{#each plan.zones}}
+  <h2>Zone: {{name}}</h2>
+  {{#if pricing.length}}
+  <p><small>Prices:
+    {{#each pricing}}<strong>{{type}}</strong> {{packagePrice}} THB{{#if package}} ({{package}}){{/if}}{{#unless @last}} &middot; {{/unless}}{{/each}}
+  </small></p>
+  {{/if}}
+  <table>
+    <tr>
+      <th>Table</th>
+      <th>Type</th>
+      <th>Capacity</th>
+      <th>Position</th>
+      <th>Seat view</th>
+    </tr>
+    {{#each tables}}
+    <tr>
+      <td>{{number}}</td>
+      <td>{{type}}</td>
+      <td>{{capacity}}</td>
+      <td>({{position.x}}, {{position.y}})</td>
+      <td>{{#if seatViewPhotoUrl}}<a href="{{seatViewPhotoUrl}}">photo</a>{{else}}&mdash;{{/if}}</td>
+    </tr>
+    {{/each}}
+  </table>
+{{/each}}

@@ -1,0 +1,27 @@
+<h1>Floor Plans</h1>
+{{#if error}}
+  <p class="error">{{error}}</p>
+{{else}}
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+      <th>Zones</th>
+      <th>Tables</th>
+      <th>Capacity</th>
+      <th>Updated</th>
+    </tr>
+    {{#each floorPlans}}
+    <tr>
+      <td><a href="/floorplans/{{_id}}">{{name}}</a></td>
+      <td><span class="badge {{status}}">{{status}}</span></td>
+      <td>{{zones.length}}</td>
+      <td>{{tableCount}}</td>
+      <td>{{totalCapacity}}</td>
+      <td>{{updatedAt}}</td>
+    </tr>
+    {{else}}
+    <tr><td colspan="6">No floor plans yet. Run <code>npm run seed</code> or POST one.</td></tr>
+    {{/each}}
+  </table>
+{{/if}}

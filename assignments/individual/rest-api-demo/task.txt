@@ -1,0 +1,24 @@
+ให้สำรวจความรู้เรื่อง REST API ของตนเองก่อนนะคะ ว่าเคยสร้าง REST API (ด้วยภาษาอะไรก็ได้) มาก่อนหรือยัง
+
+ถ้าเคยสร้าง REST API มาแล้ว ให้สร้าง REST API ด้วยภาษาใดก็ได้ ดังนี้ค่ะ
+เลือก resource 1 ตัวจากโปรเจคของเรา เช่น ข้อมูลสินค้า
+สร้างฐานข้อมูลให้กับ resource ตัวนั้น
+สร้าง REST API ให้กับ resource นั้น ให้ครบทั้ง GETONE/GET ALL/POST/PUT/DELETE method
+อัดคลิปวิดีโอความยาวไม่เกิน 5 นาที เพื่อ demo การทำงานของ method ของ REST API ทั้งหมด พร้อมค่าในฐานข้อมูลที่เปลี่ยนไปตาม method ที่เรียกใช้
+โปรแกรมบันทึกหน้าจอ ได้แก่ zoom, google meet, obs studio, loom, bandicam, etc.
+อัพโหลดคลิปวิดีโอส่งใน assignment นี้ (อาจส่งเป็น link จาก youtube/google drive ก็ได้ค่ะ อย่าลืม set permission เป็น public ด้วยนะคะ อาจารย์จะได้เข้าไปดูได้)
+ถ้ายังไม่เคยสร้าง REST API มาก่อน หรือไม่มั่นใจว่าจะสร้างเองได้ ให้ทำดังนี้ค่ะ
+ดู VDO Playlist ชื่อ SW Arch: REST ในเมนู Playlists (สอนทำ REST API อย่างง่ายพร้อม Security, Document, และ client อย่างง่าย)...ดูแค่คลิป 1-5 แล้วทำAssigment เลยค่ะ(คลิป 6-8 เก็บไว้ดูถ้าเวลาเหลือ หรือนอกเวลานะคะ...ออกสอบ)
+ทำ Assignment ตามที่ระบุในคลิปที่ 8
+โปรแกรมบันทึกหน้าจอ ได้แก่ zoom, google meet, obs studio, loom, bandicam, etc.
+(อาจส่งเป็น link จาก youtube/google drive ก็ได้ค่ะ อย่าลืม set permission เป็น public ด้วยนะคะ อาจารย์จะได้เข้าไปดูได้)
+หากยังไม่เคยสร้างฐานข้อมูล MongoDB ให้ดูวิธีการสร้างฐานข้อมูล MongoDB ในคลิปที่ 9 ด้วยค่ะ
+หมายเหตุ
+
+ในเวลาเรียน อาจารย์ออนไลน์อยู่ใน discord นะคะ มีคำถามเข้ามาถามได้ค่ะ
+Bracket Pair Colorization
+ไม่ต้องติดตั้ง Extensions ตัวนี้ใน VS Code แล้วค่ะ มันเป็น native features แล้ว แต่ต้องไป turn on ขั้นตอนตามเว็บนี้นะคะ
+
+https://digitaldrummerj.me/vscode-bracket-pair-colorization/
+
+หากทำเสร็จเร็ว สามารถทำโปรเจคต่อได้เลยค่ะ หรือจะลองดูวิธีการสร้าง Google Authentication ใน Playlist ชื่อ SW Arch: oAuth ก็ได้ค่ะ เพื่อนำไปสร้าง Google Authentication ในโปรเจคของเราต่อไป

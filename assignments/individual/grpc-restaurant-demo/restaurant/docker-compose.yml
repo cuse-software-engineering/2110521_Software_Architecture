@@ -1,0 +1,16 @@
+# Local MongoDB for the demo.
+#   npm run mongo        -> docker compose up -d
+#   npm run mongo:stop   -> docker compose down   (data kept in the named volume)
+#   npm run db:clear     -> delete every document in the menus collection
+# Compass: mongodb://127.0.0.1:27017
+services:
+  mongo:
+    image: mongo:7
+    container_name: restaurant-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - restaurant-mongo-data:/data/db
+
+volumes:
+  restaurant-mongo-data:

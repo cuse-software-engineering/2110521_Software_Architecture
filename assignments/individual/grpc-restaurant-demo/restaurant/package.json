@@ -1,0 +1,26 @@
+{
+  "name": "restaurant",
+  "version": "1.0.0",
+  "main": "server/server.js",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.9.2",
+    "@grpc/proto-loader": "^0.7.9",
+    "body-parser": "^1.20.2",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "hbs": "^4.2.0",
+    "mongoose": "^9.10.1",
+    "uuid": "^9.0.1"
+  },
+  "scripts": {
+    "start": "node server/server.js",
+    "client": "cd client && node index.js",
+    "mongo": "docker compose up -d",
+    "mongo:stop": "docker compose down",
+    "seed": "node seed.js",
+    "db:clear": "node tools/clear-db.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

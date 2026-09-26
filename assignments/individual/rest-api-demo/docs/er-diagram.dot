@@ -1,0 +1,90 @@
+// ER / document-model diagram for the FloorPlan resource (UC-04 Create Venue Zone Map)
+// Render: dot -Tpng -Gdpi=130 docs/er-diagram.dot -o docs/er-diagram.png
+//
+// FloorPlan is the aggregate root (only entity with _id). Zone, Table, Pricing and Landmark are
+// embedded value objects identified by natural keys inside the plan.
+digraph ER {
+  graph [rankdir=LR, splines=spline, nodesep=0.5, ranksep=1.0, fontname="Helvetica", bgcolor="white",
+         label="FloorPlan document model (MongoDB)\nFloorPlan is the aggregate root; Zone, Table, Pricing and Landmark are embedded value objects (no _id)",
+         labelloc=t, fontsize=14];
+  node  [shape=plaintext, fontname="Helvetica", fontsize=11];
+  edge  [fontname="Helvetica", fontsize=10, color="#444444"];
+
+  FloorPlan [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5">
+      <TR><TD BGCOLOR="#1f5f8b" COLSPAN="3"><FONT COLOR="white"><B>FloorPlan</B></FONT><BR/><FONT COLOR="white" POINT-SIZE="9">entity &#183; aggregate root &#183; collection: floorplans</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><U>_id</U></TD><TD ALIGN="LEFT">ObjectId</TD><TD ALIGN="LEFT">PK</TD></TR>
+      <TR><TD ALIGN="LEFT">name</TD><TD ALIGN="LEFT">String</TD><TD ALIGN="LEFT">required</TD></TR>
+      <TR><TD ALIGN="LEFT">venue</TD><TD ALIGN="LEFT">String</TD><TD ALIGN="LEFT"></TD></TR>
+      <TR><TD ALIGN="LEFT">status</TD><TD ALIGN="LEFT">enum</TD><TD ALIGN="LEFT">draft | active</TD></TR>
+      <TR><TD ALIGN="LEFT">extraPersonFee</TD><TD ALIGN="LEFT">Number</TD><TD ALIGN="LEFT">THB per extra person, e.g. 600</TD></TR>
+      <TR><TD ALIGN="LEFT">landmarks</TD><TD ALIGN="LEFT">[Landmark]</TD><TD ALIGN="LEFT">embedded, 0..*</TD></TR>
+      <TR><TD ALIGN="LEFT">zones</TD><TD ALIGN="LEFT">[Zone]</TD><TD ALIGN="LEFT">embedded, 1..*</TD></TR>
+      <TR><TD ALIGN="LEFT">createdAt / updatedAt</TD><TD ALIGN="LEFT">Date</TD><TD ALIGN="LEFT">auto</TD></TR>
+    </TABLE>>];
+
+  Zone [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5">
+      <TR><TD BGCOLOR="#5aa35a" COLSPAN="3"><FONT COLOR="white"><B>Zone</B></FONT><BR/><FONT COLOR="white" POINT-SIZE="9">value object &#183; key: (plan, name)</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><U>name</U></TD><TD ALIGN="LEFT">String</TD><TD ALIGN="LEFT">unique in plan, e.g. "Zone A"</TD></TR>
+      <TR><TD ALIGN="LEFT">color</TD><TD ALIGN="LEFT">String</TD><TD ALIGN="LEFT">display</TD></TR>
+      <TR><TD ALIGN="LEFT">pricing</TD><TD ALIGN="LEFT">[Pricing]</TD><TD ALIGN="LEFT">embedded, one per type used</TD></TR>
+      <TR><TD ALIGN="LEFT">tables</TD><TD ALIGN="LEFT">[Table]</TD><TD ALIGN="LEFT">embedded, 1..*</TD></TR>
+    </TABLE>>];
+
+  Pricing [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5">
+      <TR><TD BGCOLOR="#8a5aa3" COLSPAN="3"><FONT COLOR="white"><B>Pricing</B></FONT><BR/><FONT COLOR="white" POINT-SIZE="9">value object &#183; key: (plan, zone, type)</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><U>type</U></TD><TD ALIGN="LEFT">enum</TD><TD ALIGN="LEFT">circle | square | sofa | triangle</TD></TR>
+      <TR><TD ALIGN="LEFT">packagePrice</TD><TD ALIGN="LEFT">Number</TD><TD ALIGN="LEFT">THB, e.g. Zone A sofa 7,200</TD></TR>
+      <TR><TD ALIGN="LEFT">package</TD><TD ALIGN="LEFT">String</TD><TD ALIGN="LEFT">e.g. "3 TOWER + 3 ICE"</TD></TR>
+    </TABLE>>];
+
+  Table [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5">
+      <TR><TD BGCOLOR="#2a7f7f" COLSPAN="3"><FONT COLOR="white"><B>Table</B></FONT><BR/><FONT COLOR="white" POINT-SIZE="9">value object &#183; key: (plan, number)</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><U>number</U></TD><TD ALIGN="LEFT">String</TD><TD ALIGN="LEFT">unique in plan, e.g. "B14"</TD></TR>
+      <TR><TD ALIGN="LEFT">type</TD><TD ALIGN="LEFT">enum</TD><TD ALIGN="LEFT">circle | square | sofa | triangle</TD></TR>
+      <TR><TD ALIGN="LEFT">capacity</TD><TD ALIGN="LEFT">Number</TD><TD ALIGN="LEFT">2 | 4 | 6 | 1 (default by type)</TD></TR>
+      <TR><TD ALIGN="LEFT">seatViewPhotoUrl</TD><TD ALIGN="LEFT">String</TD><TD ALIGN="LEFT"></TD></TR>
+      <TR><TD ALIGN="LEFT">position</TD><TD ALIGN="LEFT">{x, y}</TD><TD ALIGN="LEFT">map coordinates</TD></TR>
+    </TABLE>>];
+
+  Landmark [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5">
+      <TR><TD BGCOLOR="#c98b1e" COLSPAN="3"><FONT COLOR="white"><B>Landmark</B></FONT><BR/><FONT COLOR="white" POINT-SIZE="9">value object &#183; not bookable</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT">name</TD><TD ALIGN="LEFT">String</TD><TD ALIGN="LEFT">STAGE | LONG TABLE | BAR</TD></TR>
+      <TR><TD ALIGN="LEFT">position</TD><TD ALIGN="LEFT">{x, y}</TD><TD ALIGN="LEFT">map coordinates</TD></TR>
+    </TABLE>>];
+
+  ConcertRound [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" STYLE="dashed">
+      <TR><TD BGCOLOR="#dddddd" COLSPAN="2"><B>ConcertRound</B><BR/><FONT POINT-SIZE="9">entity &#183; UC-03 &#183; future resource</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><U>_id</U></TD><TD ALIGN="LEFT">ObjectId</TD></TR>
+      <TR><TD ALIGN="LEFT">name, date, startTime</TD><TD ALIGN="LEFT">concert details</TD></TR>
+      <TR><TD ALIGN="LEFT">artistIds</TD><TD ALIGN="LEFT">[ref Artist._id]  (line-up)</TD></TR>
+      <TR><TD ALIGN="LEFT">floorPlanId</TD><TD ALIGN="LEFT">ref FloorPlan._id</TD></TR>
+      <TR><TD ALIGN="LEFT">tablesNotForSale</TD><TD ALIGN="LEFT">[table.number]</TD></TR>
+      <TR><TD ALIGN="LEFT">pricing snapshot</TD><TD ALIGN="LEFT">copied from zones at publish</TD></TR>
+    </TABLE>>];
+
+  Artist [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5" STYLE="dashed">
+      <TR><TD BGCOLOR="#dddddd" COLSPAN="2"><B>Artist</B><BR/><FONT POINT-SIZE="9">entity &#183; future resource</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><U>_id</U></TD><TD ALIGN="LEFT">ObjectId</TD></TR>
+      <TR><TD ALIGN="LEFT">name</TD><TD ALIGN="LEFT">String, required</TD></TR>
+      <TR><TD ALIGN="LEFT">genre</TD><TD ALIGN="LEFT">String</TD></TR>
+      <TR><TD ALIGN="LEFT">imageUrl</TD><TD ALIGN="LEFT">String</TD></TR>
+      <TR><TD ALIGN="LEFT">socialLinks</TD><TD ALIGN="LEFT">[String]</TD></TR>
+    </TABLE>>];
+
+  FloorPlan -> Zone     [label="1 .. *  contains", arrowhead=crow];
+  FloorPlan -> Landmark [label="0 .. *  contains", arrowhead=crow];
+  Zone -> Pricing       [label="1 .. *  price per type", arrowhead=crow];
+  Zone -> Table         [label="1 .. *  contains", arrowhead=crow];
+  Table -> Pricing      [label="looks up price by (zone, type)", style=dotted, arrowhead=vee, constraint=false];
+  ConcertRound -> FloorPlan [label="references by _id\nand table.number", style=dashed, arrowhead=normal];
+  ConcertRound -> Artist    [label="1 .. *  line-up\n(artistIds)", style=dashed, arrowhead=crow];
+
+  { rank=same; ConcertRound; Artist; }
+}

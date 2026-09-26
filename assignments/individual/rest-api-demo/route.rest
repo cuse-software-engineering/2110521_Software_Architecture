@@ -1,0 +1,168 @@
+### CTRS FloorPlan REST API — VS Code REST Client file
+### Run `npm run seed` first so the two seeded floor plans exist.
+### Click "Send Request" above each block. After each write, refresh the collection in Compass.
+
+@host = http://localhost:5000
+@seededId = 66f0000000000000000000a1
+
+### 0. API info
+GET {{host}}/
+
+### 1. GET ALL — list every floor plan
+GET {{host}}/floorplans
+
+### 1b. GET ALL with filter — only active plans
+GET {{host}}/floorplans?status=active
+
+### 2. GET ONE — seeded "Concert Layout" plan
+GET {{host}}/floorplans/{{seededId}}
+
+### 3. POST — create a new floor plan (response is captured as "created")
+### Table capacity is optional: it defaults from the type (circle 2, square 4, sofa 6, triangle 1).
+### Each zone carries the venue's standard price per table type; every type used in the zone must be priced.
+# @name created
+POST {{host}}/floorplans
+Content-Type: application/json
+
+{
+  "name": "Rooftop Layout - DJ Night",
+  "venue": "La Loy Bar, Nanglinchee / Rama 3",
+  "extraPersonFee": 600,
+  "landmarks": [
+    { "name": "DJ BOOTH", "position": { "x": 50, "y": 5 } },
+    { "name": "BAR", "position": { "x": 95, "y": 40 } }
+  ],
+  "zones": [
+    {
+      "name": "Zone A",
+      "color": "#5aa35a",
+      "pricing": [
+        { "type": "circle", "packagePrice": 2400, "package": "1 TOWER + 1 ICE" },
+        { "type": "square", "packagePrice": 4800, "package": "2 TOWER + 2 ICE" }
+      ],
+      "tables": [
+        { "number": "A1", "type": "circle", "position": { "x": 10, "y": 15 } },
+        { "number": "A2", "type": "square", "position": { "x": 25, "y": 15 } }
+      ]
+    },
+    {
+      "name": "Zone B",
+      "color": "#2a7f7f",
+      "pricing": [
+        { "type": "sofa",     "packagePrice": 6000, "package": "3 TOWER + 3 ICE" },
+        { "type": "triangle", "packagePrice": 700,  "package": "1 JUG + 1 ICE" }
+      ],
+      "tables": [
+        { "number": "B1", "type": "sofa", "position": { "x": 75, "y": 30 } },
+        { "number": "T1", "type": "triangle", "position": { "x": 90, "y": 30 } }
+      ]
+    }
+  ]
+}
+
+### 4. GET ONE — read back the plan we just created
+GET {{host}}/floorplans/{{created.response.body._id}}
+
+### 5. PUT — full replace of the created plan (rename, activate, new layout)
+PUT {{host}}/floorplans/{{created.response.body._id}}
+Content-Type: application/json
+
+{
+  "name": "Underground Layout - DJ Night (v2)",
+  "venue": "La Loy Bar, Nanglinchee / Rama 3",
+  "status": "active",
+  "extraPersonFee": 600,
+  "landmarks": [
+    { "name": "DJ BOOTH", "position": { "x": 50, "y": 5 } },
+    { "name": "BAR", "position": { "x": 95, "y": 40 } }
+  ],
+  "zones": [
+    {
+      "name": "Zone A",
+      "color": "#5aa35a",
+      "pricing": [
+        { "type": "circle", "packagePrice": 2400, "package": "1 TOWER + 1 ICE" },
+        { "type": "square", "packagePrice": 4800, "package": "2 TOWER + 2 ICE" },
+        { "type": "sofa",   "packagePrice": 7200, "package": "3 TOWER + 3 ICE" }
+      ],
+      "tables": [
+        { "number": "A1", "type": "circle", "position": { "x": 10, "y": 15 } },
+        { "number": "A2", "type": "square", "position": { "x": 25, "y": 15 } },
+        { "number": "A3", "type": "sofa",   "position": { "x": 40, "y": 15 } }
+      ]
+    }
+  ]
+}
+
+### 5b. PATCH — partial update: only change the status of the seeded plan (active -> draft)
+PATCH {{host}}/floorplans/{{seededId}}
+Content-Type: application/json
+
+{
+  "status": "draft"
+}
+
+### 6. DELETE — remove the created plan
+DELETE {{host}}/floorplans/{{created.response.body._id}}
+
+### 6b. GET ONE after delete — expect 404
+GET {{host}}/floorplans/{{created.response.body._id}}
+
+### ---------------------------------------------------------------
+### Error cases (status codes)
+### ---------------------------------------------------------------
+
+### E1. GET ONE with a malformed id — expect 400
+GET {{host}}/floorplans/not-a-valid-id
+
+### E2. GET ONE with a well-formed but unknown id — expect 404
+GET {{host}}/floorplans/66f00000000000000000ffff
+
+### E3. POST with missing required fields — expect 400 (validation)
+POST {{host}}/floorplans
+Content-Type: application/json
+
+{
+  "zones": []
+}
+
+### E4. POST with duplicate table numbers across zones — expect 400 (UC-04 business rule)
+POST {{host}}/floorplans
+Content-Type: application/json
+
+{
+  "name": "Broken plan",
+  "zones": [
+    { "name": "Zone A", "pricing": [ { "type": "square", "packagePrice": 4800 } ], "tables": [ { "number": "X1", "type": "square" } ] },
+    { "name": "Zone B", "pricing": [ { "type": "circle", "packagePrice": 2000 } ], "tables": [ { "number": "X1", "type": "circle" } ] }
+  ]
+}
+
+### E5. POST with an invalid table type — expect 400 (enum)
+POST {{host}}/floorplans
+Content-Type: application/json
+
+{
+  "name": "Wrong type plan",
+  "zones": [
+    { "name": "Zone A", "pricing": [ { "type": "circle", "packagePrice": 2400 } ], "tables": [ { "number": "Y1", "type": "booth" } ] }
+  ]
+}
+
+### E6. POST with a table whose type has no price in its zone — expect 400 (pricing rule)
+POST {{host}}/floorplans
+Content-Type: application/json
+
+{
+  "name": "Unpriced plan",
+  "zones": [
+    {
+      "name": "Zone A",
+      "pricing": [ { "type": "circle", "packagePrice": 2400, "package": "1 TOWER + 1 ICE" } ],
+      "tables": [
+        { "number": "A1", "type": "circle" },
+        { "number": "A2", "type": "sofa" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+// Demo architecture for the FloorPlan REST API
+// Render: dot -Tpng docs/architecture.dot -o docs/architecture.png
+digraph Architecture {
+  graph [rankdir=LR, fontname="Helvetica", bgcolor="white", nodesep=0.7, ranksep=1.3, newrank=true,
+         label="REST API demo architecture — FloorPlan resource (CTRS term project)", labelloc=t, fontsize=14];
+  node  [fontname="Helvetica", fontsize=11, style="filled,rounded", shape=box, penwidth=1.2];
+  edge  [fontname="Helvetica", fontsize=9, color="#444444"];
+
+  subgraph cluster_clients {
+    label="Clients"; style="rounded,dashed"; color="#888888"; fontsize=12;
+    restclient [label="VS Code REST Client\nroute.rest\nGET / POST / PUT / PATCH / DELETE", fillcolor="#e8f0fe", color="#1f5f8b"];
+    browser    [label="Web browser\nhttp://localhost:3000/floorplans", fillcolor="#e8f0fe", color="#1f5f8b"];
+  }
+
+  subgraph cluster_app {
+    label="Node.js servers"; style="rounded,dashed"; color="#888888"; fontsize=12;
+    api       [label="REST API Server  :5000\nserver.js\nExpress + Mongoose\n\nresource  /floorplans\nroutes/floorplans.js\nmodels/floorplan.js", fillcolor="#e3f4e3", color="#5aa35a"];
+    webclient [label="Web Application Server  :3000\nclient.js  (REST API client, read-only)\nExpress + Handlebars + unirest", fillcolor="#fff4d6", color="#c98b1e"];
+  }
+
+  subgraph cluster_data {
+    label="Data"; style="rounded,dashed"; color="#888888"; fontsize=12;
+    mongo   [label="MongoDB\nAtlas  /  Docker  /  in-memory\ndb: ctrs-demo\ncollection: floorplans", shape=cylinder, fillcolor="#e6f2f2", color="#2a7f7f"];
+    compass [label="MongoDB Compass\nshows the collection\nchanging during the video", fillcolor="#f3e6f5", color="#7b4f9d"];
+  }
+
+  { rank=same; restclient; browser; }
+  { rank=same; api; webclient; }
+  { rank=same; mongo; compass; }
+
+  restclient -> api    [dir=both, label="HTTP + JSON body\n← JSON + status 200 / 201 / 400 / 404"];
+  browser -> webclient [dir=both, label="HTTP GET\n← HTML page"];
+  webclient -> api     [dir=both, label="GET /floorplans (unirest)\n← JSON", constraint=false];
+  api -> mongo         [dir=both, label="Mongoose\nfind / save / deleteOne"];
+  compass -> mongo     [label="reads", style=dashed];
+}

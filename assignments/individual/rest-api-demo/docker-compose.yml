@@ -1,0 +1,14 @@
+# Local MongoDB for the demo (alternative to Atlas).
+#   docker compose up -d
+# Then connect Compass to mongodb://localhost:27017
+services:
+  mongo:
+    image: mongo:7
+    container_name: ctrs-demo-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
