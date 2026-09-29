@@ -38,6 +38,12 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-30 | Modified | 1.3, 5.1 | The text states the increments without referring to the teacher's feedback; only the ADRs, the revision history and these appendices cite it. | owner |
 | CH-31 | Modified | 2.2.1 to 2.2.4 | Every use case description (heading and table) starts on a new page. | owner |
 | CH-32 | Modified | 5.1, 5.3 | The heading of 5.3 is printed on the landscape page of Figure 5.1 instead of alone on the page before; the explanation of the diagram moved to the end of 5.1. Figure 2.1 stays on the portrait page of Section 2 instead of a landscape page that left the headings of Section 2 alone. Headings are kept with the text that follows them, and the contents fit on two pages. | owner |
+| CH-33 | Added | 5.2, 4 | Section 5.2 Parts of the System and Communication: the Frontend, the Backend and the External systems (Table 5.1) and how they communicate (Table 5.2). Table 4.1 names the part of the system that each ADR concerns. | owner |
+| CH-34 | Added | 4.12 | ADR-12 Communication: REST through the API Gateway, gRPC between Services; no message broker in the MVP. | owner, KI-14 |
+| CH-35 | Modified | 5.1, 5.3 | Section 5 shows the MVP only, with a note that the operations of Increment 2 and later increments are not listed. Table 5.3 completed by tracing the use cases through it: the Staff Account Service owns the back-office accounts, sign-in and roles of ADR-07; verifyBookingReference(), getRoundBookings(), getBooking(), getCustomerProfile(), countAvailableTables(), listing, reading, validating and activating a zone map, the business parameters and sendPaymentFailedNotice() added. The Concert Round Service reads the booked tables from the Table Availability Service instead of calling getConfirmedBookingCount() of the Booking Service, which removes the two-way dependency between the two services. getDeliveryStatus(), which no flow uses, removed. | KI-15, owner |
+| CH-36 | Added | 5.4 | Use case traceability: Tables 5.4 to 5.8 trace every MVP step of the four use cases, and the requirements not tied to one step, from the actor to the operation, its collaborations, the data stored and the requirements realised. | KI-15 |
+| CH-37 | Modified | 5.5 | Figure 5.1 redrawn for the MVP: the three parts as dashed boundaries; REST and gRPC tabs on the services and gRPC calls as purple arrows (ADR-12); the Staff Account Service and the Payment → Notification call added; the Increment 2 arrows removed; the payment webhook drawn along the top. | owner, KI-15 |
+| CH-38 | Modified | 1.3, 4.10 | Section 1.3 lists UC-04 EF-3 (image upload failure) in the MVP and states that Section 5 shows the MVP only. ADR-10 names the payment-failed notice among the messages in scope (FR-21), a correction of the record. | KI-15 |
 
 # Appendix B Resolution of Feedback and Known Issues
 
@@ -62,10 +68,11 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 | KI-11 | Two diagram arrows end on another service's private database. | Resolved: CH-20 |
 | KI-12 | Section numbering and page layout of Deliverable #2. | Resolved: CH-18 and the layout of this document |
 | KI-13 | Department name on both covers. | Resolved: CH-21 |
-| KI-14 | The ADRs do not yet meet the syllabus minimum technology requirements. | Open: to be decided with Deliverable #3 |
+| KI-14 | The ADRs do not yet meet the syllabus minimum technology requirements. | Partly resolved: REST and gRPC chosen in ADR-12 (CH-34); the message broker, service discovery and a second type of database stay open for Deliverable #3 |
+| KI-15 | The Service–Operations–Collaborators table misses operations that the use cases need. | Resolved: CH-35 to CH-38 |
 
 # Appendix C How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft9 the earlier drafts and doc-v2.0-draft10 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft10 the earlier drafts and doc-v2.0-draft11 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".

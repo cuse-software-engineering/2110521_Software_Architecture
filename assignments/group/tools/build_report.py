@@ -8,7 +8,7 @@ figures). That repository is found as $REQ_REPO, else the tree this repository i
 running header are replaced here: they carry this course, group SE 101 and the version.
 
 Usage (from the repository root):
-    python3 assignments/group/tools/build_report.py                          # 2.0 draft 10
+    python3 assignments/group/tools/build_report.py                          # 2.0 draft 11
     python3 assignments/group/tools/build_report.py --version "2.0" --status final
 Output: assignments/group/workspace/report/build/seats_project_document_v<version>.pdf (git-ignored)
 """
@@ -154,7 +154,7 @@ class _Markdown(build_pdf.markdown.Markdown):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--version", default="2.0 draft 10", help="version label on the cover (default: %(default)s)")
+    ap.add_argument("--version", default="2.0 draft 11", help="version label on the cover (default: %(default)s)")
     ap.add_argument("--date", default="29 September 2026")
     ap.add_argument("--status", default="draft for review by the group")
     a = ap.parse_args()
@@ -170,7 +170,11 @@ if __name__ == "__main__":
     build_pdf.CSS += ("\nh1, h2, h3, h4, h5 { break-after: avoid; page-break-after: avoid; }"
                       "\n.landscape.with-heading > h2, .landscape.with-heading > h3 { margin-top: 0; }"
                       "\n.landscape.with-heading img { max-height: 136mm; }"
-                      "\n.toc li { margin: 1pt 0; }")        # the contents fit two pages instead of three
+                      "\n.toc li { margin: 1pt 0; } .toc ul { margin-top: 0; margin-bottom: 0; } .toc > .toc { margin-bottom: 7pt; }")   # the contents fit two pages
+    # use case traceability (5.4): narrow columns for steps, callers and requirement IDs; Collaborations takes the rest
+    build_pdf.CSS += ("\ndiv.trace table th:nth-child(1) { width: 10%; } div.trace table th:nth-child(2) { width: 10%; }"
+                      "\ndiv.trace table th:nth-child(3) { width: 24%; } div.trace table th:nth-child(5) { width: 18%; }"
+                      "\ndiv.trace table th:nth-child(6) { width: 11%; }")
     # use cases (2.2.1 .. 2.2.4) each start on a new page, as the ADRs do
     build_pdf.CSS += "\nh3[id*='-uc-0'] { break-before: page; page-break-before: always; }"
     build_pdf.CSS += ("\nh2[id*='adr-'] { break-before: page; page-break-before: always; }"

@@ -12,11 +12,11 @@ Pubs and bars still rely on manual chat messaging and phone calls to handle tabl
 
 ## 1.3 Scope and Increments
 
-The system is built in increments, so that a first working version fits a build of two to three months. The use case descriptions in Section 2 still describe the complete behaviour; every flow that the MVP does not build is marked *(Increment 2)*, and the requirements, ADRs and services carry the same marks.
+The system is built in increments, so that a first working version fits a build of two to three months. The use case descriptions in Section 2 still describe the complete behaviour; every flow that the MVP does not build is marked *(Increment 2)*, and the requirements and ADRs carry the same marks. The microservice design of Section 5 shows the MVP only.
 
 | Increment | What is built | Use cases and flows |
 |---|---|---|
-| MVP | Create a venue **zone map** on an uploaded image of the venue: **zones**, tables, **table types** and capacities; validate and activate it. | UC-04 basic flow, AF-1, AF-3, EF-1, EF-2 |
+| MVP | Create a venue **zone map** on an uploaded image of the venue: **zones**, tables, **table types** and capacities; validate and activate it. | UC-04 basic flow, AF-1, AF-3, EF-1, EF-2, EF-3 |
 | MVP | Create, validate and publish a **concert round** with its prices and **booking-open time**, or save it as a draft. | UC-03 basic flow, AF-1, AF-3, EF-1, EF-2 |
 | MVP | Reserve a table: LINE Login, rounds, **zone map** refreshed within 2 seconds, 15-minute **hold** (**first lock wins**) with automatic expiry, **party size** and fee, profile and consent, **booking terms**, **simulated payment** (success or decline), confirmation, QR **e-ticket** and LINE confirmation message. | UC-01 basic flow, AF-1 to AF-7, EF-1, EF-5, EF-6 |
 | MVP | Check in with the QR code or the typed **booking reference**, verified against the **check-in window** and the **grace period**; used, unknown and out-of-window tickets are refused. | UC-02 basic flow, AF-2 to AF-5, EF-1, EF-2, EF-5 |

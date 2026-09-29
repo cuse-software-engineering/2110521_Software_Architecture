@@ -3,7 +3,7 @@
 Inconsistencies found in [Deliverable-1.pdf](../../deliverables/report/Deliverable-1.pdf) (D1) and
 [Deliverable-2.pdf](../../deliverables/report/Deliverable-2.pdf) (D2), recorded 2026-09-29. They are **not fixed**: the
 submitted files stay as handed in for now. They are fixed in the project document, version 2.0 draft 1
-(workspace/report/project-document/, Table 0.4 there); the Status column names the change that fixes each one. Page numbers are PDF pages. Teacher feedback that asks for changes is kept
+(workspace/report/project-document/, Appendix B there); the Status column names the change that fixes each one. Page numbers are PDF pages. Teacher feedback that asks for changes is kept
 separately in [../received/teacher/](../received/teacher/).
 
 | ID | Issue | Where | Status |
@@ -21,7 +21,8 @@ separately in [../received/teacher/](../received/teacher/).
 | KI-11 | Two diagram arrows end on another service's private database | D2 p7 | Resolved (CH-20) |
 | KI-12 | Section numbering and page layout of D2 | D2 p2, p3, p6, p8 | Resolved (CH-18) |
 | KI-13 | Department name on both covers | D1 p1; D2 p1 | Resolved (CH-21) |
-| KI-14 | The ADRs do not yet meet the syllabus minimum technology requirements | D1 p26–32; D2 p7; syllabus item 17 | Open: Deliverable #3 |
+| KI-14 | The ADRs do not yet meet the syllabus minimum technology requirements | D1 p26–32; D2 p7; syllabus item 17 | Partly resolved: REST and gRPC in ADR-12 (doc 2.0 draft 11, CH-34); broker, service discovery, second database open for Deliverable #3 |
+| KI-15 | The Service–Operations–Collaborators table misses operations that the use cases need | D2 p5, p7 | Resolved in doc 2.0 draft 11 (CH-35 to CH-38) |
 
 ## KI-01 Use case names in the diagram differ from the descriptions
 
@@ -186,4 +187,28 @@ MongoDB as the single database engine, and say nothing about service discovery. 
 allows REST only and a single database in the first architecture version and asks to revisit the technology requirements
 later; Deliverable #3 already needs a REST service and a gRPC service with CRUD. Found 2026-09-29; to be decided with
 Deliverable #3.
+
+Update 2026-09-29: ADR-12 (project document 2.0 draft 11) decides REST from the web apps and the payment webhook through
+the API Gateway to the services, and gRPC between the services. Still open: a service behind a message broker (ADR-12
+has none in the MVP), how services are discovered, and a second, relational database next to MongoDB (ADR-06).
+
+## KI-15 The Service–Operations–Collaborators table misses operations that the use cases need
+
+Found 2026-09-29 by walking every step of the four use cases through the Service–Operations–Collaborators table (D2 p5)
+in the order that guideline 7 of the [Deliverable #2 brief](../../problem/deliverable-2/problem.md) suggests: actor,
+operation, service, collaborator, where the data is stored. Missing in D2:
+
+- No service owns the back-office accounts, their sign-in and their roles (FR-65, FR-66, ADR-07).
+- No operation verifies a scanned ticket before the entry is confirmed (UC-02 steps 3–4); there is only checkInBooking().
+- No operation reads the bookings of a round for the Manager's live view (FR-42).
+- No operation lists, reads, validates or activates a zone map (UC-03 steps 6–7, UC-04 steps 8–12, FR-74), and none
+  reads or sets the business parameters (FR-38).
+- The sold-out status of a round (UC-01 step 3, AF-2) needs the number of free tables, which the Concert Round Service
+  has no way to get.
+- No operation reads the customer profile to pre-fill it (UC-01 step 12b), and no LINE message is sent when a payment
+  fails (FR-21).
+- getDeliveryStatus() has no caller.
+
+Resolved in the project document 2.0 draft 11: Table 5.3 completed (CH-35) and checked by the traceability tables of
+Section 5.4 (CH-36), where every operation appears in at least one row and every MVP requirement is realised.
 

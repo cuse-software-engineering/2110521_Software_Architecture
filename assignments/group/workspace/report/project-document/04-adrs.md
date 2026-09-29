@@ -1,22 +1,23 @@
 # 4 Architecture Decision Records (ADRs)
 
-The ADRs follow the course template (Michael Nygard's format: Title, Context, Decision, Status, Consequences); each ADR is a table of these five fields and starts on a new page. An accepted ADR is not rewritten when its decision changes: a new ADR supersedes it, and the old record keeps its text with a status that names its successor. Corrections to how a record is written, such as the teacher's comment on ADR-06 (FB-D1-01), are made in place and listed in the Change Log.
+The ADRs follow the course template (Michael Nygard's format: Title, Context, Decision, Status, Consequences); each ADR is a table of these five fields and starts on a new page. An accepted ADR is not rewritten when its decision changes: a new ADR supersedes it, and the old record keeps its text with a status that names its successor. Corrections to how a record is written, such as the teacher's comment on ADR-06 (FB-D1-01), are made in place and listed in the Change Log. The Part column names the part of the system that each decision concerns: the Frontend, the Backend or the External systems (Section 5.2).
 
 *Table 4.1 Architecture decision records*
 
-| ADR | Title | Status |
-|---|---|---|
-| ADR-01 | Frontend Architecture & Client Channel | Accepted |
-| ADR-02 | Real-Time Floor Plan Communication | Superseded by ADR-08 and ADR-09 |
-| ADR-03 | Backend Language & Framework | Accepted; Socket.io deferred by ADR-09 |
-| ADR-04 | Notification Engine | Superseded by ADR-10 |
-| ADR-05 | Interactive Floor Plan Rendering | Accepted |
-| ADR-06 | Primary Database Engine | Accepted (revised after FB-D1-01) |
-| ADR-07 | Internal Role Authentication (**Front Staff**, **Manager**) | Accepted |
-| ADR-08 | Table Hold and Concurrency Control | Accepted |
-| ADR-09 | Table Status Updates in the MVP: Polling | Accepted |
-| ADR-10 | **Customer** Notifications through the LINE Messaging API Only | Accepted |
-| ADR-11 | Simulated **Payment Gateway** for the MVP | Accepted |
+| ADR | Title | Part of the system | Status |
+|---|---|---|---|
+| ADR-01 | Frontend Architecture & Client Channel | Frontend | Accepted |
+| ADR-02 | Real-Time Floor Plan Communication | Frontend, Backend | Superseded by ADR-08 and ADR-09 |
+| ADR-03 | Backend Language & Framework | Backend | Accepted; Socket.io deferred by ADR-09 |
+| ADR-04 | Notification Engine | Backend, External systems | Superseded by ADR-10 |
+| ADR-05 | Interactive Floor Plan Rendering | Frontend | Accepted |
+| ADR-06 | Primary Database Engine | Backend | Accepted (revised after FB-D1-01) |
+| ADR-07 | Internal Role Authentication (**Front Staff**, **Manager**) | Frontend, Backend | Accepted |
+| ADR-08 | Table Hold and Concurrency Control | Backend | Accepted |
+| ADR-09 | Table Status Updates in the MVP: Polling | Frontend, Backend | Accepted |
+| ADR-10 | **Customer** Notifications through the LINE Messaging API Only | Backend, External systems | Accepted |
+| ADR-11 | Simulated **Payment Gateway** for the MVP | Backend, External systems | Accepted |
+| ADR-12 | Communication: REST through the API Gateway, gRPC between Services | All three parts | Accepted |
 
 ## 4.1 ADR-01: Frontend Architecture & Client Channel
 
@@ -480,7 +481,7 @@ Accepted on 2026-09-29. Supersedes the real-time part of ADR-02.
 <td class="k">Context</td>
 <td markdown="block">
 
-ADR-04 chose LINE Messaging API push messages supplemented by Web Push, mainly for reminders before cutoff times with "On My Way" and "Postpone 30 mins" buttons. The requirements now use the **check-in window** and the **grace period** as the arrival rule; reminders and the grace extension are planned for a later release and are out of scope (Section 3.1.7). The customer web app runs inside LINE's in-app browser (**LIFF**), which does not support the Push API that Web Push needs, and the system is LINE-only. The messages in scope are the booking confirmation with the **e-ticket**, the hold-expired notice and, from Increment 2, the refund and slip-decision notices (FR-20, FR-21), each retried 3 times within 5 minutes (FR-22) and sent within the Official Account's monthly push quota.
+ADR-04 chose LINE Messaging API push messages supplemented by Web Push, mainly for reminders before cutoff times with "On My Way" and "Postpone 30 mins" buttons. The requirements now use the **check-in window** and the **grace period** as the arrival rule; reminders and the grace extension are planned for a later release and are out of scope (Section 3.1.7). The customer web app runs inside LINE's in-app browser (**LIFF**), which does not support the Push API that Web Push needs, and the system is LINE-only. The messages in scope are the booking confirmation with the **e-ticket**, the hold-expired and payment-failed notices and, from Increment 2, the refund and slip-decision notices (FR-20, FR-21), each retried 3 times within 5 minutes (FR-22) and sent within the Official Account's monthly push quota.
 
 </td>
 </tr>
@@ -558,6 +559,71 @@ Accepted on 2026-09-29.
 - The Payment Service and the Booking Service do not change when the real gateway arrives; only the adapter does (NFR-37).
 - The simulated gateway must never run in production; only the test configuration enables it (NFR-31).
 - What only a real gateway shows (late or missing results, refunds, outages) is not exercised until Increment 2.
+
+</td>
+</tr>
+</table>
+
+## 4.12 ADR-12: Communication: REST through the API Gateway, gRPC between Services
+
+*Table 4.13 ADR-12 Communication: REST through the API Gateway, gRPC between Services*
+
+<table class="adr" markdown="1">
+<tr markdown="1">
+<td class="k">Title</td>
+<td markdown="block">
+
+Communication: REST through the API Gateway, gRPC between Services
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Context</td>
+<td markdown="block">
+
+SEATS has three parts (Section 5.2): the Frontend in the users' browsers, the Backend on the servers of SEATS, and the External systems. Version 1 of the architecture (Deliverable #2) used REST for every call, as the Deliverable #2 brief allowed for a first version; the brief asks the later versions to choose REST, gRPC or asynchronous messaging for each part according to its work, and the minimum requirements of the course project include at least one REST service and one gRPC service. Three kinds of call cross or stay inside the parts:
+
+- The web apps run in LINE's in-app browser (**LIFF**, ADR-01) and in ordinary browsers, which speak HTTP and JSON; the **Payment Gateway** reports payment results by an HTTPS webhook.
+- Inside the Backend the services call each other on the busiest paths: holding a table calls the Concert Round Service and the Table Availability Service within one customer request, which must answer within 2 seconds at the 95th percentile (NFR-04) at 5 hold requests per second (NFR-01).
+- The backend is written in JavaScript (ADR-03), which is dynamically typed, so nothing checks that a caller and a service agree on the shape of their messages.
+
+Options considered: REST everywhere; gRPC everywhere, with gRPC-Web for the browsers; REST into and through the API Gateway with gRPC between the services; asynchronous messages through a message broker.
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Decision</td>
+<td markdown="block">
+
+- **Frontend to Backend:** REST, JSON over HTTPS, only through the API Gateway, which authenticates each request and routes it to the service that owns the operation.
+- **External systems to Backend:** the payment webhook is a REST call over HTTPS to the API Gateway, which passes it to the Payment Service.
+- **API Gateway to services:** REST, JSON over HTTP on the private network. Every service that the web apps use offers a REST API, built with Express (ADR-03).
+- **Service to service:** gRPC, Protocol Buffers over HTTP/2, with @grpc/grpc-js. Every collaboration between services in Table 5.3 is a gRPC call. Each service publishes its gRPC API as a .proto file from which its callers generate their client. Every call carries a deadline, and only calls that are safe to repeat, such as releaseHold() (ADR-08), are retried.
+- **Backend to External systems:** through the adapters, over the provider's HTTPS API.
+- **No message broker in the MVP:** every call is synchronous.
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Status</td>
+<td markdown="block">
+
+Accepted on 2026-09-29.
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Consequences</td>
+<td markdown="block">
+
+- The browsers, the **LIFF** app and the payment webhook use plain HTTPS and JSON, so no gRPC-Web proxy is needed.
+- The .proto files are typed contracts between the services and generate their client and server code, which catches the type mismatches that ADR-03 warns about when a service changes its messages.
+- The calls between services use a compact binary encoding over long-lived HTTP/2 connections, which keeps the internal calls of a **hold** small within the 2-second budget of NFR-04.
+- The design itself contains REST services (for example the Concert Round Service for the **back-office**) and gRPC services (every service that another service calls), as the course project requires.
+- A service used by both the web apps and other services implements two APIs over the same application logic, and both must be tested; the team has to learn gRPC and Protocol Buffers.
+- gRPC messages are binary and harder to inspect than JSON; debugging needs tools such as grpcurl and server reflection.
+- Every call is synchronous: when a service is down, the calls to it fail and so does the request that made them. Calls that can be delayed without harm, such as the LINE messages, are the first candidates for asynchronous messaging when a later ADR revisits it.
+- The services find each other by service names that the deployment resolves; how services are discovered is left to a later ADR.
 
 </td>
 </tr>
