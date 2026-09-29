@@ -36,6 +36,7 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-28 | Added | 6 | Glossary of the business terms (Table 6.1, 40 terms, including those the business rules use); the appendices move to the end of the document. | owner |
 | CH-29 | Modified | 1 to 5 | Business terms set in bold wherever they occur in the text and the tables, except in headings, captions, names of use cases and services, and phase names; in the PDF each bold term links to its glossary entry. The very frequent words booking and table are defined but not set in bold. | owner |
 | CH-30 | Modified | 1.3, 5.1 | The text states the increments without referring to the teacher's feedback; only the ADRs, the revision history and these appendices cite it. | owner |
+| CH-31 | Modified | 2.2.1 to 2.2.4 | Every use case description (heading and table) starts on a new page. | owner |
 
 # Appendix B Resolution of Feedback and Known Issues
 
@@ -65,5 +66,5 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 # Appendix C How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft7 the earlier drafts and doc-v2.0-draft8 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft8 the earlier drafts and doc-v2.0-draft9 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".
