@@ -1,0 +1,66 @@
+# Appendix A Change Log
+
+Each change of version 2.0 has an identifier. The commits that made it start with the same identifier, and the redline of Appendix C shows the exact text. In the Source column, FB-nn is teacher feedback, KI-nn a known issue of the submitted deliverables, "Req. update" a change of the system's requirements, and "owner" a request of the document owner.
+
+*Table A.1 Changes from version 1.1 to version 2.0*
+
+| ID | Type | Section | Change | Source |
+|---|---|---|---|---|
+| CH-01 | Added | 0, A to C | Document control (document information, revision history) and, in the appendices, this change log, the resolution of the feedback and the known issues, and how to compare the versions. | — |
+| CH-02 | Modified | 1.1, 1.2 | The problem description ends with full payment and one arrival rule (check-in window, grace period, no-show) instead of cutoff reminders and extension requests. Target customers are the Manager (the owner reads the same back-office), the Front Staff, who seat walk-ins at no-show tables and no longer create postponement requests, and the Customer; analytics and seat-view photographs are removed. | KI-02, KI-03, KI-04, KI-05, Req. update |
+| CH-03 | Added | 1.3 | Scope and increments: what the MVP builds, what Increment 2 adds and what is out of scope. | FB-D2-01 |
+| CH-04 | Modified | 2.1 | Use case diagram redrawn: use case names as in the descriptions; actors Customer, Front Staff, Manager, LINE Platform, Payment Gateway and Time with the associations of the descriptions. Table 2.1 lists actors, traces and increments. | KI-01, KI-02 |
+| CH-05 | Modified | 2.2 | "Front Staff" instead of "Staff" in the stakeholder lists; every use case states its increment and the business rules it follows. | KI-02 |
+| CH-06 | Modified | 2.2 | Flows that the MVP does not build are marked (Increment 2); UC-01 pays through the simulated gateway in the MVP. | FB-D2-01 |
+| CH-07 | Modified | 2.2.1 | UC-01: the map is refreshed within 2 seconds; leaving the app does not release a hold; the hold timer keeps running during a correction; status polling runs until 10 minutes after the hold ends; the e-ticket stays under My Bookings when LINE fails. | Req. update |
+| CH-08 | Modified | 2.2.2 | UC-02: extra guests are handled by hand outside the system; latecomers of a booking are let through; a late party may be seated as walk-ins on the Manager's authority while the booking stays No-show; no-show tables are free for walk-ins and never waitlisted; "at the cutoff" is "at the end of the grace period". | KI-03, Req. update |
+| CH-09 | Modified | 2.2.3 | UC-03: package price per table type and zone; extra-person fee, check-in window and grace period are business parameters; zone map, tables and prices are fixed once booking opens. | Req. update |
+| CH-10 | Modified | 2.2.4 | UC-04: the zones are drawn on an uploaded image of the venue; seat-view photographs are out of scope; EF-3 is an image upload failure. | Req. update |
+| CH-11 | Modified | 3.1 | Functional requirements completed and given identifiers, use cases and increments: payment, hold, e-ticket, check-in, escalation, no-show and live view added; cutoff reminders, extensions and walk-in bookings replaced; "admins" is "Manager"; out-of-scope list added. | KI-02, KI-03, KI-05, Req. update |
+| CH-12 | Modified | 3.2 | Non-functional requirements with identifiers and measurable targets (for example table status within 2 seconds instead of 3); Reliability and Interfaces added. | Req. update |
+| CH-13 | Modified | 4.6 | ADR-06: the need for a flexible schema for layouts moved from Consequences to Context; the consequences now include the negative ones; the TTL-index consequence is removed. | FB-D1-01, KI-06 |
+| CH-14 | Added, Modified | 4, 4.2, 4.3, 4.8, 4.9 | ADR index (Table 4.1) and the rule that a changed decision gets a new ADR. ADR-08 Table Hold and Concurrency Control and ADR-09 Table Status Updates in the MVP: Polling added; ADR-02 superseded; ADR-03 amended. | KI-06, KI-07, FB-D2-01 |
+| CH-15 | Added, Modified | 4.4, 4.10 | ADR-10 Customer Notifications through the LINE Messaging API Only added; ADR-04 superseded. | KI-03, KI-08 |
+| CH-16 | Added | 4.11 | ADR-11 Simulated Payment Gateway for the MVP. | FB-D2-01 |
+| CH-17 | Modified | 4.7 | ADR-07 includes the Owner's read-only account role. | Req. update |
+| CH-18 | Modified | 5.1 | The scope covers the four use cases; the sections are numbered 5.1 to 5.3. | KI-09, KI-12 |
+| CH-19 | Modified | 5.2 | Table 5.1 marks the Increment 2 operations; the Payment Service calls the Notification Service for sendSlipDecisionNotice(); zone-map image operations replace the seat-view photo operations; recordAdditionalGuests() is removed. | KI-10, FB-D2-01, Req. update |
+| CH-20 | Modified | 5.3 | Figure 5.1 architecture version 2: arrows end on the services, not on their databases; Payment → Notification added; Increment 2 arrows grey and dashed; polling and simulated gateway in the MVP. | KI-10, KI-11, FB-D2-01 |
+| CH-21 | Modified | cover | The cover names the Department of Computer Engineering. | KI-13 |
+| CH-22 | Modified | 0.1, 1.3, 2.1, 5.1, 5.3, cover | The product is named Seating & Event Availability Tracking System (SEATS) instead of Concert Table Reservation System (CTRS); the use case diagram's system boundary, the figure captions, the cover and the running header follow. | Req. update |
+| CH-23 | Modified | 2.2 | The four use case descriptions are tables (name, ID, importance with increment; primary and secondary actors, type; stakeholders; brief description; trigger with its type; relationships as association, include, extend, generalization, related use cases and business rules; pre- and postconditions; basic flow with phases and extension points; subflows S-1; alternative and exception flows), grouped as 2.2.1 to 2.2.4 under 2.2 Use Case Descriptions. The wording of the flows is unchanged. | owner |
+| CH-24 | Modified | 2.1 | Figure 2.1 redrawn as a generated diagram (SVG: actors as stick figures, external systems as «actor» boxes, Time as «timer»), with the same use cases, actors and associations. | owner |
+| CH-25 | Modified | 4.1 to 4.11 | Every ADR is a table of the template's five fields (Title, Context, Decision, Status, Consequences), Tables 4.2 to 4.12, and starts on a new page. The wording of the ADRs is unchanged. | owner |
+| CH-26 | Modified | 5.3 | Figure 5.1 re-laid so that no arrow crosses a component or a label: the Booking → Notification call crossed the Notification hexagon and now enters its REST tab directly (the Notification Service moved up beside the Booking Service); the LINE Login line crossed the "Client applications" label, which moved to the bottom of its group. The drawing tool now checks every arrow against every component and label. | owner |
+| CH-27 | Modified | 0, 1.3, 2, 3, 4, A to C | Section 0 keeps the document information and the revision history; the change log, the resolution table and how to compare the versions moved to Appendices A to C, and the open items are removed. The sources of the requirements are no longer cited: the requirements, their identifiers and the business rules (new Section 3.3) are part of this document, and requirements SA-01 to SA-05 are renumbered FR-73 to FR-75, NFR-44 and NFR-45. | owner |
+
+# Appendix B Resolution of Feedback and Known Issues
+
+The teacher feedback is kept as received in the group's workspace (received/teacher/), and the known issues are described in workspace/notes/known-issues.md.
+
+*Table B.1 Feedback and known issues, and the changes that resolve them*
+
+| Item | Summary | Resolution |
+|---|---|---|
+| FB-D1-01 | ADR-06: "Flexible Schema for Layouts" belongs in Context rather than Consequences. | Done: CH-13 |
+| FB-D2-01 | The scope is large for 2–3 months; the MVP should cover rounds, table selection and booking, simulated payment and QR check-in; automatic refund, transfer-slip review, real-time WebSocket and degraded payment mode later. | Done: CH-03, CH-06, CH-14, CH-16, CH-19, CH-20 |
+| KI-01 | Use case names in the diagram differ from the descriptions. | Resolved: CH-04 |
+| KI-02 | Actors in the diagram differ from the descriptions and the requirements. | Resolved: CH-02, CH-04, CH-05, CH-11 |
+| KI-03 | Two arrival models: cutoff with extensions, or check-in window with no-shows. | Resolved: the check-in window model is kept; reminders and the extension are out of scope (CH-02, CH-08, CH-11, CH-15) |
+| KI-04 | Who asks for a postponement is stated two ways. | Resolved: postponement requests are removed with the extension (CH-02) |
+| KI-05 | The requirements leave out behaviour the use cases depend on. | Resolved: CH-11; analytics out of scope (CH-02) |
+| KI-06 | Three different mechanisms expire a table hold. | Resolved: ADR-08 (CH-13, CH-14) |
+| KI-07 | ADR-02 leaves its decision open. | Resolved: ADR-09 supersedes it (CH-14) |
+| KI-08 | ADR-04's Web Push channel is missing from the architecture. | Resolved: ADR-10 (CH-15) |
+| KI-09 | Deliverable #2 counts three business use cases but lists four. | Resolved: CH-18 |
+| KI-10 | sendSlipDecisionNotice() has no caller. | Resolved: CH-19, CH-20 |
+| KI-11 | Two diagram arrows end on another service's private database. | Resolved: CH-20 |
+| KI-12 | Section numbering and page layout of Deliverable #2. | Resolved: CH-18 and the layout of this document |
+| KI-13 | Department name on both covers. | Resolved: CH-21 |
+| KI-14 | The ADRs do not yet meet the syllabus minimum technology requirements. | Open: to be decided with Deliverable #3 |
+
+# Appendix C How to See the Changes
+
+- **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft5 the earlier drafts and doc-v2.0-draft6 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".

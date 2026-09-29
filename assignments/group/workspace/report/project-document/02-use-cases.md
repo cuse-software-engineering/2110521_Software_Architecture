@@ -8,18 +8,18 @@
 
 The diagram names each use case as its description does and shows every actor that takes part in it: the Customer, the Front Staff and the Manager, and the secondary actors LINE Platform (LINE Login and the Messaging API), Payment Gateway and Time. There is no «include» or «extend» relationship: UC-04, UC-03, UC-01 and UC-02 follow one another because each produces what the next one needs (zone map, concert round, confirmed booking), which is an order of use, not a relationship between use cases.
 
-*Table 2.1 Use cases, actors and traces*
+*Table 2.1 Use cases, actors and increments*
 
-| Use case | Primary actor | Secondary actors | Traces to 2110628 | Increment |
-|---|---|---|---|---|
-| UC-01 Reserve a Specific Table | Customer | LINE Platform, Payment Gateway, Time (hold expiry), Manager (transfer-slip review, Increment 2) | UC-01, UC-16 | MVP |
-| UC-02 Check In Using Digital QR Ticket | Front Staff | Customer, Manager (escalation, Increment 2), Time (no-show marking, Increment 2) | UC-02, UC-09, UC-10 | MVP |
-| UC-03 Create Concert Event | Manager | — | UC-03 | MVP |
-| UC-04 Create Venue Zone Map | Manager | — | UC-04 | MVP |
+| Use case | Primary actor | Secondary actors | Increment |
+|---|---|---|---|
+| UC-01 Reserve a Specific Table | Customer | LINE Platform, Payment Gateway, Time (hold expiry), Manager (transfer-slip review, Increment 2) | MVP |
+| UC-02 Check In Using Digital QR Ticket | Front Staff | Customer, Manager (escalation, Increment 2), Time (no-show marking, Increment 2) | MVP |
+| UC-03 Create Concert Event | Manager | — | MVP |
+| UC-04 Create Venue Zone Map | Manager | — | MVP |
 
 ## 2.2 Use Case Descriptions
 
-Each use case is described in the table format of the 2110628 requirements report (after Dennis, Wixom and Tegarden): name, identifier and importance, actors and type, stakeholders, brief description, trigger, relationships, pre- and postconditions, then the basic flow with its phases in braces and its extension points in bold, the subflows, the alternative flows and the exception flows. Flows that the MVP does not build are marked *(Increment 2)*.
+Each use case is described in a table after Dennis, Wixom and Tegarden: name, identifier and importance, actors and type, stakeholders, brief description, trigger, relationships, pre- and postconditions, then the basic flow with its phases in braces and its extension points in bold, the subflows, the alternative flows and the exception flows. Flows that the MVP does not build are marked *(Increment 2)*.
 
 ### 2.2.1 UC-01 Reserve a Specific Table
 
@@ -107,7 +107,7 @@ Customer wants to reserve a table for a concert round. Trigger type: external.
 - Extend: none.
 - Generalization: none.
 - Related use cases: Relies on LINE Login for customer authentication, the LINE Messaging API for confirmation messages, the Payment Gateway for payment, and the concert round created in UC-03 on a zone map from UC-04. Produces the Confirmed booking and e-ticket used in UC-02; the check-in window and grace period applied in UC-02 come from the round created in UC-03.
-- Traces to 2110628: UC-01 Reserve Concert Table, UC-16 Pay the Full Table Fee; BRULE-01, 02, 03, 07, 08, 09, 11, 12, 16, 17.
+- Business rules: BRULE-01, 02, 03, 07, 08, 09, 11, 12, 16, 17.
 
 </td>
 </tr>
@@ -411,7 +411,7 @@ Customer arrives at the door and shows the e-ticket QR code on the phone. Trigge
 - Extend: none.
 - Generalization: none.
 - Related use cases: Uses the Confirmed booking and e-ticket issued in UC-01 and the venue-issued back-office account of the Front Staff. Updates the live view seen by the Manager. Escalations are ruled on by the Manager; a no-show frees its table for walk-in guests, paid by hand at the venue and never offered to a waitlist (BRULE-06).
-- Traces to 2110628: UC-02 Check In with E-Ticket, UC-09 Resolve Invalid Ticket, UC-10 Mark No-show; BRULE-04, 05, 06, 09.
+- Business rules: BRULE-04, 05, 06, 09.
 
 </td>
 </tr>
@@ -664,7 +664,7 @@ Manager wants to open a new concert round for booking. Trigger type: external.
 - Extend: none.
 - Generalization: none.
 - Related use cases: Requires the venue zone map (zones, tables and table types) created in UC-04 and the venue-issued back-office account of the Manager. Produces the concert round used in UC-01 (rounds, table map, fees) and in UC-02 (check-in window and grace period). The live view of published rounds is shared by the Manager.
-- Traces to 2110628: UC-03 Manage Concert Round; BRULE-04, 05, 07, 08.
+- Business rules: BRULE-04, 05, 07, 08.
 
 </td>
 </tr>
@@ -876,7 +876,7 @@ Business / Creation
 
 #### Brief Description
 
-Manager creates or edits the venue zone map in the back-office: uploads an image of the venue, defines the zones on it, places the tables on the map, gives each table a table number, a table type and a seating capacity, and activates the map. System validates the map (named zones, unique table numbers, every table typed and sized) before it can be activated. Seat-view photographs of the tables are out of scope (Future in the 2110628 requirements, F37). An Active zone map can be selected by the Manager when creating a concert round in UC-03 and is rendered as the floor plan seen by Customers in UC-01 and by Front Staff in UC-02.
+Manager creates or edits the venue zone map in the back-office: uploads an image of the venue, defines the zones on it, places the tables on the map, gives each table a table number, a table type and a seating capacity, and activates the map. System validates the map (named zones, unique table numbers, every table typed and sized) before it can be activated. Seat-view photographs of the tables are out of scope (a future feature). An Active zone map can be selected by the Manager when creating a concert round in UC-03 and is rendered as the floor plan seen by Customers in UC-01 and by Front Staff in UC-02.
 
 </td>
 </tr>
@@ -899,7 +899,7 @@ Manager wants to set up the venue layout for the first time or change the layout
 - Extend: none.
 - Generalization: none.
 - Related use cases: Requires the venue-issued back-office account of the Manager. Produces the venue zone map (zones, tables and table types) that UC-03 requires when a concert round is created and that is rendered in UC-01 and UC-02.
-- Traces to 2110628: UC-04 Define Zones and Packages; FR-37, FR-39.
+- Requirements: FR-37, FR-39.
 
 </td>
 </tr>

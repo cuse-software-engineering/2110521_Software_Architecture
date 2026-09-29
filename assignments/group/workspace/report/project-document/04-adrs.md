@@ -430,7 +430,7 @@ Table Status Updates in the MVP: Polling
 <td class="k">Context</td>
 <td markdown="block">
 
-A table status change must appear on every open map within 2 seconds (FR-06, NFR-25), with up to 200 customers browsing at once and rounds of up to 60 tables (NFR-27). ADR-02 chose WebSocket or Server-Sent Events, and the 2110628 design constraint CON-04 also prefers pushed updates. The teacher's feedback on Deliverable #2 (FB-D2-01) recommends leaving real-time WebSocket out of the MVP and adding it later.
+A table status change must appear on every open map within 2 seconds (FR-06, NFR-25), with up to 200 customers browsing at once and rounds of up to 60 tables (NFR-27). ADR-02 chose WebSocket or Server-Sent Events, and the design constraints of the system also prefer pushed map updates to polling. The teacher's feedback on Deliverable #2 (FB-D2-01) recommends leaving real-time WebSocket out of the MVP and adding it later.
 
 </td>
 </tr>
@@ -480,7 +480,7 @@ Customer Notifications through the LINE Messaging API Only
 <td class="k">Context</td>
 <td markdown="block">
 
-ADR-04 chose LINE Messaging API push messages supplemented by Web Push, mainly for reminders before cutoff times with "On My Way" and "Postpone 30 mins" buttons. The requirements now use the check-in window and the grace period as the arrival rule; reminders and the grace extension are planned for Release 2.0 of the 2110628 requirements (FR-45, FR-46, FR-55) and are out of scope (Section 3.1.7). The customer web app runs inside LINE's in-app browser (LIFF), which does not support the Push API that Web Push needs, and the system is LINE-only (CON-02). The messages in scope are the booking confirmation with the e-ticket, the hold-expired notice and, from Increment 2, the refund and slip-decision notices (FR-20, FR-21), each retried 3 times within 5 minutes (FR-22) and sent within the Official Account's monthly push quota.
+ADR-04 chose LINE Messaging API push messages supplemented by Web Push, mainly for reminders before cutoff times with "On My Way" and "Postpone 30 mins" buttons. The requirements now use the check-in window and the grace period as the arrival rule; reminders and the grace extension are planned for a later release and are out of scope (Section 3.1.7). The customer web app runs inside LINE's in-app browser (LIFF), which does not support the Push API that Web Push needs, and the system is LINE-only. The messages in scope are the booking confirmation with the e-ticket, the hold-expired notice and, from Increment 2, the refund and slip-decision notices (FR-20, FR-21), each retried 3 times within 5 minutes (FR-22) and sent within the Official Account's monthly push quota.
 
 </td>
 </tr>
@@ -530,7 +530,7 @@ Simulated Payment Gateway for the MVP
 <td class="k">Context</td>
 <td markdown="block">
 
-UC-01 pays the full table fee through a payment gateway (BRULE-01, FR-13, FR-16). The 2110628 Payment Gateway Feasibility Study chose Beam Checkout, with Opn Payments as the fallback, and requires one payment-service interface so that the gateway can be replaced (NFR-37) and a sandbox for testing (NFR-31). Onboarding with a real gateway needs a registered merchant. The teacher's feedback on Deliverable #2 (FB-D2-01) recommends a simulated payment in the MVP, and automatic refunds, transfer-slip review and the degraded payment mode later.
+UC-01 pays the full table fee through a payment gateway (BRULE-01, FR-13, FR-16). A payment gateway feasibility study selected Beam Checkout, with Opn Payments as the fallback; the requirements ask for one payment-service interface so that the gateway can be replaced (NFR-37) and a sandbox for testing (NFR-31). Onboarding with a real gateway needs a registered merchant. The teacher's feedback on Deliverable #2 (FB-D2-01) recommends a simulated payment in the MVP, and automatic refunds, transfer-slip review and the degraded payment mode later.
 
 </td>
 </tr>
