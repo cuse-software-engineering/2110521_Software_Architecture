@@ -20,6 +20,7 @@ DPI = 110
 ALL_DIRS = ["materials", "assignments/group/workspace/received"]            # every PDF here -> png/ next to it
 ALL_PAIRS = [  # handed-in PDFs whose transcription lives elsewhere: (PDF, png folder next to the transcription)
     ("assignments/group/deliverables/report/Deliverable-1.pdf", "assignments/group/workspace/report/deliverable-1/png"),
+    ("assignments/group/deliverables/report/Deliverable-2.pdf", "assignments/group/workspace/report/deliverable-2/png"),
 ]
 
 

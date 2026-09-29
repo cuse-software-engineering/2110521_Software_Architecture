@@ -2,7 +2,7 @@
 
 **2110521 วิศวกรรมสถาปัตยกรรมซอฟต์แวร์ (Software Architecture)**
 
-> Transcribed from [Deliverable-1.pdf](../../../deliverables/report/Deliverable-1.pdf) (32 pages), the version handed in. Page images are in [png/](png/) (render with `python3 tools/render_pages.py --all`). The document is split into [use-cases.md](use-cases.md), [requirements.md](requirements.md) and [adr.md](adr.md).
+> Transcribed from [Deliverable-1.pdf](../../../deliverables/report/Deliverable-1.pdf) (32 pages), the version handed in. Page images are in [png/](png/) (render with `python3 tools/render_pages.py --all`); the use case diagram of page 3 is also extracted at full resolution to [assets/use-case-diagram.png](assets/use-case-diagram.png). The document is split into [use-cases.md](use-cases.md), [requirements.md](requirements.md) and [adr.md](adr.md).
 
 ## Group Members — SE 101
 
@@ -33,52 +33,18 @@ Pubs and bars still rely on manual chat messaging and phone calls to handle tabl
 
 ### Use Case Diagram
 
-System boundary: **Concert Table Reservation System (CTRS)**
+![Use case diagram of the Concert Table Reservation System (CTRS)](assets/use-case-diagram.png)
 
-The diagram below is derived from the use case descriptions in this document. The original diagram on page 3 of the PDF ([png/page-03.png](png/page-03.png)) is out of date: it names UC-03 "Manage arrival and cutoff" and UC-04 "Configure venue and floor plan", which do not match the descriptions.
+System boundary: **Concert Table Reservation System (CTRS)**. The diagram as submitted on page 3 (figure extracted from the PDF at full resolution):
 
-| Use case | Primary actor | Supporting actors |
-|---|---|---|
-| UC-01 Reserve a Specific Table | Customer | LINE Login, LINE Messaging API, Payment Gateway, Manager (degraded-mode slip review), Time (hold expiry) |
-| UC-02 Check In Using Digital QR Ticket | Front Staff | Customer, Manager (escalation ruling), Time (no-show marking) |
-| UC-03 Create Concert Event | Manager | — |
-| UC-04 Create Venue Zone Map | Manager | — |
+| Use case, as named in the diagram | Actors associated in the diagram |
+|---|---|
+| UC-01 Reserve a specific table | Customer |
+| UC-02 Check in using digital QR ticket | Customer, Staff |
+| UC-03 Manage arrival and cutoff | Customer, Staff |
+| UC-04 Configure venue and floor plan | Admin / Venue Owner |
 
-Dependencies between use cases: UC-04 produces the zone map required by UC-03; UC-03 produces the concert round used by UC-01 and the check-in window and grace period used by UC-02; UC-01 produces the Confirmed booking and e-ticket used by UC-02.
-
-```mermaid
-flowchart LR
-    Customer(["Customer"])
-    Staff(["Front Staff"])
-    Manager(["Manager"])
-    Time(["Time"])
-    LINE(["LINE Login /<br/>Messaging API"])
-    PG(["Payment Gateway"])
-
-    subgraph CTRS["Concert Table Reservation System (CTRS)"]
-        UC01(["UC-01<br/>Reserve a Specific Table"])
-        UC02(["UC-02<br/>Check In Using Digital QR Ticket"])
-        UC03(["UC-03<br/>Create Concert Event"])
-        UC04(["UC-04<br/>Create Venue Zone Map"])
-    end
-
-    Customer --- UC01
-    Customer --- UC02
-    Staff --- UC02
-    Manager --- UC01
-    Manager --- UC02
-    Manager --- UC03
-    Manager --- UC04
-    UC01 --- LINE
-    UC01 --- PG
-    UC01 --- Time
-    UC02 --- Time
-
-    UC04 -. "zone map" .-> UC03
-    UC03 -. "concert round" .-> UC01
-    UC03 -. "check-in window" .-> UC02
-    UC01 -. "booking + e-ticket" .-> UC02
-```
+> Transcription note: the names of UC-03 and UC-04 and the actor names in the diagram differ from the use case descriptions. The submitted document is transcribed as it is; see issues KI-01 and KI-02 in [../../notes/known-issues.md](../../notes/known-issues.md).
 
 ---
 

@@ -31,8 +31,9 @@ assignments/
     02/               Tutorial 1, REST: CTRS FloorPlan REST API (Node.js, Express, MongoDB) + demo video script
     03/               Tutorial 2, gRPC: the lecture's restaurant sample moved onto MongoDB + demo video script
   group/              The term project (CTRS): architecture deliverables of group SE 101
-    workspace/        report/deliverable-N/ = markdown of each deliverable; received/examples/ = ADR samples
-    deliverables/     What was handed in: report/ (submitted PDFs)
+    workspace/        report/deliverable-N/ = markdown of each deliverable; notes/ = known issues;
+                      received/teacher/ = feedback; received/examples/ = ADR samples
+    deliverables/     What was handed in: report/ (Deliverable-1.pdf, Deliverable-2.pdf)
 materials/
   syllabus/                  Course syllabus (3 Aug 2026): PDF + md/ transcription
   lecture_notes/<topic>/     Lecture deck PDFs, with md/ transcriptions and png/ page images; index in its README
