@@ -33,7 +33,7 @@ Found by Watayut: the names of UC-03 and UC-04 in the use case diagram differ fr
 | UC-04 | **Configure venue and floor plan** | **Create Venue Zone Map** |
 
 UC-01 and UC-02 differ only in capitalization. No description exists for "Manage arrival and cutoff"; see KI-03.
-The [Deliverable #1 brief](../../problem/deliverable-1/problem.txt) asks for a use case diagram consistent with the use cases described.
+The [Deliverable #1 brief](../../problem/deliverable-1/problem.md) asks for a use case diagram consistent with the use cases described.
 
 ## KI-02 Actors in the diagram differ from the descriptions and the requirements
 
@@ -144,7 +144,7 @@ calls only the LINE Messaging Adapter.
 D2 p2 refers to "the three business use cases of Deliverable #1", lists four (UC-01 to UC-04), and then says "Maintaining the
 venue zone map is not itself one of the three business use cases". D1 p19 defines it as UC-04 Create Venue Zone Map with
 use case type "Business / Creation".
-The [Deliverable #2 brief](../../problem/deliverable-2/problem.txt) asks for coverage of the group's 3 business use cases; the only use cases it rules out as non-business are
+The [Deliverable #2 brief](../../problem/deliverable-2/problem.md) asks for coverage of the group's 3 business use cases; the only use cases it rules out as non-business are
 user-management ones such as registration and login (guideline 2).
 
 ## KI-10 sendSlipDecisionNotice() has no caller
@@ -153,7 +153,7 @@ The Notification Service offers sendSlipDecisionNotice() (D2 p5). The Payment Se
 reviewTransferSlip(), but its collaborators are the Payment Gateway Adapter, the Media Storage Adapter and the Booking
 Service. The Booking Service's Notification collaborators omit it, and the diagram (D2 p7) has no arrow from the Payment
 Service to the Notification Service.
-Guideline 7 of the [Deliverable #2 brief](../../problem/deliverable-2/problem.txt): the table and the diagram must agree, checked from each use case through its operations and
+Guideline 7 of the [Deliverable #2 brief](../../problem/deliverable-2/problem.md): the table and the diagram must agree, checked from each use case through its operations and
 collaborators.
 
 ## KI-11 Two diagram arrows end on another service's private database
@@ -161,7 +161,7 @@ collaborators.
 In the diagram (D2 p7) the arrow from the Booking Service to the Table Availability Service ends beside the Table Status DB,
 and the confirmBookingPayment() arrow from the Payment Service ends on the Booking DB. The legend says a cylinder is a data
 store owned privately by its service, so the two arrows can be read as cross-service database access.
-Guideline 4 of the [Deliverable #2 brief](../../problem/deliverable-2/problem.txt): a service's data is private, and other services reach it through the service's API, not its
+Guideline 4 of the [Deliverable #2 brief](../../problem/deliverable-2/problem.md): a service's data is private, and other services reach it through the service's API, not its
 database.
 
 ## KI-12 Section numbering and page layout of D2

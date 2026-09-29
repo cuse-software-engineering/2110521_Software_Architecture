@@ -9,7 +9,7 @@ One folder per kind of thing, as in the 2110628 repository. What is handed in li
 
 | Folder | What it holds | Edit? |
 |---|---|---|
-| `problem/` | The brief of each deliverable as posted in MyCourseVille, `deliverable-N/problem.txt`, with the FTGO example images posted with Deliverable #2. See its README for due dates and weights. | no |
+| `problem/` | The brief of each deliverable as posted in MyCourseVille, `deliverable-N/problem.md`, with the FTGO example images posted with Deliverable #2. See its README for due dates and weights. | no |
 | `deliverables/report/` | What was handed in: `Deliverable-1.pdf` (32 pages: problem, use cases, requirements, ADRs) and `Deliverable-2.pdf` (8 pages: Service–Operations–Collaborators table, architecture diagram). | only by copying the submitted file |
 | `workspace/report/deliverable-1/` | Markdown transcription of Deliverable #1: `Deliverable-1.md`, split into `use-cases.md`, `requirements.md` and `adr.md`. `assets/` holds the use case diagram extracted from the PDF and the venue's printed zone map. | yes (base for the next deliverables) |
 | `workspace/report/deliverable-2/` | Markdown transcription of Deliverable #2: `Deliverable-2.md`, with the service table and a transcription of the diagram. `assets/architecture-diagram.png` is the diagram extracted from the PDF. | yes |
