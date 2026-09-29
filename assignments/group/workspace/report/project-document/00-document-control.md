@@ -10,7 +10,7 @@
 | Product name | SEATS, the name used by the 2110628 requirements; Deliverables #1 and #2 called the system Concert Table Reservation System (CTRS) |
 | Course | 2110521 Software Architecture, Semester 1, Academic Year 2026 |
 | Group | SE 101 |
-| Version | 2.0 draft 2, 29 September 2026 |
+| Version | 2.0 draft 3, 29 September 2026 |
 | Status | Draft for review by the group; basis of the updated ADRs and microservice design of Deliverable #3 |
 | Previous version | 1.1: Deliverable #1 (version 1.0) and Deliverable #2 as submitted on 8 September 2026 |
 | Source of requirements | 2110628 Requirements Engineering project of the same system: Vision 1.13, Software Requirements Specification 1.11, Supplementary Specification 1.9, Business Rules 1.7, use cases UC-01 1.14, UC-02 1.9 and UC-16 1.1 |
@@ -25,10 +25,11 @@
 | 1.1 | 2026-09-08 | SE 101 | Deliverable #2 submitted: microservice design version 1 (Service–Operations–Collaborators table, architecture diagram). | — |
 | 2.0 draft 1 | 2026-09-29 | Watayut A. | Revision after the teacher's feedback on both deliverables and the known issues found in them: scope in increments with an MVP, use case diagram redrawn, requirements aligned with the 2110628 artifacts, ADR-06 corrected, ADR-08 to ADR-11 added, architecture version 2. Changes CH-01 to CH-21. | FB-D1-01, FB-D2-01, KI-01 to KI-13 |
 | 2.0 draft 2 | 2026-09-29 | Watayut A. | Product name SEATS (Seating & Event Availability Tracking System) instead of CTRS, as in the 2110628 requirements. Change CH-22. | 2110628 |
+| 2.0 draft 3 | 2026-09-29 | Watayut A. | Use case descriptions in the table format of the 2110628 report, grouped under 2.2; use case diagram redrawn in that report's style. Changes CH-23, CH-24. | owner |
 
 ## 0.3 Change Log
 
-Each change of version 2.0 has an identifier. The commits that made it start with the same identifier, and the redline of Section 0.6 shows the exact text. In the Source column, FB-nn is teacher feedback, KI-nn a known issue of the submitted deliverables, and "2110628" a change of the requirements in the Requirements Engineering project.
+Each change of version 2.0 has an identifier. The commits that made it start with the same identifier, and the redline of Section 0.6 shows the exact text. In the Source column, FB-nn is teacher feedback, KI-nn a known issue of the submitted deliverables, "2110628" a change of the requirements in the Requirements Engineering project, and "owner" a request of the document owner.
 
 *Table 0.3 Changes from version 1.1 to version 2.0*
 
@@ -38,12 +39,12 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-02 | Modified | 1.1, 1.2 | The problem description ends with full payment and one arrival rule (check-in window, grace period, no-show) instead of cutoff reminders and extension requests. Target customers are the Manager (the owner reads the same back-office), the Front Staff, who seat walk-ins at no-show tables and no longer create postponement requests, and the Customer; analytics and seat-view photographs are removed. | KI-02, KI-03, KI-04, KI-05, 2110628 |
 | CH-03 | Added | 1.3 | Scope and increments: what the MVP builds, what Increment 2 adds and what is out of scope; the requirements' source and identifiers. | FB-D2-01 |
 | CH-04 | Modified | 2.1 | Use case diagram redrawn: use case names as in the descriptions; actors Customer, Front Staff, Manager, LINE Platform, Payment Gateway and Time with the associations of the descriptions. Table 2.1 lists actors, traces and increments. | KI-01, KI-02 |
-| CH-05 | Modified | 2.2 to 2.5 | "Front Staff" instead of "Staff" in the stakeholder lists; every use case header gains the rows "Traces to 2110628" and "Increment". | KI-02 |
-| CH-06 | Modified | 2.2 to 2.5 | Flows that the MVP does not build are marked (Increment 2); UC-01 pays through the simulated gateway in the MVP. | FB-D2-01 |
-| CH-07 | Modified | 2.2 | UC-01: the map is refreshed within 2 seconds; leaving the app does not release a hold; the hold timer keeps running during a correction; status polling runs until 10 minutes after the hold ends; the e-ticket stays under My Bookings when LINE fails. | 2110628 |
-| CH-08 | Modified | 2.3 | UC-02: extra guests are handled by hand outside the system; latecomers of a booking are let through; a late party may be seated as walk-ins on the Manager's authority while the booking stays No-show; no-show tables are free for walk-ins and never waitlisted; "at the cutoff" is "at the end of the grace period". | KI-03, 2110628 |
-| CH-09 | Modified | 2.4 | UC-03: package price per table type and zone; extra-person fee, check-in window and grace period are business parameters; zone map, tables and prices are fixed once booking opens. | 2110628 |
-| CH-10 | Modified | 2.5 | UC-04: the zones are drawn on an uploaded image of the venue; seat-view photographs are out of scope; EF-3 is an image upload failure. | 2110628 |
+| CH-05 | Modified | 2.2 | "Front Staff" instead of "Staff" in the stakeholder lists; every use case header gains the rows "Traces to 2110628" and "Increment". | KI-02 |
+| CH-06 | Modified | 2.2 | Flows that the MVP does not build are marked (Increment 2); UC-01 pays through the simulated gateway in the MVP. | FB-D2-01 |
+| CH-07 | Modified | 2.2.1 | UC-01: the map is refreshed within 2 seconds; leaving the app does not release a hold; the hold timer keeps running during a correction; status polling runs until 10 minutes after the hold ends; the e-ticket stays under My Bookings when LINE fails. | 2110628 |
+| CH-08 | Modified | 2.2.2 | UC-02: extra guests are handled by hand outside the system; latecomers of a booking are let through; a late party may be seated as walk-ins on the Manager's authority while the booking stays No-show; no-show tables are free for walk-ins and never waitlisted; "at the cutoff" is "at the end of the grace period". | KI-03, 2110628 |
+| CH-09 | Modified | 2.2.3 | UC-03: package price per table type and zone; extra-person fee, check-in window and grace period are business parameters; zone map, tables and prices are fixed once booking opens. | 2110628 |
+| CH-10 | Modified | 2.2.4 | UC-04: the zones are drawn on an uploaded image of the venue; seat-view photographs are out of scope; EF-3 is an image upload failure. | 2110628 |
 | CH-11 | Modified | 3.1 | Functional requirements rebuilt from the 2110628 specification with their identifiers, use cases and increments: payment, hold, e-ticket, check-in, escalation, no-show and live view added; cutoff reminders, extensions and walk-in bookings replaced; "admins" is "Manager"; out-of-scope list added. | KI-02, KI-03, KI-05, 2110628 |
 | CH-12 | Modified | 3.2 | Non-functional requirements with the identifiers and measures of the 2110628 Supplementary Specification (for example table status within 2 seconds instead of 3); Reliability and Interfaces added. | 2110628 |
 | CH-13 | Modified | 4.6 | ADR-06: the need for a flexible schema for layouts moved from Consequences to Context; the consequences now include the negative ones; the TTL-index consequence is removed. | FB-D1-01, KI-06 |
@@ -56,6 +57,8 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-20 | Modified | 5.3 | Figure 5.1 architecture version 2: arrows end on the services, not on their databases; Payment → Notification added; Increment 2 arrows grey and dashed; polling and simulated gateway in the MVP. | KI-10, KI-11, FB-D2-01 |
 | CH-21 | Modified | cover | The cover names the Department of Computer Engineering. | KI-13 |
 | CH-22 | Modified | 0.1, 1.3, 2.1, 5.1, 5.3, cover | The product is named Seating & Event Availability Tracking System (SEATS), as in the 2110628 requirements, instead of Concert Table Reservation System (CTRS); the use case diagram's system boundary, the figure captions, the cover and the running header follow. | 2110628 |
+| CH-23 | Modified | 2.2 | The four use case descriptions are tables in the format of the 2110628 report (name, ID, importance with increment; primary and secondary actors, type; stakeholders; brief description; trigger with its type; relationships as association, include, extend, generalization, related use cases and traces; pre- and postconditions; basic flow with phases and extension points; subflows S-1; alternative and exception flows), grouped as 2.2.1 to 2.2.4 under 2.2 Use Case Descriptions. The wording of the flows is unchanged. | owner |
+| CH-24 | Modified | 2.1 | Figure 2.1 redrawn in the style of the 2110628 use case diagram (generated SVG: actors as stick figures, external systems as «actor» boxes, Time as «timer»), with the same use cases, actors and associations. | owner |
 
 ## 0.4 Resolution of Feedback and Known Issues
 
@@ -91,5 +94,5 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 ## 0.6 How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 the first draft and doc-v2.0-draft2 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 and doc-v2.0-draft2 the earlier drafts and doc-v2.0-draft3 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".
