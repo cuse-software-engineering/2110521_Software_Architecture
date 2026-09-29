@@ -14,7 +14,7 @@ from pathlib import Path
 
 GROUP = Path(__file__).resolve().parent.parent
 OUT = str(GROUP / "workspace/report/project-document/assets/architecture-diagram.html")
-W, H = 1720, 1010
+W, H = 1745, 1010
 S = []                                   # svg elements
 DARK, GREY = "#3E4C59", "#9AA5B1"
 
@@ -37,9 +37,9 @@ def box(x, y, w, h, title, sub=None, fill="#fff", stroke=DARK, dash=None, r=10, 
     else:
         text(x + w/2, y + h/2, title, tsize, "bold")
 
-def group(x, y, w, h, label):
+def group(x, y, w, h, label, bottom=False):
     S.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="12" fill="none" stroke="#9AA5B1" stroke-width="1.5" stroke-dasharray="6 5"/>')
-    text(x + 12, y + 16, label, 14, anchor="start", color="#52606D", style="italic")
+    text(x + 12, y + h - 16 if bottom else y + 16, label, 14, anchor="start", color="#52606D", style="italic")
 
 def person(cx, cy, color="#B7950B"):
     S.append(f'<circle cx="{cx}" cy="{cy-22}" r="11" fill="{color}"/>'
@@ -75,8 +75,8 @@ def arrow(path, inc2=False, dotted=False, label=None, lx=None, ly=None, lanchor=
         text(lx, ly, label, lsize, anchor=lanchor, color="#52606D" if not (inc2 or dotted) else "#7B8794", style="italic")
 
 # ---------------- groups
-group(262, 140, 232, 420, "Client applications")
-group(716, 118, 588, 800, "Internal services (one box = one business capability)")
+group(262, 140, 232, 420, "Client applications", bottom=True)
+group(716, 118, 620, 800, "Internal services (one box = one business capability)")
 
 # ---------------- actors
 actor(90, 175, "Customer")
@@ -94,29 +94,29 @@ hexagon("Table Availability Service", 862, 222, 128, 72, 36, ["per-round table s
 hexagon("Concert Round Service", 1152, 262, 132, 90, 40, ["venue zone map, tables,", "table types; rounds,", "schedule, prices,", "check-in window,", "publish / draft"], "Round DB")
 hexagon("Booking Service", 912, 474, 142, 106, 46, ["booking lifecycle: hold, fee,", "customer profile, terms,", "confirmation, e-ticket,", "check-in, expiry;", "no-show, escalation (Inc. 2)"], "Booking DB")
 hexagon("Payment Service", 902, 752, 128, 84, 38, ["payment requests,", "signed webhook; polling,", "refunds, transfer-slip", "review (Inc. 2)"], "Payment DB")
-hexagon("Notification Service", 1172, 700, 128, 66, 34, ["LINE messages,", "retries,", "delivery status"], "Notification DB")
+hexagon("Notification Service", 1204, 556, 128, 66, 34, ["LINE messages,", "retries,", "delivery status"], "Notification DB")
 
 # ---------------- adapters and external systems
 AD = "#FEF1E1"; ADS = "#DD6B20"; EX = "#FDECEC"; EXS = "#C53030"
-box(1340, 42, 162, 54, "LINE Login", "Adapter", fill=AD, stroke=ADS, tsize=15, ssize=12)
-box(1540, 42, 168, 54, "LINE Login Platform", "external", fill=EX, stroke=EXS, dash="7 5", tsize=14, ssize=12)
-box(1340, 290, 162, 58, "Media Storage", "Adapter", fill=AD, stroke=ADS, tsize=15, ssize=12)
-box(1540, 290, 168, 58, "Cloud Object Storage", "external", fill=EX, stroke=EXS, dash="7 5", tsize=14, ssize=12)
-box(1340, 671, 162, 58, "LINE Messaging", "Adapter", fill=AD, stroke=ADS, tsize=15, ssize=12)
-box(1540, 671, 168, 58, "LINE Messaging API", "external", fill=EX, stroke=EXS, dash="7 5", tsize=14, ssize=12)
-box(1340, 800, 162, 58, "Payment Gateway", "Adapter", fill=AD, stroke=ADS, tsize=15, ssize=12)
-box(1540, 776, 168, 106, "Payment Gateway", ["external", "MVP: simulated (ADR-11)", "Inc. 2: Beam sandbox"], fill=EX, stroke=EXS, dash="7 5", tsize=14, ssize=11)
+box(1362, 42, 162, 54, "LINE Login", "Adapter", fill=AD, stroke=ADS, tsize=15, ssize=12)
+box(1560, 42, 168, 54, "LINE Login Platform", "external", fill=EX, stroke=EXS, dash="7 5", tsize=14, ssize=12)
+box(1362, 290, 162, 58, "Media Storage", "Adapter", fill=AD, stroke=ADS, tsize=15, ssize=12)
+box(1560, 290, 168, 58, "Cloud Object Storage", "external", fill=EX, stroke=EXS, dash="7 5", tsize=14, ssize=12)
+box(1362, 527, 162, 58, "LINE Messaging", "Adapter", fill=AD, stroke=ADS, tsize=15, ssize=12)
+box(1560, 527, 168, 58, "LINE Messaging API", "external", fill=EX, stroke=EXS, dash="7 5", tsize=14, ssize=12)
+box(1362, 800, 162, 58, "Payment Gateway", "Adapter", fill=AD, stroke=ADS, tsize=15, ssize=12)
+box(1560, 776, 168, 106, "Payment Gateway", ["external", "MVP: simulated (ADR-11)", "Inc. 2: Beam sandbox"], fill=EX, stroke=EXS, dash="7 5", tsize=14, ssize=11)
 
 # ---------------- arrows: actors to clients
 arrow("M230,200 L276,204")
 arrow("M230,400 C252,402 256,448 276,452")
 arrow("M230,500 C252,500 256,472 276,470")
 # clients to gateway and to LINE Login
-arrow("M378,170 L378,22 L1624,22 L1624,36", label="LINE Login (LIFF)", lx=980, ly=12)
+arrow("M378,170 L378,22 L1644,22 L1644,36", label="LINE Login (LIFF)", lx=980, ly=12)
 arrow("M474,212 C505,222 505,330 524,352")
 arrow("M474,458 C500,456 505,430 524,424")
-arrow("M606,330 L606,69 L1334,69", label="verify ID token", lx=660, ly=58, lanchor="start")
-arrow("M1502,69 L1534,69")
+arrow("M606,330 L606,69 L1356,69", label="verify ID token", lx=660, ly=58, lanchor="start")
+arrow("M1524,69 L1554,69")
 # gateway to services
 arrow("M684,342 C704,318 704,240 713,226")
 arrow("M684,356 C790,340 930,322 1000,272", label="", )
@@ -131,18 +131,18 @@ arrow("M1120,354 C1110,420 1090,455 1060,470", label="getConfirmedBookingCount()
 arrow("M860,368 L860,300")
 arrow("M852,580 L852,662", label="createPaymentRequest()", lx=842, ly=622, lanchor="end", lsize=10.5)
 arrow("M920,668 L920,584", label="confirmBookingPayment()", lx=930, ly=612, lanchor="start", lsize=10.5)
-arrow("M1054,478 C1112,530 1098,640 1052,684")
-arrow("M1030,752 L1060,736", inc2=True, label="sendSlipDecisionNotice() (Inc. 2)", lx=1040, ly=786, lanchor="start", lsize=11)
-arrow("M1284,262 C1310,262 1316,300 1334,312")
-arrow("M1005,800 C1120,820 1300,816 1318,750 L1318,380 C1318,360 1330,352 1360,352", inc2=True, label="storeTransferSlip() (Inc. 2)", lx=1296, ly=520, lanchor="end", lsize=11)
-arrow("M1300,700 L1334,700")
-arrow("M998,822 C1120,846 1250,836 1334,830")
+arrow("M1036,515 C1042,538 1046,552 1053,556")
+arrow("M1030,752 C1052,690 1066,618 1074,572", inc2=True, label="sendSlipDecisionNotice() (Inc. 2)", lx=1086, ly=690, lanchor="start", lsize=11)
+arrow("M1284,262 C1316,262 1336,300 1356,312")
+arrow("M1005,800 C1120,820 1330,816 1348,750 L1348,382 C1348,364 1366,354 1392,352", inc2=True, label="storeTransferSlip() (Inc. 2)", lx=1326, ly=722, lanchor="end", lsize=11)
+arrow("M1332,556 L1356,556")
+arrow("M998,822 C1120,846 1260,836 1356,830")
 # adapters to external systems
-arrow("M1502,319 L1534,319")
-arrow("M1502,700 L1534,700")
-arrow("M1502,829 L1534,829")
+arrow("M1524,319 L1554,319")
+arrow("M1524,556 L1554,556")
+arrow("M1524,829 L1554,829")
 # payment result webhook back to the gateway
-arrow("M1624,882 L1624,968 L606,968 L606,456", label="payment result (signed webhook)", lx=1110, ly=956)
+arrow("M1644,882 L1644,968 L606,968 L606,456", label="payment result (signed webhook)", lx=1110, ly=956)
 # Time
 arrow("M230,775 C420,760 600,640 780,560", label="expire holds; mark no-shows (Inc. 2)", lx=250, ly=711, lanchor="start", lsize=11.5)
 arrow("M230,800 C420,810 600,770 751,758", inc2=True, label="poll payment results (Inc. 2)", lx=420, ly=822, lanchor="start")
@@ -194,4 +194,78 @@ def render() -> None:
     print("wrote", OUT[:-5] + ".png")
 
 
+
+JS = r"""
+() => {
+  const svg = document.querySelector('svg');
+  const W = +svg.getAttribute('width');
+  const all = [...svg.querySelectorAll('polygon, rect, ellipse, circle, path')];
+  const arrows = all.filter(e => e.tagName === 'path' && e.getAttribute('marker-end'));
+  const shapes = all.filter(e => !arrows.includes(e)
+      && !(e.getAttribute('fill') === 'none')               // group outlines
+      && !(e.tagName === 'rect' && +e.getAttribute('width') >= W - 1));   // background
+  const legend = [...svg.querySelectorAll('rect')].find(r => r.getAttribute('fill') === '#F8F9FA');
+  const lb = legend.getBBox();
+  const inLegend = b => b.x >= lb.x && b.y >= lb.y && b.x + b.width <= lb.x + lb.width && b.y + b.height <= lb.y + lb.height;
+  const texts = [...svg.querySelectorAll('text')].filter(t => !inLegend(t.getBBox()));
+  const desc = e => { const b = e.getBBox(); return `${e.tagName}@(${Math.round(b.x)},${Math.round(b.y)} ${Math.round(b.width)}x${Math.round(b.height)})`; };
+  const near = e => { // name a shape by the text whose centre is inside its box
+    const b = e.getBBox(); const t = texts.find(t => { const c = t.getBBox(); const cx = c.x + c.width/2, cy = c.y + c.height/2;
+      return cx > b.x && cx < b.x + b.width && cy > b.y && cy < b.y + b.height && c.width > 20; });
+    return t ? t.textContent.slice(0, 28) : desc(e); };
+  const out = [];
+  for (const a of arrows) {
+    if (inLegend(a.getBBox())) continue;
+    const L = a.getTotalLength(), d0 = a.getAttribute('d').split(' ')[0];
+    const hits = new Map();
+    for (let s = 6; s <= L - 6; s += 2) {
+      const p = a.getPointAtLength(s), pt = new DOMPoint(p.x, p.y);
+      for (const sh of shapes) if (sh.isPointInFill(pt)) { const k = 'shape: ' + near(sh); if (!hits.has(k)) hits.set(k, [Math.round(p.x), Math.round(p.y)]); }
+      for (const t of texts) { const b = t.getBBox();
+        if (p.x > b.x + 1 && p.x < b.x + b.width - 1 && p.y > b.y + 1 && p.y < b.y + b.height - 1) {
+          const k = 'text: ' + t.textContent.slice(0, 30); if (!hits.has(k)) hits.set(k, [Math.round(p.x), Math.round(p.y)]); } }
+    }
+    for (const [k, v] of hits) out.push(`arrow ${d0} ... crosses ${k} at ${v}`);
+  }
+  // arrow labels (italic text) must not overlap a shape; a data-store label must lie inside its own service
+  for (const t of texts.filter(t => t.getAttribute('font-style') === 'italic' && !t.textContent.endsWith(' DB') && !t.textContent.startsWith('Internal services') && !t.textContent.startsWith('Client applications'))) {
+    const b = t.getBBox();
+    for (const sh of shapes) {
+      const pts = [[b.x+2,b.y+2],[b.x+b.width-2,b.y+2],[b.x+2,b.y+b.height-2],[b.x+b.width-2,b.y+b.height-2],[b.x+b.width/2,b.y+b.height/2]];
+      if (pts.some(([x,y]) => sh.isPointInFill(new DOMPoint(x,y)))) { const n = near(sh);
+        if (!n.startsWith(t.textContent.slice(0, 10))) out.push(`label "${t.textContent.slice(0, 34)}" overlaps shape ${n}`); break; }
+    }
+  }
+  for (const t of texts.filter(t => t.textContent.endsWith(' DB'))) {
+    const b = t.getBBox(), c = new DOMPoint(b.x + b.width / 2, b.y + b.height / 2);
+    const own = shapes.find(s => s.tagName === 'polygon' && s.isPointInFill(c));
+    const corners = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]];
+    if (!own || !corners.every(([x, y]) => own.isPointInFill(new DOMPoint(x, y)))) out.push(`data-store label "${t.textContent}" leaves its service`);
+  }
+  // labels must not overlap each other
+  const labs = texts.filter(t => t.getAttribute('font-style') === 'italic');
+  for (let i = 0; i < labs.length; i++) for (let j = i + 1; j < labs.length; j++) {
+    const a = labs[i].getBBox(), b = labs[j].getBBox();
+    if (a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height)
+      out.push(`labels overlap: "${labs[i].textContent.slice(0, 24)}" / "${labs[j].textContent.slice(0, 24)}"`);
+  }
+  return out;
+}
+"""
+
+
+def check() -> None:
+    """Every arrow sampled every 2 px against every shape and every text box (the first and last 6 px, where it
+    leaves its source and meets its target, are allowed); labels against shapes and each other."""
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        page.goto(Path(OUT).resolve().as_uri())
+        problems = page.evaluate(JS)
+        browser.close()
+    print("\n".join(problems) if problems else "geometry: no overlaps")
+
+
 render()
+check()
