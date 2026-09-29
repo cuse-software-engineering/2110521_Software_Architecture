@@ -12,7 +12,7 @@ Pubs and bars still rely on manual chat messaging and phone calls to handle tabl
 
 ## 1.3 Scope and Increments
 
-The teacher's feedback on Deliverable #2 (FB-D2-01) found the scope too large for a build of two to three months. The system is therefore built in increments. The use case descriptions in Section 2 still describe the complete behaviour; every flow that the MVP does not build is marked *(Increment 2)*, and the requirements, ADRs and services carry the same marks.
+The system is built in increments, so that a first working version fits a build of two to three months. The use case descriptions in Section 2 still describe the complete behaviour; every flow that the MVP does not build is marked *(Increment 2)*, and the requirements, ADRs and services carry the same marks.
 
 | Increment | What is built | Use cases and flows |
 |---|---|---|

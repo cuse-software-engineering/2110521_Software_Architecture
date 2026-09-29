@@ -2,7 +2,7 @@
 
 ## 5.1 Scope of the Microservice Design
 
-This section presents the second version of the microservice architecture for the Seating & Event Availability Tracking System (SEATS). It contains the Service–Operations–Collaborators table and the architecture diagram of the system, together with the reasoning that ties them to the four use cases of Section 2. Following the teacher's feedback on Deliverable #2 (FB-D2-01), the table and the diagram mark what the MVP builds and what Increment 2 adds (Section 1.3).
+This section presents the second version of the microservice architecture for the Seating & Event Availability Tracking System (SEATS). It contains the Service–Operations–Collaborators table and the architecture diagram of the system, together with the reasoning that ties them to the four use cases of Section 2. The table and the diagram mark what the MVP builds and what Increment 2 adds (Section 1.3).
 
 The architecture covers the four use cases end to end, including their alternative and exceptional flows:
 
