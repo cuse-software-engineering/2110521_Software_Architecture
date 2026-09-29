@@ -1,0 +1,30 @@
+﻿Javelin Board,,,
+Project Name:,"Concert Table Reservation
+System for Restaurant (CTRS)",,
+Group Name: ,SE101,,
+Team Leader Name:,"Waris Natirutthakorn 6872081621
+Chetsada Winaikoson 6772012221
+Natcha Thawinpipat 6870083521
+Watayut Aiamanan 6970267821",,
+"Start here. Brainstorm with stickies, pull it over to the right to start your experiment.""",Experiment,Experiment 1,Experiment 2
+Who is your customer? (Time Limit: 5 Min),Customer,นักศึกษาและคนวัยทำงานช่วงอายุประมาณ 20–35 ปี ที่มีประสบการณ์ไปร้านเหล้า/บาร์ และมีส่วนร่วมในการจองโต๊ะ,นักศึกษาและคนวัยทำงานช่วงอายุประมาณ 20–35 ปี ที่มีประสบการณ์ไปร้านเหล้า/บาร์ และมีส่วนร่วมในการจองโต๊ะ
+hat is the problem? Phrase it from your customer's perspective. (Time Limit: 5 Min),Problem,"รับโต๊ะไม่ทัน
+จองแล้วหลุด
+จองแล้วแต่ต้องคุยใหม่
+ตอบช้า
+เลือกโต๊ะไม่ได้
+ไม่ได้โต๊ะที่เลือก
+ไม่มีแจ้งเดือน",เหมือน Experiment 1
+Define the solution only after you have validated a problem worth solving. (Time Limit: 5 Min),Solution,,"สำหรับลูกค้าร้านอาหารสร้าง Web App บน Line Messenger ด้วย feature ต่อไปนี้
+F1. ผังร้าน real-time เลือกโซน/เลือกโต๊ะ เห็นสถานะ พร้อมรูปจริงจากมุมโต๊ะ + จำนวนที่นั่ง + ระยะเวที
+F2. ตั๋วดิจิทัล + QR ให้หน้าร้านสแกน
+F3. แจ้งเตือนก่อนถึง cutoff + ปุ่ม ""กำลังไป / ขอเลื่อน 30 นาที"""
+"List the assumptions that must hold true, for your hypothesis to be true. (Time Limit: 10 Min)",Riskiest Assumption,Customers have this problem,Customers will use the app
+,Method & Success Critieria,5 from 5 interviewees have this problem,5 from 5 interviewees have this problem
+,Result & Decision,5 from 5 GO! ,5 from 5 GO! 
+,Learning (ได้อะไรมา จากการคุย),"Business usecases:
+F1. ผังร้าน real-time เลือกโซน/เลือกโต๊ะ เห็นสถานะ พร้อมรูปจริงจากมุมโต๊ะ + จำนวนที่นั่ง + ระยะเวที
+F2. ตั๋วดิจิทัล + QR ให้หน้าร้านสแกน
+F3. แจ้งเตือนก่อนถึง cutoff + ปุ่ม ""กำลังไป / ขอเลื่อน 30 นาที""",
+,,,
+,,,
