@@ -1,11 +1,14 @@
 # dependencies
 node_modules/
 
+# Python bytecode from tools/
+__pycache__/
+
 # local environment files (use the .example files as templates)
 .env
 config.env
 
-# page images rendered from PDFs (regenerate locally, see lecture-slide/README.md)
+# page images rendered from PDFs (regenerate locally, python3 tools/render_pages.py --all)
 png/
 
 # logs and OS junk
