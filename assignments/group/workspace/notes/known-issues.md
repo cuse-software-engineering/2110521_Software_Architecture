@@ -2,24 +2,26 @@
 
 Inconsistencies found in [Deliverable-1.pdf](../../deliverables/report/Deliverable-1.pdf) (D1) and
 [Deliverable-2.pdf](../../deliverables/report/Deliverable-2.pdf) (D2), recorded 2026-09-29. They are **not fixed**: the
-submitted files stay as handed in for now. Page numbers are PDF pages. Teacher feedback that asks for changes is kept
+submitted files stay as handed in for now. They are fixed in the project document, version 2.0 draft 1
+(workspace/report/project-document/, Table 0.4 there); the Status column names the change that fixes each one. Page numbers are PDF pages. Teacher feedback that asks for changes is kept
 separately in [../received/teacher/](../received/teacher/).
 
-| ID | Issue | Where |
-|---|---|---|
-| KI-01 | Use case names in the diagram differ from the descriptions | D1 p3; D1 p15, p19; D2 p2 |
-| KI-02 | Actors in the diagram differ from the descriptions and the requirements | D1 p2, p3, p23, p25; D2 p7 |
-| KI-03 | Two arrival models: cutoff with extensions, or check-in window with no-shows | D1 p2, p3, p13, p23–25, p28–29; D2 |
-| KI-04 | Who asks for a postponement is stated two ways | D1 p2, p24, p29 |
-| KI-05 | The requirements leave out behaviour the use cases and D2 depend on | D1 p2, p23–25 |
-| KI-06 | Three different mechanisms expire a table hold | D1 p27, p28, p31; D2 |
-| KI-07 | ADR-02 leaves its decision open | D1 p27 |
-| KI-08 | ADR-04's Web Push channel is missing from D2 | D1 p29; D2 p5, p7 |
-| KI-09 | D2 counts three business use cases but lists four | D2 p2; D1 p19 |
-| KI-10 | sendSlipDecisionNotice() has no caller | D2 p5, p7 |
-| KI-11 | Two diagram arrows end on another service's private database | D2 p7 |
-| KI-12 | Section numbering and page layout of D2 | D2 p2, p3, p6, p8 |
-| KI-13 | Department name on both covers | D1 p1; D2 p1 |
+| ID | Issue | Where | Status |
+|---|---|---|---|
+| KI-01 | Use case names in the diagram differ from the descriptions | D1 p3; D1 p15, p19; D2 p2 | Resolved in doc 2.0 draft 1 (CH-04) |
+| KI-02 | Actors in the diagram differ from the descriptions and the requirements | D1 p2, p3, p23, p25; D2 p7 | Resolved (CH-02, CH-04, CH-05, CH-11) |
+| KI-03 | Two arrival models: cutoff with extensions, or check-in window with no-shows | D1 p2, p3, p13, p23–25, p28–29; D2 | Resolved: check-in window model kept (CH-02, CH-08, CH-11, CH-15) |
+| KI-04 | Who asks for a postponement is stated two ways | D1 p2, p24, p29 | Resolved (CH-02) |
+| KI-05 | The requirements leave out behaviour the use cases and D2 depend on | D1 p2, p23–25 | Resolved (CH-11, CH-02) |
+| KI-06 | Three different mechanisms expire a table hold | D1 p27, p28, p31; D2 | Resolved: ADR-08 (CH-13, CH-14) |
+| KI-07 | ADR-02 leaves its decision open | D1 p27 | Resolved: ADR-09 (CH-14) |
+| KI-08 | ADR-04's Web Push channel is missing from D2 | D1 p29; D2 p5, p7 | Resolved: ADR-10 (CH-15) |
+| KI-09 | D2 counts three business use cases but lists four | D2 p2; D1 p19 | Resolved (CH-18) |
+| KI-10 | sendSlipDecisionNotice() has no caller | D2 p5, p7 | Resolved (CH-19, CH-20) |
+| KI-11 | Two diagram arrows end on another service's private database | D2 p7 | Resolved (CH-20) |
+| KI-12 | Section numbering and page layout of D2 | D2 p2, p3, p6, p8 | Resolved (CH-18) |
+| KI-13 | Department name on both covers | D1 p1; D2 p1 | Resolved (CH-21) |
+| KI-14 | The ADRs do not yet meet the syllabus minimum technology requirements | D1 p26–32; D2 p7; syllabus item 17 | Open: Deliverable #3 |
 
 ## KI-01 Use case names in the diagram differ from the descriptions
 
@@ -174,3 +176,14 @@ database.
 Both covers (D1 p1, D2 p1) say "Department of Software Engineering, Faculty of Engineering". The course belongs to the
 Department of Computer Engineering: the syllabus (item 4) gives ภาควิชาวิศวกรรมคอมพิวเตอร์, and the page header of both
 documents shows the CHULA ENGINEERING COMPUTER logo.
+
+## KI-14 The ADRs do not yet meet the syllabus minimum technology requirements
+
+The syllabus (item 17, minimum requirements for the term project) asks for at least one REST service, one gRPC service,
+one service behind a message broker and an API gateway, a description of service discovery, and at least two types of
+database, both relational and NoSQL. The ADRs (D1 p26–32) and the architecture (D2 p7) use REST only, no message broker and
+MongoDB as the single database engine, and say nothing about service discovery. The Deliverable #2 brief (guideline 8)
+allows REST only and a single database in the first architecture version and asks to revisit the technology requirements
+later; Deliverable #3 already needs a REST service and a gRPC service with CRUD. Found 2026-09-29; to be decided with
+Deliverable #3.
+

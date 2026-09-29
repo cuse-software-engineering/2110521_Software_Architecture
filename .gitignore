@@ -15,3 +15,6 @@ png/
 *.log
 .DS_Store
 Thumbs.db
+
+# Working builds of the project document: draft PDF, redlines (regenerate with tools/build_report.py and tools/redline.py)
+assignments/group/workspace/report/build/

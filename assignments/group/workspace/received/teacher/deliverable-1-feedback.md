@@ -12,5 +12,5 @@ Feedback from the teaching team on [Deliverable-1.pdf](../../../deliverables/rep
 
 ## Points to act on
 
-- **ADR-06 Primary Database Engine.** Move "Flexible Schema for Layouts" from Consequences to Context: it states the need that led to MongoDB, not a result of choosing it. Not done yet.
+- **FB-D1-01 ADR-06 Primary Database Engine.** Move "Flexible Schema for Layouts" from Consequences to Context: it states the need that led to MongoDB, not a result of choosing it. Done in the project document 2.0 draft 1, CH-13.
 - No other change was asked for. The link between each ADR and the business focus and the detail of the use case descriptions were praised.

@@ -32,14 +32,17 @@ assignments/
     03/               Tutorial 2, gRPC: the lecture's restaurant sample moved onto MongoDB + demo video script
   group/              The term project (CTRS): architecture deliverables of group SE 101
     problem/          The brief of each deliverable (deliverable-N/problem.md + images); read-only
-    workspace/        report/deliverable-N/ = markdown of each deliverable; notes/ = known issues;
+    workspace/        report/project-document/ = the living document (fixed D1 + D2, versioned);
+                      report/deliverable-N/ = as-submitted transcriptions; notes/ = known issues;
                       received/teacher/ = feedback; received/examples/ = ADR samples
+    tools/            build_report.py (document PDF), draw_architecture.py (architecture figure)
     deliverables/     What was handed in: report/ (Deliverable-1.pdf, Deliverable-2.pdf)
 materials/
   syllabus/                  Course syllabus (3 Aug 2026): PDF + md/ transcription
   lecture_notes/<topic>/     Lecture deck PDFs, with md/ transcriptions and png/ page images; index in its README
 tools/
   render_pages.py            Render PDF pages to png/ (110 DPI, page-NN.png), the images the transcriptions embed
+  redline.py                 Word-level redline of the project document between two versions (git tags)
 ```
 
 Individual assignments follow a four-way split:
