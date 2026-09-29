@@ -10,7 +10,7 @@
 | Product name | SEATS; Deliverables #1 and #2 called the system Concert Table Reservation System (CTRS) |
 | Course | 2110521 Software Architecture, Semester 1, Academic Year 2026 |
 | Group | SE 101 |
-| Version | 2.0 draft 6, 29 September 2026 |
+| Version | 2.0 draft 7, 29 September 2026 |
 | Status | Draft for review by the group; basis of the updated ADRs and microservice design of Deliverable #3 |
 | Previous version | 1.1: Deliverable #1 (version 1.0) and Deliverable #2 as submitted on 8 September 2026 |
 | Changes | Appendix A lists every change since version 1.1, Appendix B how each teacher comment and known issue was resolved, and Appendix C how to compare the versions |
@@ -29,3 +29,4 @@
 | 2.0 draft 4 | 2026-09-29 | Watayut A. | Every ADR written as a table of the template's five fields, each ADR on a new page. Change CH-25. | owner |
 | 2.0 draft 5 | 2026-09-29 | Watayut A. | Figure 5.1 without overlaps: no arrow crosses a component or a label. Change CH-26. | owner |
 | 2.0 draft 6 | 2026-09-29 | Watayut A. | Change log, resolution of feedback and known issues, and how to compare versions moved to Appendices A to C; open items removed; business rules listed in Section 3.3; the sources of the requirements are no longer cited. Change CH-27. | owner |
+| 2.0 draft 7 | 2026-09-29 | Watayut A. | Glossary added as Section 6; business terms set in bold and linked to the glossary. Changes CH-28, CH-29. | owner |

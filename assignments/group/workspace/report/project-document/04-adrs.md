@@ -12,11 +12,11 @@ The ADRs follow the course template (Michael Nygard's format: Title, Context, De
 | ADR-04 | Notification Engine | Superseded by ADR-10 |
 | ADR-05 | Interactive Floor Plan Rendering | Accepted |
 | ADR-06 | Primary Database Engine | Accepted (revised after FB-D1-01) |
-| ADR-07 | Internal Role Authentication (Front Staff, Manager) | Accepted |
+| ADR-07 | Internal Role Authentication (**Front Staff**, **Manager**) | Accepted |
 | ADR-08 | Table Hold and Concurrency Control | Accepted |
 | ADR-09 | Table Status Updates in the MVP: Polling | Accepted |
-| ADR-10 | Customer Notifications through the LINE Messaging API Only | Accepted |
-| ADR-11 | Simulated Payment Gateway for the MVP | Accepted |
+| ADR-10 | **Customer** Notifications through the LINE Messaging API Only | Accepted |
+| ADR-11 | Simulated **Payment Gateway** for the MVP | Accepted |
 
 ## 4.1 ADR-01: Frontend Architecture & Client Channel
 
@@ -43,7 +43,7 @@ Target users primarily interact via mobile phones while coordinating nightlife p
 <td class="k">Decision</td>
 <td markdown="block">
 
-Use Next.js (React) bundled as a LINE Front-end Framework (LIFF) Web App, with fallback access via standard mobile browsers.
+Use Next.js (React) bundled as a LINE Front-end Framework (**LIFF**) Web App, with fallback access via standard mobile browsers.
 
 </td>
 </tr>
@@ -61,7 +61,7 @@ Accepted
 
 - Eliminates app install friction; customers book directly inside the LINE app.
 - Allows seamless integration with LINE Login and LINE Messaging API.
-- Requires compliance with LIFF webview constraints and in-app browser caching behaviors.
+- Requires compliance with **LIFF** webview constraints and in-app browser caching behaviors.
 
 </td>
 </tr>
@@ -133,7 +133,7 @@ Backend Language & Framework
 <td class="k">Context</td>
 <td markdown="block">
 
-The system requires rapid development cycles while supporting RESTful APIs, real-time bi-directional communication for floor plan updates, seamless integration with the LINE Messaging API/LIFF SDK, and scheduled background tasks to automatically release expired table reservations past the cutoff window. Options considered include Go, Java, and Node.js (JavaScript). Given that the frontend is built using Next.js/React, adopting a unified language stack across client and server significantly streamlines development.
+The system requires rapid development cycles while supporting RESTful APIs, real-time bi-directional communication for floor plan updates, seamless integration with the LINE Messaging API/**LIFF** SDK, and scheduled background tasks to automatically release expired table reservations past the cutoff window. Options considered include Go, Java, and Node.js (JavaScript). Given that the frontend is built using Next.js/React, adopting a unified language stack across client and server significantly streamlines development.
 
 </td>
 </tr>
@@ -208,7 +208,7 @@ Superseded by ADR-10 on 2026-09-29.
 
 1. Near 100% open rate with interactive rich cards ("On My Way" / "Postpone 30 mins").
 2. Low messaging cost within standard official account quotas.
-3. Requires users to add or link the venue's LINE Official Account (OA).
+3. Requires users to add or link the venue's **LINE Official Account** (OA).
 
 </td>
 </tr>
@@ -231,7 +231,7 @@ Interactive Floor Plan Rendering
 <td class="k">Context</td>
 <td markdown="block">
 
-The floor plan needs to support responsive rendering, pinch-to-zoom, zone highlighting, and seat view popups without lagging on mid-range smartphones.
+The floor plan needs to support responsive rendering, pinch-to-zoom, **zone** highlighting, and seat view popups without lagging on mid-range smartphones.
 
 </td>
 </tr>
@@ -255,8 +255,8 @@ Accepted
 <td class="k">Consequences</td>
 <td markdown="block">
 
-- Smooth vector scaling and interactive zone/table hit-testing.
-- Managers can visually manipulate coordinates for tables and stages.
+- Smooth vector scaling and interactive **zone**/table hit-testing.
+- **Managers** can visually manipulate coordinates for tables and stages.
 - Requires custom responsive coordinate mapping to ensure layouts adapt across various mobile screen sizes.
 
 </td>
@@ -280,7 +280,7 @@ Primary Database Engine
 <td class="k">Context</td>
 <td markdown="block">
 
-The system needs to store diverse data structures, including flexible venue floor plan layouts (coordinates, shapes, multi-table zone configs, the image of the venue), booking transaction records, customer profiles, and time-stamped status transitions. Traditional relational databases (RDBMS) enforce rigid table schemas that make storing deeply nested floor layout geometries and dynamic table attributes cumbersome. A zone map is naturally one nested document (zones that contain tables with their coordinates, types and capacities) whose shape differs from venue to venue, so the layouts need a flexible schema that stores such a document whole, without complex multi-table joins. Additionally, the backend runtime is Node.js/JavaScript, making native JSON/BSON document handling particularly advantageous for rapid development.
+The system needs to store diverse data structures, including flexible venue floor plan layouts (coordinates, shapes, multi-table **zone** configs, the image of the venue), booking transaction records, **customer profiles**, and time-stamped status transitions. Traditional relational databases (RDBMS) enforce rigid table schemas that make storing deeply nested floor layout geometries and dynamic table attributes cumbersome. A **zone map** is naturally one nested document (**zones** that contain tables with their coordinates, types and capacities) whose shape differs from venue to venue, so the layouts need a flexible schema that stores such a document whole, without complex multi-table joins. Additionally, the backend runtime is Node.js/JavaScript, making native JSON/BSON document handling particularly advantageous for rapid development.
 
 </td>
 </tr>
@@ -323,7 +323,7 @@ Accepted. Revised on 2026-09-29 after the teacher's feedback (FB-D1-01): the nee
 <td class="k">Title</td>
 <td markdown="block">
 
-Internal Role Authentication (Front Staff, Manager)
+Internal Role Authentication (**Front Staff**, **Manager**)
 
 </td>
 </tr>
@@ -331,7 +331,7 @@ Internal Role Authentication (Front Staff, Manager)
 <td class="k">Context</td>
 <td markdown="block">
 
-Customers reach the web app through LINE and are authenticated with LINE Login, as decided in ADR-01. Front Staff and Managers use internal accounts created by the venue, and front-of-house staff work from shared devices. Binding those accounts to personal LINE profiles would tie venue access to individual social accounts and make shift handover and staff turnover difficult. Options considered: LINE Login for every role, venue-issued username and password accounts, and an external identity provider.
+**Customers** reach the web app through LINE and are authenticated with LINE Login, as decided in ADR-01. **Front Staff** and **Managers** use internal accounts created by the venue, and front-of-house staff work from shared devices. Binding those accounts to personal LINE profiles would tie venue access to individual social accounts and make shift handover and staff turnover difficult. Options considered: LINE Login for every role, venue-issued username and password accounts, and an external identity provider.
 
 </td>
 </tr>
@@ -339,7 +339,7 @@ Customers reach the web app through LINE and are authenticated with LINE Login, 
 <td class="k">Decision</td>
 <td markdown="block">
 
-Use venue-issued username and password accounts with JWT sessions for all internal roles (Front Staff, Manager, and the Owner with read-only access, FR-65), kept separate from the customer LINE Login flow. Each account carries a role that determines which back-office functions it may use (e.g. check-in for Front Staff; zone map and round creation for the Manager). The Manager creates, updates, and deactivates internal accounts from the venue configuration.
+Use venue-issued username and password accounts with JWT sessions for all internal roles (**Front Staff**, **Manager**, and the **Owner** with read-only access, FR-65), kept separate from the customer LINE Login flow. Each account carries a role that determines which **back-office** functions it may use (e.g. check-in for **Front Staff**; **zone map** and round creation for the **Manager**). The **Manager** creates, updates, and deactivates internal accounts from the venue configuration.
 
 </td>
 </tr>
@@ -380,7 +380,7 @@ Table Hold and Concurrency Control
 <td class="k">Context</td>
 <td markdown="block">
 
-Selecting a table gives the Customer a hold of 15 minutes (BRULE-02, FR-07). When several customers select the same table, exactly one hold may succeed (first lock wins, BRULE-03, FR-08); NFR-20 tests this with at least 50 simultaneous attempts. An unpaid hold must be released within 10 seconds of its end, with a timer accuracy of ±5 seconds, and the Customer informed (FR-23, NFR-21). Version 1.1 named three different mechanisms for this: short-term Redis distributed locks (ADR-02), MongoDB TTL indexes (ADR-06) and a node-cron job (ADR-03). Options considered: a Redis lock with an expiry time, a MongoDB TTL index on hold documents, and a conditional update of the table's status with a scheduled release job.
+Selecting a table gives the **Customer** a **hold** of 15 minutes (BRULE-02, FR-07). When several customers select the same table, exactly one hold may succeed (**first lock wins**, BRULE-03, FR-08); NFR-20 tests this with at least 50 simultaneous attempts. An unpaid hold must be released within 10 seconds of its end, with a timer accuracy of ±5 seconds, and the **Customer** informed (FR-23, NFR-21). Version 1.1 named three different mechanisms for this: short-term Redis distributed locks (ADR-02), MongoDB TTL indexes (ADR-06) and a node-cron job (ADR-03). Options considered: a Redis lock with an expiry time, a MongoDB TTL index on hold documents, and a conditional update of the table's status with a scheduled release job.
 
 </td>
 </tr>
@@ -388,7 +388,7 @@ Selecting a table gives the Customer a hold of 15 minutes (BRULE-02, FR-07). Whe
 <td class="k">Decision</td>
 <td markdown="block">
 
-The Table Availability Service owns the status of every table of every round in its own database. holdTable() is one conditional update that changes a table from available to held only if it is still available, and stores the booking and the end of the hold; exactly one of several concurrent requests succeeds. The Booking Service owns the hold timer of the booking: a scheduled job (node-cron, ADR-03) runs every 5 seconds, calls expireUnpaidBookings(), sets every overdue Held booking to Expired, calls releaseHold() of the Table Availability Service and asks the Notification Service to send the hold-expired notice. No Redis server and no TTL index are used.
+The Table Availability Service owns the status of every table of every round in its own database. holdTable() is one conditional update that changes a table from available to held only if it is still available, and stores the booking and the end of the **hold**; exactly one of several concurrent requests succeeds. The Booking Service owns the **hold** timer of the booking: a scheduled job (node-cron, ADR-03) runs every 5 seconds, calls expireUnpaidBookings(), sets every overdue Held booking to Expired, calls releaseHold() of the Table Availability Service and asks the Notification Service to send the hold-expired notice. No Redis server and no TTL index are used.
 
 </td>
 </tr>
@@ -404,8 +404,8 @@ Accepted on 2026-09-29. Supersedes the locking part of ADR-02 and the TTL conseq
 <td class="k">Consequences</td>
 <td markdown="block">
 
-- One atomic operation in one database gives first lock wins, and it can be load-tested directly (NFR-20).
-- A 5-second job meets the 10-second release requirement. A MongoDB TTL index would not: its background task runs only every 60 seconds, and it deletes the document instead of releasing the table and informing the Customer.
+- One atomic operation in one database gives **first lock wins**, and it can be load-tested directly (NFR-20).
+- A 5-second job meets the 10-second release requirement. A MongoDB TTL index would not: its background task runs only every 60 seconds, and it deletes the document instead of releasing the table and informing the **Customer**.
 - No extra infrastructure is needed, which helps keep the operating cost within the limit of NFR-32.
 - The two services must agree after a crash between the booking update and the table release: the job retries releaseHold() for Expired bookings whose table is still held, so releaseHold() must be idempotent.
 
@@ -438,7 +438,7 @@ A table status change must appear on every open map within 2 seconds (FR-06, NFR
 <td class="k">Decision</td>
 <td markdown="block">
 
-In the MVP the Customer Web App and the Back-office Web App poll getRoundTableStatus() of the Table Availability Service through the API Gateway every 2 seconds while a zone map is open; the response carries a version number of the round's table status, so an unchanged map costs one small response. In Increment 2 the Table Availability Service pushes status changes to the open maps by WebSocket (Socket.io, ADR-03), and polling stays as the fallback after a lost connection.
+In the MVP the Customer Web App and the Back-office Web App poll getRoundTableStatus() of the Table Availability Service through the API Gateway every 2 seconds while a **zone map** is open; the response carries a version number of the round's table status, so an unchanged map costs one small response. In Increment 2 the Table Availability Service pushes status changes to the open maps by WebSocket (Socket.io, ADR-03), and polling stays as the fallback after a lost connection.
 
 </td>
 </tr>
@@ -456,7 +456,7 @@ Accepted on 2026-09-29. Supersedes the real-time part of ADR-02.
 
 - A change reaches every open map within 2 seconds plus one response time, as FR-06 requires, and the MVP has no persistent connections to manage.
 - 200 customers polling every 2 seconds make about 100 small requests per second at booking open; the answer is one status document per round, which the Table Availability Service can cache.
-- Between two polls a customer can still select a table that has just been taken; the conditional update of ADR-08 refuses the hold and UC-01 AF-3 refreshes the map.
+- Between two polls a customer can still select a table that has just been taken; the conditional update of ADR-08 refuses the **hold** and UC-01 AF-3 refreshes the map.
 - Requests are wasted when nothing changes, which is the cost ADR-02 wanted to avoid; Increment 2 removes most of it.
 
 </td>
@@ -472,7 +472,7 @@ Accepted on 2026-09-29. Supersedes the real-time part of ADR-02.
 <td class="k">Title</td>
 <td markdown="block">
 
-Customer Notifications through the LINE Messaging API Only
+**Customer** Notifications through the LINE Messaging API Only
 
 </td>
 </tr>
@@ -480,7 +480,7 @@ Customer Notifications through the LINE Messaging API Only
 <td class="k">Context</td>
 <td markdown="block">
 
-ADR-04 chose LINE Messaging API push messages supplemented by Web Push, mainly for reminders before cutoff times with "On My Way" and "Postpone 30 mins" buttons. The requirements now use the check-in window and the grace period as the arrival rule; reminders and the grace extension are planned for a later release and are out of scope (Section 3.1.7). The customer web app runs inside LINE's in-app browser (LIFF), which does not support the Push API that Web Push needs, and the system is LINE-only. The messages in scope are the booking confirmation with the e-ticket, the hold-expired notice and, from Increment 2, the refund and slip-decision notices (FR-20, FR-21), each retried 3 times within 5 minutes (FR-22) and sent within the Official Account's monthly push quota.
+ADR-04 chose LINE Messaging API push messages supplemented by Web Push, mainly for reminders before cutoff times with "On My Way" and "Postpone 30 mins" buttons. The requirements now use the **check-in window** and the **grace period** as the arrival rule; reminders and the grace extension are planned for a later release and are out of scope (Section 3.1.7). The customer web app runs inside LINE's in-app browser (**LIFF**), which does not support the Push API that Web Push needs, and the system is LINE-only. The messages in scope are the booking confirmation with the **e-ticket**, the hold-expired notice and, from Increment 2, the refund and slip-decision notices (FR-20, FR-21), each retried 3 times within 5 minutes (FR-22) and sent within the Official Account's monthly push quota.
 
 </td>
 </tr>
@@ -488,7 +488,7 @@ ADR-04 chose LINE Messaging API push messages supplemented by Web Push, mainly f
 <td class="k">Decision</td>
 <td markdown="block">
 
-Send every customer notification as a LINE Messaging API push message (a Flex Message for the e-ticket) from the Notification Service through the LINE Messaging Adapter. No Web Push, SMS or e-mail.
+Send every customer notification as a LINE Messaging API push message (a Flex Message for the **e-ticket**) from the Notification Service through the LINE Messaging Adapter. No Web Push, SMS or e-mail.
 
 </td>
 </tr>
@@ -505,9 +505,9 @@ Accepted on 2026-09-29. Supersedes ADR-04.
 <td markdown="block">
 
 - One channel that every customer already has, since the LINE account is the customer's identity (BRULE-12).
-- The Customer must be a friend of the venue's LINE Official Account, as the precondition of UC-01 already requires.
+- The **Customer** must be a friend of the venue's **LINE Official Account**, as the precondition of UC-01 already requires.
 - Push messages count against the monthly quota; the MVP sends only transactional messages.
-- When LINE is unavailable the confirmation is delayed, but the e-ticket stays available under My Bookings (FR-22).
+- When LINE is unavailable the confirmation is delayed, but the **e-ticket** stays available under My Bookings (FR-22).
 
 </td>
 </tr>
@@ -522,7 +522,7 @@ Accepted on 2026-09-29. Supersedes ADR-04.
 <td class="k">Title</td>
 <td markdown="block">
 
-Simulated Payment Gateway for the MVP
+Simulated **Payment Gateway** for the MVP
 
 </td>
 </tr>
@@ -530,7 +530,7 @@ Simulated Payment Gateway for the MVP
 <td class="k">Context</td>
 <td markdown="block">
 
-UC-01 pays the full table fee through a payment gateway (BRULE-01, FR-13, FR-16). A payment gateway feasibility study selected Beam Checkout, with Opn Payments as the fallback; the requirements ask for one payment-service interface so that the gateway can be replaced (NFR-37) and a sandbox for testing (NFR-31). Onboarding with a real gateway needs a registered merchant. The teacher's feedback on Deliverable #2 (FB-D2-01) recommends a simulated payment in the MVP, and automatic refunds, transfer-slip review and the degraded payment mode later.
+UC-01 pays the **full table fee** through a payment gateway (BRULE-01, FR-13, FR-16). A payment gateway feasibility study selected Beam Checkout, with Opn Payments as the fallback; the requirements ask for one payment-service interface so that the gateway can be replaced (NFR-37) and a sandbox for testing (NFR-31). Onboarding with a real gateway needs a registered merchant. The teacher's feedback on Deliverable #2 (FB-D2-01) recommends a simulated payment in the MVP, and automatic refunds, transfer-slip review and the degraded payment mode later.
 
 </td>
 </tr>
@@ -538,7 +538,7 @@ UC-01 pays the full table fee through a payment gateway (BRULE-01, FR-13, FR-16)
 <td class="k">Decision</td>
 <td markdown="block">
 
-The Payment Service reaches a gateway only through the Payment Gateway Adapter, the port of Section 5 (createCheckoutSession(), verifyWebhookSignature(), queryPaymentStatus(), refundPayment()). In the MVP the adapter is backed by a simulated gateway: a small checkout page, opened inside the web app like a hosted checkout, where the tester chooses to pay or to decline, after which it sends a signed webhook to the API Gateway as a real gateway would. In Increment 2 a Beam Checkout adapter replaces it, first against Beam's sandbox, together with status polling, automatic refund of a late payment and the degraded mode.
+The Payment Service reaches a gateway only through the Payment Gateway Adapter, the port of Section 5 (createCheckoutSession(), verifyWebhookSignature(), queryPaymentStatus(), refundPayment()). In the MVP the adapter is backed by a simulated gateway: a small checkout page, opened inside the web app like a **hosted checkout**, where the tester chooses to pay or to decline, after which it sends a signed webhook to the API Gateway as a real gateway would. In Increment 2 a Beam Checkout adapter replaces it, first against Beam's sandbox, together with status polling, automatic refund of a late payment and the **degraded mode**.
 
 </td>
 </tr>
