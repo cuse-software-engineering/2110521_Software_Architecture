@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Draw the CTRS microservice architecture diagram (project document Figure 5.1) and render it.
+"""Draw the SEATS microservice architecture diagram (project document Figure 5.1) and render it.
 
 Writes workspace/report/project-document/assets/architecture-diagram.html (one inline SVG, the editable source of the
 figure) and renders assets/architecture-diagram.png with headless Chromium at 2x (Playwright). Every element and arrow is
@@ -173,7 +173,7 @@ svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBo
        f'<rect width="{W}" height="{H}" fill="#fff"/>' + "".join(S) + "</svg>")
 html = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
-<title>CTRS microservice architecture, version 2</title>
+<title>SEATS microservice architecture, version 2</title>
 <!-- Source of assets/architecture-diagram.png (project document v2.0, CH-20). Rendered with headless Chromium
      at 2x: the screenshot covers div.canvas. Grey dashed and dotted arrows are added in Increment 2. -->
 <style>body {{ margin: 0; background: #fff; }} .canvas {{ width: {W}px; height: {H}px; }}</style>

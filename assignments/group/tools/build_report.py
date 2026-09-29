@@ -8,9 +8,9 @@ figures). That repository is found as $REQ_REPO, else the tree this repository i
 running header are replaced here: they carry this course, group SE 101 and the version.
 
 Usage (from the repository root):
-    python3 assignments/group/tools/build_report.py                          # 2.0 draft 1
+    python3 assignments/group/tools/build_report.py                          # 2.0 draft 2
     python3 assignments/group/tools/build_report.py --version "2.0" --status final
-Output: assignments/group/workspace/report/build/ctrs_project_document_v<version>.pdf (git-ignored)
+Output: assignments/group/workspace/report/build/seats_project_document_v<version>.pdf (git-ignored)
 """
 import argparse
 import base64
@@ -25,7 +25,8 @@ REPO = GROUP.parent.parent
 DOC = GROUP / "workspace" / "report" / "project-document"
 OUT = GROUP / "workspace" / "report" / "build"
 
-TITLE = "Concert Table Reservation System for Restaurant"
+TITLE = "Seating & Event Availability Tracking System (SEATS)"
+FORMER_NAME = "named Concert Table Reservation System (CTRS) in Deliverables #1 and #2"
 SUBTITLE = "Project Description, ADRs and Microservice Design"
 COURSE = "2110521 Software Architecture"
 COURSE_TH = "2110521 วิศวกรรมสถาปัตยกรรมซอฟต์แวร์"
@@ -54,7 +55,7 @@ def make_cover(label: str, date: str, status: str):
         return f"""<section class="cover">
 <img class="emblem" src="{build_pdf.LOGO_EMBLEM.as_uri()}" alt="Chulalongkorn University">
 <div class="title">{html.escape(TITLE)}</div>
-<div class="subtitle">{html.escape(SUBTITLE)}<br>{html.escape(COURSE_TH)} ({html.escape(COURSE)})</div>
+<div class="subtitle">{html.escape(SUBTITLE)}<br>{html.escape(COURSE_TH)} ({html.escape(COURSE)})<br><small>{html.escape(FORMER_NAME)}</small></div>
 <div class="members-title">Group Members</div>
 <div class="group">{html.escape(GROUP_NAME)}</div>
 <table>{members}</table>
@@ -71,7 +72,7 @@ def running_header() -> str:
             f"<div style='display:flex;align-items:center;gap:5px;'><img src='{uri(build_pdf.LOGO_GEAR)}' style='height:22px'>"
             f"<img src='{uri(build_pdf.LOGO_STRIP)}' style='height:19px'></div>"
             f"<div style='text-align:right;font-size:8.5px;color:#374151;line-height:1.5;'>{html.escape(COURSE)}<br>"
-            f"Group {html.escape(GROUP_NAME)} · CTRS project document<br><span style='color:#6b7280'><span class='pageNumber'></span> / <span class='totalPages'></span></span></div>"
+            f"Group {html.escape(GROUP_NAME)} · SEATS project document<br><span style='color:#6b7280'><span class='pageNumber'></span> / <span class='totalPages'></span></span></div>"
             f"</div><div style='height:2px;background:#8b1a1a;margin-top:3px;-webkit-print-color-adjust:exact;'></div></div>")
 
 
@@ -145,7 +146,7 @@ class _Markdown(build_pdf.markdown.Markdown):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--version", default="2.0 draft 1", help="version label on the cover (default: %(default)s)")
+    ap.add_argument("--version", default="2.0 draft 2", help="version label on the cover (default: %(default)s)")
     ap.add_argument("--date", default="29 September 2026")
     ap.add_argument("--status", default="draft for review by the group")
     a = ap.parse_args()
@@ -159,5 +160,5 @@ if __name__ == "__main__":
     build_pdf.CSS += ("\np > em:only-child { display: inline; text-align: inherit; font-size: inherit; margin-top: 0; }"
                       "\np[id^='fig-'] > em:only-child { display: block; text-align: center; font-size: 13pt; margin-top: -2pt; }")
     build_pdf.markdown.Markdown = _Markdown
-    out = OUT / f"ctrs_project_document_v{re.sub(r'[^0-9A-Za-z.]+', '-', a.version).strip('-')}.pdf"
+    out = OUT / f"seats_project_document_v{re.sub(r'[^0-9A-Za-z.]+', '-', a.version).strip('-')}.pdf"
     build_pdf.build(parts, "v" + a.version, out)

@@ -26,4 +26,4 @@ The teacher's feedback on Deliverable #2 (FB-D2-01) found the scope too large fo
 | Increment 2 | Copy a round or a zone map; withdraw a published round; handle a zone map changed during editing. | UC-03 AF-2, AF-4, EF-3; UC-04 AF-2 |
 | Out of scope | Planned in the 2110628 requirements for Release 2.0 or later: reminders and the "on my way" grace extension, waitlist, booking transfer, reports and analytics, and seat-view photographs of the tables. | — |
 
-The requirements come from the 2110628 Requirements Engineering project of the same system, where the product is now named SEATS. Their identifiers (FR-nn, NFR-nn, BRULE-nn) are kept in this document so that the two documents cross-reference.
+The requirements come from the 2110628 Requirements Engineering project of the same system, and so does the product's name, Seating & Event Availability Tracking System (SEATS); Deliverables #1 and #2 called it Concert Table Reservation System (CTRS). The identifiers of those requirements (FR-nn, NFR-nn, BRULE-nn) are kept in this document so that the two documents cross-reference.

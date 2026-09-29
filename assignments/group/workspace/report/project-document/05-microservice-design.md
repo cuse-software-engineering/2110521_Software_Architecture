@@ -2,7 +2,7 @@
 
 ## 5.1 Scope of the Microservice Design
 
-This section presents the second version of the microservice architecture for the Concert Table Reservation System (CTRS). It contains the Service–Operations–Collaborators table and the architecture diagram of the system, together with the reasoning that ties them to the four use cases of Section 2. Following the teacher's feedback on Deliverable #2 (FB-D2-01), the table and the diagram mark what the MVP builds and what Increment 2 adds (Section 1.3).
+This section presents the second version of the microservice architecture for the Seating & Event Availability Tracking System (SEATS). It contains the Service–Operations–Collaborators table and the architecture diagram of the system, together with the reasoning that ties them to the four use cases of Section 2. Following the teacher's feedback on Deliverable #2 (FB-D2-01), the table and the diagram mark what the MVP builds and what Increment 2 adds (Section 1.3).
 
 The architecture covers the four use cases end to end, including their alternative and exceptional flows:
 
@@ -29,8 +29,8 @@ Operations are the business operations exposed by each service. Collaborators ar
 
 ## 5.3 Architecture Diagram
 
-![CTRS microservice architecture, version 2](assets/architecture-diagram.png)
+![SEATS microservice architecture, version 2](assets/architecture-diagram.png)
 
-*Figure 5.1 CTRS microservice architecture, version 2*
+*Figure 5.1 SEATS microservice architecture, version 2*
 
 The diagram is drawn in the ports-and-adapters style: every service is a hexagon whose business logic is reached only through adapters on its edges. An arrow A → B means A invokes B; response paths are not drawn. The hosted checkout page of the Payment Gateway is opened by the customer's browser inside the web app and is therefore not shown as a service call. Grey dashed arrows are added in Increment 2. In the MVP the web apps read the table status by polling through the API Gateway (ADR-09), and the Payment Gateway is the simulated gateway of ADR-11.

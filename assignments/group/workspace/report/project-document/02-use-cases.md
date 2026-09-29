@@ -2,9 +2,9 @@
 
 ## 2.1 Use Case Diagram
 
-![Use case diagram of the Concert Table Reservation System (CTRS)](assets/use-case-diagram.png)
+![Use case diagram of the Seating & Event Availability Tracking System (SEATS)](assets/use-case-diagram.png)
 
-*Figure 2.1 Use case diagram of the Concert Table Reservation System (CTRS)*
+*Figure 2.1 Use case diagram of the Seating & Event Availability Tracking System (SEATS)*
 
 The diagram names each use case as its description does and shows every actor that takes part in it: the Customer, the Front Staff and the Manager, and the secondary actors LINE Platform (LINE Login and the Messaging API), Payment Gateway and Time. There is no «include» or «extend» relationship: UC-04, UC-03, UC-01 and UC-02 follow one another because each produces what the next one needs (zone map, concert round, confirmed booking), which is an order of use, not a relationship between use cases.
 

@@ -6,13 +6,14 @@
 
 | | |
 |---|---|
-| Document | Project Description, ADRs and Microservice Design of the Concert Table Reservation System (CTRS) |
+| Document | Project Description, ADRs and Microservice Design of the Seating & Event Availability Tracking System (SEATS) |
+| Product name | SEATS, the name used by the 2110628 requirements; Deliverables #1 and #2 called the system Concert Table Reservation System (CTRS) |
 | Course | 2110521 Software Architecture, Semester 1, Academic Year 2026 |
 | Group | SE 101 |
-| Version | 2.0 draft 1, 29 September 2026 |
+| Version | 2.0 draft 2, 29 September 2026 |
 | Status | Draft for review by the group; basis of the updated ADRs and microservice design of Deliverable #3 |
 | Previous version | 1.1: Deliverable #1 (version 1.0) and Deliverable #2 as submitted on 8 September 2026 |
-| Source of requirements | 2110628 Requirements Engineering project of the same system, there named SEATS: Vision 1.13, Software Requirements Specification 1.11, Supplementary Specification 1.9, Business Rules 1.7, use cases UC-01 1.14, UC-02 1.9 and UC-16 1.1 |
+| Source of requirements | 2110628 Requirements Engineering project of the same system: Vision 1.13, Software Requirements Specification 1.11, Supplementary Specification 1.9, Business Rules 1.7, use cases UC-01 1.14, UC-02 1.9 and UC-16 1.1 |
 
 ## 0.2 Revision History
 
@@ -23,6 +24,7 @@
 | 1.0 | 2026-09-08 | SE 101 | Deliverable #1 submitted: project description, four use cases, requirements, ADR-01 to ADR-07. | — |
 | 1.1 | 2026-09-08 | SE 101 | Deliverable #2 submitted: microservice design version 1 (Service–Operations–Collaborators table, architecture diagram). | — |
 | 2.0 draft 1 | 2026-09-29 | Watayut A. | Revision after the teacher's feedback on both deliverables and the known issues found in them: scope in increments with an MVP, use case diagram redrawn, requirements aligned with the 2110628 artifacts, ADR-06 corrected, ADR-08 to ADR-11 added, architecture version 2. Changes CH-01 to CH-21. | FB-D1-01, FB-D2-01, KI-01 to KI-13 |
+| 2.0 draft 2 | 2026-09-29 | Watayut A. | Product name SEATS (Seating & Event Availability Tracking System) instead of CTRS, as in the 2110628 requirements. Change CH-22. | 2110628 |
 
 ## 0.3 Change Log
 
@@ -53,6 +55,7 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-19 | Modified | 5.2 | Table 5.1 marks the Increment 2 operations; the Payment Service calls the Notification Service for sendSlipDecisionNotice(); zone-map image operations replace the seat-view photo operations; recordAdditionalGuests() is removed. | KI-10, FB-D2-01, 2110628 |
 | CH-20 | Modified | 5.3 | Figure 5.1 architecture version 2: arrows end on the services, not on their databases; Payment → Notification added; Increment 2 arrows grey and dashed; polling and simulated gateway in the MVP. | KI-10, KI-11, FB-D2-01 |
 | CH-21 | Modified | cover | The cover names the Department of Computer Engineering. | KI-13 |
+| CH-22 | Modified | 0.1, 1.3, 2.1, 5.1, 5.3, cover | The product is named Seating & Event Availability Tracking System (SEATS), as in the 2110628 requirements, instead of Concert Table Reservation System (CTRS); the use case diagram's system boundary, the figure captions, the cover and the running header follow. | 2110628 |
 
 ## 0.4 Resolution of Feedback and Known Issues
 
@@ -82,11 +85,11 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 ## 0.5 Open Items
 
 - **KI-14, technology minimums.** The syllabus asks for REST, gRPC and message-broker services, an API gateway, service discovery, and both a relational and a NoSQL database. Deliverable #3 needs at least a REST and a gRPC service with CRUD, so the ADRs for these choices come next.
-- **Decisions for the group to confirm.** The MVP boundary of Section 1.3, in particular that seat-view photographs are out of scope and that the degraded payment mode comes after the MVP although the 2110628 requirements keep it in their Release 1.0. The product keeps the name CTRS here, while the 2110628 project now calls it SEATS.
+- **Decisions for the group to confirm.** The MVP boundary of Section 1.3, in particular that seat-view photographs are out of scope and that the degraded payment mode comes after the MVP although the 2110628 requirements keep it in their Release 1.0.
 - **Traceability.** The requirement identifiers follow the 2110628 artifact versions of Table 0.1; later changes there are not followed automatically.
 
 ## 0.6 How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted and doc-v2.0-draft1 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 the first draft and doc-v2.0-draft2 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".

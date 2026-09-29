@@ -1,5 +1,5 @@
 @startuml use-case-diagram
-' CTRS use case diagram, project document v2.0 (CH-04, KI-01, KI-02).
+' SEATS use case diagram, project document v2.0 (CH-04, KI-01, KI-02; name CH-22).
 ' Render: java -jar <plantuml.jar> -tpng assets/use-case-diagram.puml
 left to right direction
 skinparam shadowing false
@@ -26,15 +26,15 @@ actor Customer
 actor "Front Staff" as Staff
 actor Manager
 
-rectangle "Concert Table Reservation System (CTRS)" {
+rectangle "SEATS" {
   usecase "UC-01\nReserve a Specific Table" as UC01
   usecase "UC-02\nCheck In Using\nDigital QR Ticket" as UC02
   usecase "UC-03\nCreate Concert Event" as UC03
   usecase "UC-04\nCreate Venue Zone Map" as UC04
 }
 
-actor "LINE Platform\n(LINE Login,\nMessaging API)" as LINE <<system>>
 actor "Payment Gateway" as PG <<system>>
+actor "LINE Platform\n(LINE Login,\nMessaging API)" as LINE <<system>>
 actor Time <<timer>>
 
 Customer -- UC01
@@ -45,8 +45,8 @@ Manager -- UC02
 Manager -- UC03
 Manager -- UC04
 
-UC01 -- LINE
 UC01 -- PG
+UC01 -- LINE
 UC01 -- Time
 UC02 -- Time
 @enduml

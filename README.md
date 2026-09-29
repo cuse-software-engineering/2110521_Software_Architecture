@@ -30,7 +30,7 @@ assignments/
     01/               Homework 1: fifty keywords from lecture 1
     02/               Tutorial 1, REST: CTRS FloorPlan REST API (Node.js, Express, MongoDB) + demo video script
     03/               Tutorial 2, gRPC: the lecture's restaurant sample moved onto MongoDB + demo video script
-  group/              The term project (CTRS): architecture deliverables of group SE 101
+  group/              The term project (SEATS, formerly CTRS): architecture deliverables of group SE 101
     problem/          The brief of each deliverable (deliverable-N/problem.md + images); read-only
     workspace/        report/project-document/ = the living document (fixed D1 + D2, versioned);
                       report/deliverable-N/ = as-submitted transcriptions; notes/ = known issues;
