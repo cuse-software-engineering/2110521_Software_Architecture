@@ -10,7 +10,7 @@
 | Product name | SEATS, the name used by the 2110628 requirements; Deliverables #1 and #2 called the system Concert Table Reservation System (CTRS) |
 | Course | 2110521 Software Architecture, Semester 1, Academic Year 2026 |
 | Group | SE 101 |
-| Version | 2.0 draft 3, 29 September 2026 |
+| Version | 2.0 draft 4, 29 September 2026 |
 | Status | Draft for review by the group; basis of the updated ADRs and microservice design of Deliverable #3 |
 | Previous version | 1.1: Deliverable #1 (version 1.0) and Deliverable #2 as submitted on 8 September 2026 |
 | Source of requirements | 2110628 Requirements Engineering project of the same system: Vision 1.13, Software Requirements Specification 1.11, Supplementary Specification 1.9, Business Rules 1.7, use cases UC-01 1.14, UC-02 1.9 and UC-16 1.1 |
@@ -26,6 +26,7 @@
 | 2.0 draft 1 | 2026-09-29 | Watayut A. | Revision after the teacher's feedback on both deliverables and the known issues found in them: scope in increments with an MVP, use case diagram redrawn, requirements aligned with the 2110628 artifacts, ADR-06 corrected, ADR-08 to ADR-11 added, architecture version 2. Changes CH-01 to CH-21. | FB-D1-01, FB-D2-01, KI-01 to KI-13 |
 | 2.0 draft 2 | 2026-09-29 | Watayut A. | Product name SEATS (Seating & Event Availability Tracking System) instead of CTRS, as in the 2110628 requirements. Change CH-22. | 2110628 |
 | 2.0 draft 3 | 2026-09-29 | Watayut A. | Use case descriptions in the table format of the 2110628 report, grouped under 2.2; use case diagram redrawn in that report's style. Changes CH-23, CH-24. | owner |
+| 2.0 draft 4 | 2026-09-29 | Watayut A. | Every ADR written as a table of the template's five fields, each ADR on a new page. Change CH-25. | owner |
 
 ## 0.3 Change Log
 
@@ -59,6 +60,7 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-22 | Modified | 0.1, 1.3, 2.1, 5.1, 5.3, cover | The product is named Seating & Event Availability Tracking System (SEATS), as in the 2110628 requirements, instead of Concert Table Reservation System (CTRS); the use case diagram's system boundary, the figure captions, the cover and the running header follow. | 2110628 |
 | CH-23 | Modified | 2.2 | The four use case descriptions are tables in the format of the 2110628 report (name, ID, importance with increment; primary and secondary actors, type; stakeholders; brief description; trigger with its type; relationships as association, include, extend, generalization, related use cases and traces; pre- and postconditions; basic flow with phases and extension points; subflows S-1; alternative and exception flows), grouped as 2.2.1 to 2.2.4 under 2.2 Use Case Descriptions. The wording of the flows is unchanged. | owner |
 | CH-24 | Modified | 2.1 | Figure 2.1 redrawn in the style of the 2110628 use case diagram (generated SVG: actors as stick figures, external systems as «actor» boxes, Time as «timer»), with the same use cases, actors and associations. | owner |
+| CH-25 | Modified | 4.1 to 4.11 | Every ADR is a table of the template's five fields (Title, Context, Decision, Status, Consequences), Tables 4.2 to 4.12, and starts on a new page. The wording of the ADRs is unchanged. | owner |
 
 ## 0.4 Resolution of Feedback and Known Issues
 
@@ -94,5 +96,5 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 ## 0.6 How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 and doc-v2.0-draft2 the earlier drafts and doc-v2.0-draft3 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft3 the earlier drafts and doc-v2.0-draft4 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".
