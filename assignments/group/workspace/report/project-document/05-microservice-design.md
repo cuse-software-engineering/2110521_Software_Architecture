@@ -13,6 +13,8 @@ The architecture covers the four use cases end to end, including their alternati
 
 The Deliverable #2 brief asks for at least three business use cases; the design covers all four. The venue **zone map** is owned by the same service that owns the rounds, because a round cannot be created without it.
 
+The architecture diagram of Section 5.3 (Figure 5.1) is drawn in the ports-and-adapters style: every service is a hexagon whose business logic is reached only through adapters on its edges. An arrow A → B means A invokes B; response paths are not drawn. The **hosted checkout** page of the **Payment Gateway** is opened by the customer's browser inside the web app and is therefore not shown as a service call. Grey dashed arrows are added in Increment 2. In the MVP the web apps read the table status by polling through the API Gateway (ADR-09), and the **Payment Gateway** is the simulated gateway of ADR-11.
+
 ## 5.2 Service–Operations–Collaborators
 
 Operations are the business operations exposed by each service. Collaborators are the services or adapters that the service invokes to complete its own operations; an em dash means the service completes its work without calling anyone else. Operations and collaborations marked *(Inc. 2)* are added in Increment 2; all others are built in the MVP.
@@ -32,5 +34,3 @@ Operations are the business operations exposed by each service. Collaborators ar
 ![SEATS microservice architecture, version 2](assets/architecture-diagram.png)
 
 *Figure 5.1 SEATS microservice architecture, version 2*
-
-The diagram is drawn in the ports-and-adapters style: every service is a hexagon whose business logic is reached only through adapters on its edges. An arrow A → B means A invokes B; response paths are not drawn. The **hosted checkout** page of the **Payment Gateway** is opened by the customer's browser inside the web app and is therefore not shown as a service call. Grey dashed arrows are added in Increment 2. In the MVP the web apps read the table status by polling through the API Gateway (ADR-09), and the **Payment Gateway** is the simulated gateway of ADR-11.

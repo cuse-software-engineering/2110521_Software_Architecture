@@ -8,7 +8,7 @@ figures). That repository is found as $REQ_REPO, else the tree this repository i
 running header are replaced here: they carry this course, group SE 101 and the version.
 
 Usage (from the repository root):
-    python3 assignments/group/tools/build_report.py                          # 2.0 draft 9
+    python3 assignments/group/tools/build_report.py                          # 2.0 draft 10
     python3 assignments/group/tools/build_report.py --version "2.0" --status final
 Output: assignments/group/workspace/report/build/seats_project_document_v<version>.pdf (git-ignored)
 """
@@ -77,6 +77,7 @@ def running_header() -> str:
 
 
 LIST = re.compile(r"^(\s*)([-*]|\d+\.)\s")
+PORTRAIT_FIGURES = ["use-case-diagram.png"]    # readable at portrait width; landscape would strand the headings before it
 
 
 def normalize(text: str) -> str:
@@ -85,6 +86,8 @@ def normalize(text: str) -> str:
     label that follows a text line starts its own paragraph, nested list items indented by 4 spaces per
     level, and em-only lines that are not table or figure captions ({step names}, "Alternative Flows:")
     made bold so that the builder does not style them as figure captions."""
+    for name in PORTRAIT_FIGURES:
+        text = re.sub(r"(!\[[^\]]*\]\([^)]*" + re.escape(name) + r"\))(?!\{)", r'\1{: data-portrait="1" }', text)
     out, stack, in_list, fenced = [], [], False, False
     for line in text.split("\n"):
         if line.startswith("```"):
@@ -128,13 +131,18 @@ _render_part = build_pdf.render_part
 
 
 def render_part(md_path: Path):
-    """The 2110628 renderer on a normalized copy next to the source (so relative image paths still resolve)."""
+    """The 2110628 renderer on a normalized copy next to the source (so relative image paths still resolve); a heading
+    right before a wide figure goes onto the figure's landscape page instead of staying alone on the portrait page."""
     tmp = md_path.with_name(f".render-{md_path.name}")
     tmp.write_text(normalize(md_path.read_text(encoding="utf-8")), encoding="utf-8")
     try:
-        return _render_part(tmp)
+        body, toc = _render_part(tmp)
     finally:
         tmp.unlink()
+    # only the one heading right before the figure: its content may not cross into another heading
+    body = re.sub(r'(<h([2-4])\b[^>]*>(?:(?!</?h\d).)*</h\2>)\s*<div class="landscape">', r'<div class="landscape with-heading">\1',
+                  body, flags=re.S)
+    return body, toc
 
 
 class _Markdown(build_pdf.markdown.Markdown):
@@ -146,7 +154,7 @@ class _Markdown(build_pdf.markdown.Markdown):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--version", default="2.0 draft 9", help="version label on the cover (default: %(default)s)")
+    ap.add_argument("--version", default="2.0 draft 10", help="version label on the cover (default: %(default)s)")
     ap.add_argument("--date", default="29 September 2026")
     ap.add_argument("--status", default="draft for review by the group")
     a = ap.parse_args()
@@ -158,6 +166,11 @@ if __name__ == "__main__":
     # the 2110628 CSS centres any paragraph whose only element is an <em> as a figure caption, which also catches a
     # sentence with one italic phrase ("marked *(Increment 2)*"): keep that style for real figure captions only
     # ADRs (section 4): one key-value table per ADR, each ADR on a new page
+    # a heading never ends a page; a heading moved onto a landscape page leaves room for itself above the figure
+    build_pdf.CSS += ("\nh1, h2, h3, h4, h5 { break-after: avoid; page-break-after: avoid; }"
+                      "\n.landscape.with-heading > h2, .landscape.with-heading > h3 { margin-top: 0; }"
+                      "\n.landscape.with-heading img { max-height: 136mm; }"
+                      "\n.toc li { margin: 1pt 0; }")        # the contents fit two pages instead of three
     # use cases (2.2.1 .. 2.2.4) each start on a new page, as the ADRs do
     build_pdf.CSS += "\nh3[id*='-uc-0'] { break-before: page; page-break-before: always; }"
     build_pdf.CSS += ("\nh2[id*='adr-'] { break-before: page; page-break-before: always; }"
