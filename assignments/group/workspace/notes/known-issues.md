@@ -25,6 +25,7 @@ separately in [../received/teacher/](../received/teacher/).
 | KI-15 | The Service–Operations–Collaborators table misses operations that the use cases need | D2 p5, p7 | Resolved in doc 2.0 draft 11 and 12 (CH-35 to CH-39) |
 | KI-16 | UC-01 lost its preconditions, postconditions and basic-flow steps 1 to 11 in draft 21 | doc 2.0 drafts 21 to 26 | Resolved in doc 2.0 draft 27 (CH-57); the build now checks every use case |
 | KI-17 | The back-office has no route that lists Draft rounds | doc 2.0 draft 27, Appendix D | Open: decide listRounds() or a status query on GET /rounds before the back-office is built (progress 2) |
+| KI-18 | The polled table map shows every customer the booking id of a held or booked table | code review of the scenario tests, 2026-09-30 | Open: the id is opaque, but the Customer's view could omit `booking_id` (the live view of the Manager needs it); decide in progress 2 |
 
 ## KI-01 Use case names in the diagram differ from the descriptions
 
@@ -230,4 +231,15 @@ rounds of the venue, while GET /rounds is getUpcomingRounds(), the Customer's pu
 sold-out status. Options: a listRounds() operation of the Concert Round Service for the Manager (Table 5.3, Table 6.4,
 Table 6.9, the code), or a status query on GET /rounds that the gateway allows for staff roles only. To decide before
 the back-office is built (progress 2); until then a Draft round is reopened by its id.
+
+## KI-18 The polled table map shows every customer the booking id of a held or booked table
+
+Found 2026-09-30 while writing the scenario tests (Table 6.7 TableStatus carries `booking_id`, and the gateway serves the
+same message to the Customer Web App and to the live view). The id is opaque and gives no access (GET /api/bookings/{id}
+is restricted to the owner, FR-40), so nothing leaks today; but the Customer's read could omit it. Options: a second
+read for customers, or the gateway blanking the field for the customer role. To decide in progress 2.
+
+Two defects found the same way were fixed in the code at once (SEATS commit of 2026-09-30): a Published round whose
+zone map or sale list changed before booking opened did not rebuild its table map (UC-03 AF-3 step 2), and a Customer
+could read a Draft round by its id (UC-03 AF-1 step 1).
 
