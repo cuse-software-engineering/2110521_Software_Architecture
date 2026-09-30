@@ -13,6 +13,15 @@ The architecture covers the four use cases end to end, including the alternative
 
 The Deliverable #2 brief asks for at least three business use cases; the design covers all four. The venue **zone map** is owned by the same service that owns the rounds, because a round cannot be created without it. Which tables of a round are booked is read from the Table Availability Service, which owns the status of every table, so the Concert Round Service does not depend on the Booking Service. The **back-office** accounts of ADR-07 are owned by the Staff Account Service.
 
+The services follow the bounded contexts of the domain, and each is named by the glossary term for what it owns:
+
+- **Concert Round Service** — the venue and events context: **zone maps**, **table types**, **concert rounds**, prices and **business parameters**. A supporting subdomain.
+- **Table Availability Service** — the table availability context: the status of every table of every round and the rule that one **hold** or booking exists per table per round (**first lock wins**). A core subdomain, since double bookings are the problem the system solves.
+- **Booking Service** — the booking context: the booking from Held to Checked-in, with the **customer profile** and the **e-ticket** as parts of the same aggregate. A core subdomain.
+- **Payment Service**, **Notification Service** and **Staff Account Service** — the generic subdomains of payment, messaging and staff identity, each behind an external provider or a standard mechanism, and each changing for its own reasons.
+
+Table Availability and Booking stay two services although every booking state change has a matching table status change: the table status is also written by the Concert Round Service when a round is published, it is read by every open map, and its consistency with the booking is handled by ADR-08.
+
 The architecture diagram of Section 5.5 (Figure 5.1) is drawn in the ports-and-adapters style: every service is a hexagon whose business logic is reached only through the ports on its edges, a REST tab for the calls routed by the API Gateway and a gRPC tab for the calls of other services, and that reaches the external systems only through adapters. The API Gateway carries the REST tab that the Frontend calls: it is the only API that the web apps use. An arrow A → B means A invokes B; response paths are not drawn. The three dashed boundaries are the parts of Section 5.2. The **hosted checkout** page of the **Payment Gateway** is opened by the customer's browser inside the web app and is therefore not shown as a service call. The web apps read the table status by polling through the API Gateway (ADR-09), and the **Payment Gateway** is the simulated gateway of ADR-11.
 
 ## 5.2 Parts of the System and Communication

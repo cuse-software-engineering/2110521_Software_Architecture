@@ -46,6 +46,7 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-38 | Modified | 1.3, 4.10 | Section 1.3 lists UC-04 EF-3 (image upload failure) in the MVP and states that Section 5 shows the MVP only. ADR-10 names the payment-failed notice among the messages in scope (FR-21), a correction of the record. | KI-15 |
 | CH-39 | Modified | 5.3, 5.4 | Each operation is one function: createZoneMap() and updateZoneMap() replace createOrUpdateZoneMap(), updateRound() replaces saveRoundAsDraft(), createCustomerProfile() and updateCustomerProfile() replace saveCustomerProfile(), defineTableType() replaces setTableType(), and getBookingTerms() is added for UC-01 step 13. The traceability tables follow the use cases step by step with one row per operation, including the steps without an operation and the retries of EF-2 and EF-5. | owner |
 | CH-40 | Modified | 5.1, 5.5 | Figure 5.1: the API Gateway carries a REST tab on its left edge and both web-app arrows end on it, as the teacher's FTGO figure draws the gateway; the legend and Section 5.1 say that a tab is an API a component offers. | owner |
+| CH-41 | Added | 5.1 | The services are mapped to the bounded contexts of the domain and to the core, supporting and generic subdomains, with the reason for keeping Table Availability and Booking as two services. | owner |
 
 # Appendix B Resolution of Feedback and Known Issues
 
@@ -76,5 +77,5 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 # Appendix C How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft12 the earlier drafts and doc-v2.0-draft13 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft13 the earlier drafts and doc-v2.0-draft14 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".
