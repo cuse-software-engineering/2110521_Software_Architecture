@@ -7,7 +7,7 @@
 | | |
 |---|---|
 | Document | Change Log of the Project Description, ADRs and Microservice Design of the Seating & Event Availability Tracking System (SEATS) |
-| Applies to | SEATS project document, version 2.0 draft 25, 30 September 2026 (its Section 0.2 lists the drafts) |
+| Applies to | SEATS project document, version 2.0 draft 26, 30 September 2026 (its Section 0.2 lists the drafts) |
 | Group | SE 101 |
 | Contents | Section 1.2: every change since version 1.1, with its type, section, description and source. Section 2.1: how each teacher comment and known issue of Deliverables #1 and #2 was resolved. Section 2.2: how to compare the versions. |
 
@@ -74,6 +74,7 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-53 | Modified | 6.1, 6.3, 6.4 | Table 6.2 Associations and invariants is dropped: the class diagram shows every association and multiplicity, and the two rules the table carried (one zone map serves many rounds and is fixed once booking opens; a round uses the business parameters in force at its booking-open time) are in the definitions of Table 6.1. Tables 6.3 to 6.8 become 6.2 to 6.7. | owner |
 | CH-54 | Modified | 4.12, 5.1, 5.2, 5.3, 5.4, 6.3, 6.4, C | ADR-12 changed in place, as it is a decision of this draft and not of Deliverable #1 or #2: the API Gateway is the only REST API of the system and maps each route onto one gRPC method of the owning service, and every service has exactly one API, gRPC, described by its .proto file, instead of a REST API for the gateway and a gRPC API for the other services. Figure 5.1 shows a gRPC tab on every service, Tables 5.1 and 5.2 name the gRPC API of each component, Tables 6.4 to 6.7 give the gRPC method and the gateway route of every operation with the mapping of gRPC statuses to HTTP statuses, and the glossary follows. Reason: one contract per service instead of two APIs over the same logic, a gateway that only translates, and one transport inside the Backend. | owner |
 | CH-55 | Modified | 6.4 | The API specification is split into the two views that differ in shape: Tables 6.4 to 6.7 give the gRPC API of each service, every method with its request message and its response message in separate columns and the proto field names, private methods included; Table 6.8 lists the fields of the messages; Table 6.9 lists the public routes of the API Gateway with the gRPC method behind each, the roles that may call it, the JSON body and the answer. Reason: the gRPC messages and the JSON of the routes have different names and shapes, and only part of each service's API is public. | owner |
+| CH-56 | Modified | 6.4 | Table 6.9 gains a Called by column: the Customer Web App, the Back-office Web App (the two Frontend components of Table 5.1), both, or the Payment Gateway for its webhook, so that the public API reads as the contract of each frontend. | owner |
 
 # 2 Resolution of Feedback and Known Issues
 
@@ -106,5 +107,5 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 ## 2.2 How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft24 the earlier drafts and doc-v2.0-draft25 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft25 the earlier drafts and doc-v2.0-draft26 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".

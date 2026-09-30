@@ -88,7 +88,7 @@ Two consequences of the rule shape the design. First, a gRPC message is owned by
 
 ## 6.4 API Specification per Service
 
-Every service has one API, gRPC, described by its `.proto` file, and the API Gateway is the only REST API of the system (ADR-12). The two are specified separately because they differ in shape: a gRPC method takes one request message and returns one response message, named as in the `.proto` file with `snake_case` fields, while a route of the gateway is a method and a path whose path parameters, query and JSON body are turned into the request message and whose answer is the response message as JSON, with the same fields in `camelCase` (`round_id` becomes `roundId`) and a list message unwrapped to an array. Not every method has a route: the methods that only another service calls stay private to the Backend. Tables 6.4 to 6.7 give the gRPC API of each service, Table 6.8 the fields of the messages, and Table 6.9 the routes of the gateway with the roles that may call them (FR-66). A field marked `?` is optional and, in an update, unchanged when left out.
+Every service has one API, gRPC, described by its `.proto` file, and the API Gateway is the only REST API of the system (ADR-12). The two are specified separately because they differ in shape: a gRPC method takes one request message and returns one response message, named as in the `.proto` file with `snake_case` fields, while a route of the gateway is a method and a path whose path parameters, query and JSON body are turned into the request message and whose answer is the response message as JSON, with the same fields in `camelCase` (`round_id` becomes `roundId`) and a list message unwrapped to an array. Not every method has a route: the methods that only another service calls stay private to the Backend. Tables 6.4 to 6.7 give the gRPC API of each service, Table 6.8 the fields of the messages, and Table 6.9 the routes of the gateway, each with the web app of Table 5.1 that calls it, the Customer Web App or the Back-office Web App, and the roles that may call it (FR-66); the payment webhook is called by the **Payment Gateway** itself. A field marked `?` is optional and, in an update, unchanged when left out.
 
 The gateway authenticates the caller and passes its identity and role to the service as the gRPC metadata `x-user-id` and `x-role`. An error is a gRPC status with a message and, where useful, details, which the gateway maps to an HTTP status and a JSON body `{error, details?}`: INVALID_ARGUMENT to 400 (invalid input), UNAUTHENTICATED to 401 (no identity), PERMISSION_DENIED to 403 (role), NOT_FOUND to 404, FAILED_PRECONDITION to 409 (a rule refuses the change, for example the table was just taken), UNIMPLEMENTED to 501 (not built in this increment) and UNAVAILABLE to 502 (the service or one of its collaborators is down).
 
@@ -205,51 +205,50 @@ The gateway authenticates the caller and passes its identity and role to the ser
 
 *Table 6.9 Routes of the API Gateway (REST, port 4000): the public API*
 
-| Service | Route | gRPC method | Roles | Request body | Response |
-|---|---|---|---|---|---|
-| Concert Round | `PUT /table-types/{id}` | DefineTableType | manager | `{name, capacity, packageContent}` | TableType |
-| | `GET /table-types` | ListTableTypes | manager, owner | — | [TableType] |
-| | `GET /business-parameters` | GetBusinessParameters | manager, owner | — | BusinessParameters |
-| | `PUT /business-parameters` | UpdateBusinessParameters | manager | `{holdPeriodMinutes?, checkInWindowHours?, gracePeriodMinutes?, extraPersonFee?}` | BusinessParameters |
-| | `POST /zone-maps` | CreateZoneMap | manager | `{name?}` | ZoneMap |
-| | `GET /zone-maps?status=` | ListZoneMaps | manager, owner | — | [ZoneMapSummary] |
-| | `GET /zone-maps/{id}` | GetZoneMap | manager, owner | — | ZoneMap |
-| | `PUT /zone-maps/{id}` | UpdateZoneMap | manager | `{name?, zones?, tables?}` | ZoneMap |
-| | `POST /zone-maps/{id}/image` | UploadZoneMapImage | manager | `{fileName}` | ZoneMap |
-| | `POST /zone-maps/{id}/validate` | ValidateZoneMap | manager | — | ValidationResult |
-| | `POST /zone-maps/{id}/activate` | ActivateZoneMap | manager | — | ZoneMap |
-| | `DELETE /zone-maps/{id}` | DiscardDraftZoneMap | manager | — | Removed |
-| | `POST /rounds` | CreateRound | manager | `{name?}` | Round |
-| | `GET /rounds` | GetUpcomingRounds | everyone | — | [UpcomingRound] |
-| | `GET /rounds/{id}` | GetRound | everyone | — | Round |
-| | `GET /rounds/{id}/tables` | GetRoundTables | everyone | — | [RoundTable] |
-| | `PUT /rounds/{id}` | UpdateRound | manager | `{name?, artist?, date?, doorsOpenAt?, startAt?, bookingOpenAt?, zoneMapId?, tablesNotForSale?, prices?}` | Round |
-| | `POST /rounds/{id}/validate` | ValidateRound | manager | — | ValidationResult |
-| | `POST /rounds/{id}/publish` | PublishRound | manager | — | Round |
-| | `DELETE /rounds/{id}` | DiscardDraftRound | manager | — | Removed |
-| Table Availability | `GET /rounds/{id}/table-status` | GetRoundTableStatus | everyone | header `If-None-Match: <version>` (ADR-09) | RoundTableStatus with `ETag: <version>`, or 304 |
-| Booking | `POST /bookings` | CreateHeldBooking | customer | `{roundId, tableNumber}` | Booking |
-| | `GET /bookings/{id}` | GetBooking | customer | — | Booking |
-| | `PUT /bookings/{id}/party-size` | SetPartySize | customer | `{partySize}` | Booking |
-| | `GET /bookings/{id}/terms` | GetBookingTerms | customer | — | BookingTerms |
-| | `POST /bookings/{id}/terms-acceptance` | AcceptBookingTerms | customer | — | Booking |
-| | `POST /bookings/{id}/payment` | StartPayment | customer | — | PaymentRequest (501 in Increment 1) |
-| | `POST /bookings/{id}/cancel` | CancelBooking | customer | — | Booking |
-| | `GET /bookings/{id}/e-ticket` | GetETicket | customer | — | ETicket |
-| | `GET /customers/me` | GetCustomerProfile | customer | — | CustomerProfile |
-| | `POST /customers/me` | CreateCustomerProfile | customer | `{name, phone, consent}` | CustomerProfile |
-| | `PUT /customers/me` | UpdateCustomerProfile | customer | `{name?, phone?}` | CustomerProfile |
-| | `GET /customers/me/bookings` | GetCustomerBookings | customer | — | [Booking] |
-| | `POST /check-ins/verify` | VerifyBookingReference | front staff, manager | `{bookingReference}` | VerificationResult |
-| | `POST /check-ins` | CheckInBooking | front staff, manager | `{bookingReference}` | Booking |
-| | `GET /rounds/{id}/bookings` | GetRoundBookings | manager, owner | — | [Booking] |
-| Payment | `POST /payments/webhook` | ReceivePaymentResult | the **Payment Gateway**, by its signature (NFR-38) | the signed result | 200 |
-| | `GET /payments/{id}` | GetPaymentStatus | customer | — | PaymentStatus |
-| Staff Account | `POST /sessions` | SignIn | anyone | `{username, password}` | Session |
-| | `DELETE /sessions/current` | SignOut | staff | — | — |
-| | `POST /staff-accounts` | CreateStaffAccount | manager | `{username, role, password}` | StaffAccount |
-| | `GET /staff-accounts` | ListStaffAccounts | manager, owner | — | [StaffAccount] |
-| | `PUT /staff-accounts/{id}` | UpdateStaffAccount | manager | `{role?, password?}` | StaffAccount |
-| | `DELETE /staff-accounts/{id}` | DisableStaffAccount | manager | — | StaffAccount |
-
+| Service | Route | gRPC method | Web app | Roles | Request body | Response |
+|---|---|---|---|---|---|---|
+| Concert Round | `PUT /table-types/{id}` | DefineTableType | Back-office | manager | `{name, capacity, packageContent}` | TableType |
+|  | `GET /table-types` | ListTableTypes | Back-office | manager, owner | — | [TableType] |
+|  | `GET /business-parameters` | GetBusinessParameters | Back-office | manager, owner | — | BusinessParameters |
+|  | `PUT /business-parameters` | UpdateBusinessParameters | Back-office | manager | `{holdPeriodMinutes?, checkInWindowHours?, gracePeriodMinutes?, extraPersonFee?}` | BusinessParameters |
+|  | `POST /zone-maps` | CreateZoneMap | Back-office | manager | `{name?}` | ZoneMap |
+|  | `GET /zone-maps?status=` | ListZoneMaps | Back-office | manager, owner | — | [ZoneMapSummary] |
+|  | `GET /zone-maps/{id}` | GetZoneMap | Back-office | manager, owner | — | ZoneMap |
+|  | `PUT /zone-maps/{id}` | UpdateZoneMap | Back-office | manager | `{name?, zones?, tables?}` | ZoneMap |
+|  | `POST /zone-maps/{id}/image` | UploadZoneMapImage | Back-office | manager | `{fileName}` | ZoneMap |
+|  | `POST /zone-maps/{id}/validate` | ValidateZoneMap | Back-office | manager | — | ValidationResult |
+|  | `POST /zone-maps/{id}/activate` | ActivateZoneMap | Back-office | manager | — | ZoneMap |
+|  | `DELETE /zone-maps/{id}` | DiscardDraftZoneMap | Back-office | manager | — | Removed |
+|  | `POST /rounds` | CreateRound | Back-office | manager | `{name?}` | Round |
+|  | `GET /rounds` | GetUpcomingRounds | both | everyone | — | [UpcomingRound] |
+|  | `GET /rounds/{id}` | GetRound | both | everyone | — | Round |
+|  | `GET /rounds/{id}/tables` | GetRoundTables | both | everyone | — | [RoundTable] |
+|  | `PUT /rounds/{id}` | UpdateRound | Back-office | manager | `{name?, artist?, date?, doorsOpenAt?, startAt?, bookingOpenAt?, zoneMapId?, tablesNotForSale?, prices?}` | Round |
+|  | `POST /rounds/{id}/validate` | ValidateRound | Back-office | manager | — | ValidationResult |
+|  | `POST /rounds/{id}/publish` | PublishRound | Back-office | manager | — | Round |
+|  | `DELETE /rounds/{id}` | DiscardDraftRound | Back-office | manager | — | Removed |
+| Table Availability | `GET /rounds/{id}/table-status` | GetRoundTableStatus | both | everyone | header `If-None-Match: <version>` (ADR-09) | RoundTableStatus with `ETag: <version>`, or 304 |
+| Booking | `POST /bookings` | CreateHeldBooking | Customer | customer | `{roundId, tableNumber}` | Booking |
+|  | `GET /bookings/{id}` | GetBooking | Customer | customer | — | Booking |
+|  | `PUT /bookings/{id}/party-size` | SetPartySize | Customer | customer | `{partySize}` | Booking |
+|  | `GET /bookings/{id}/terms` | GetBookingTerms | Customer | customer | — | BookingTerms |
+|  | `POST /bookings/{id}/terms-acceptance` | AcceptBookingTerms | Customer | customer | — | Booking |
+|  | `POST /bookings/{id}/payment` | StartPayment | Customer | customer | — | PaymentRequest (501 in Increment 1) |
+|  | `POST /bookings/{id}/cancel` | CancelBooking | Customer | customer | — | Booking |
+|  | `GET /bookings/{id}/e-ticket` | GetETicket | Customer | customer | — | ETicket |
+|  | `GET /customers/me` | GetCustomerProfile | Customer | customer | — | CustomerProfile |
+|  | `POST /customers/me` | CreateCustomerProfile | Customer | customer | `{name, phone, consent}` | CustomerProfile |
+|  | `PUT /customers/me` | UpdateCustomerProfile | Customer | customer | `{name?, phone?}` | CustomerProfile |
+|  | `GET /customers/me/bookings` | GetCustomerBookings | Customer | customer | — | [Booking] |
+|  | `POST /check-ins/verify` | VerifyBookingReference | Back-office | front staff, manager | `{bookingReference}` | VerificationResult |
+|  | `POST /check-ins` | CheckInBooking | Back-office | front staff, manager | `{bookingReference}` | Booking |
+|  | `GET /rounds/{id}/bookings` | GetRoundBookings | Back-office | manager, owner | — | [Booking] |
+| Payment | `POST /payments/webhook` | ReceivePaymentResult | **Payment Gateway** | the **Payment Gateway**, by its signature (NFR-38) | the signed result | 200 |
+|  | `GET /payments/{id}` | GetPaymentStatus | Customer | customer | — | PaymentStatus |
+| Staff Account | `POST /sessions` | SignIn | Back-office | anyone | `{username, password}` | Session |
+|  | `DELETE /sessions/current` | SignOut | Back-office | staff | — | — |
+|  | `POST /staff-accounts` | CreateStaffAccount | Back-office | manager | `{username, role, password}` | StaffAccount |
+|  | `GET /staff-accounts` | ListStaffAccounts | Back-office | manager, owner | — | [StaffAccount] |
+|  | `PUT /staff-accounts/{id}` | UpdateStaffAccount | Back-office | manager | `{role?, password?}` | StaffAccount |
+|  | `DELETE /staff-accounts/{id}` | DisableStaffAccount | Back-office | manager | — | StaffAccount |
 </div>
