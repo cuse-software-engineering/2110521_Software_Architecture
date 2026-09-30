@@ -7,7 +7,7 @@
 | | |
 |---|---|
 | Document | Change Log of the Project Description, ADRs and Microservice Design of the Seating & Event Availability Tracking System (SEATS) |
-| Applies to | SEATS project document, version 2.0 draft 35, 30 September 2026 (its Section 0.2 lists the drafts) |
+| Applies to | SEATS project document, version 2.0, 30 September 2026 |
 | Group | SE 101 |
 | Contents | Section 1.2: every change since version 1.1, with its type, section, description and source. Section 2.1: how each teacher comment and known issue of Deliverables #1 and #2 was resolved. Section 2.2: how to compare the versions. |
 
@@ -85,6 +85,8 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-64 | Modified | 6.3 to 6.7 | The routes table is split for its two readers: Table 6.11 is the public REST API (route, web app, roles, body, answer, status) for the web apps, and Table 6.12 maps each route onto the gRPC method of its service for the gateway and service implementers; the service sections point to Table 6.12. Reason: eight columns at 10 pt served neither reader well. | owner |
 | CH-65 | Added | 4.1, 4.14 | ADR-14 Modular Monolith Mode for Development and Tests: every service keeps an API layer that its gRPC server wraps, and one composition root can run the gateway and the six services as one process with the calls in memory, through the Protocol Buffers serializers, for debugging and the in-process end-to-end tests; the microservices stay the deployment. Reason: the team tests the flows before scaling the services out. | owner |
 | CH-66 | Modified | D | The example calls of Tables D.1 to D.16 are laid out one call per block, the method and path in bold, the status coloured (green 2xx, blue 304, red 4xx and 5xx), the JSON pretty-printed with coloured keys, strings and numbers, and the back-office examples extended to the calls of a full edit; they are kept as data in tools/api_examples.py and written into the appendix from it. A screen's example may now run on to a second page. Reason: readability. | owner |
+| CH-67 | Modified | 0.1, 0.2 | The document is version 2.0: the revision history keeps one row per delivered version, by the group (SE 101), and the 35 draft rows of version 2.0 are summarised in it; the drafts remain as git tags and their changes in this log. | owner |
+| CH-68 | Modified | B | Table B.1 gains a Name column: the name of each business rule, which opened its text, stands in a column of its own. Reason: the rules are cited by name in the use cases and the ADRs. | owner |
 
 # 2 Resolution of Feedback and Known Issues
 
@@ -119,5 +121,5 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 ## 2.2 How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft34 the earlier drafts and doc-v2.0-draft35 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft35 the drafts of version 2.0 and doc-v2.0 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".
