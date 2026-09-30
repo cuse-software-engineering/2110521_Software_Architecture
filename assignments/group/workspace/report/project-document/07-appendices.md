@@ -268,7 +268,7 @@ Table C.1 lists the business terms of this document: the words of the venue, its
 
 # Appendix D Screens and the Routes They Call
 
-The two web apps of Table 5.1 are, with the payment webhook, the only callers of the API Gateway. Tables D.1 and D.2 name the screens of each web app, the use case steps and flows that each screen serves, its main elements and the routes of Table 6.9 that it calls; the gRPC method behind each route is in Table 6.9. A screen is defined here by its elements, and its drawing is not part of this document. A route is called when the screen opens or when the named element is used; a polled route is called again every 2 seconds while the screen is open (ADR-09). Section D.3 checks the mapping in the other direction.
+The two web apps of Table 5.1 are, with the payment webhook, the only callers of the API Gateway. Tables D.1 and D.2 name the screens of each web app, the use case steps and flows that each screen serves, its main elements and the routes of Table 6.11 that it calls; the gRPC method behind each route is in Table 6.11. A screen is defined here by its elements, and its drawing is not part of this document. A route is called when the screen opens or when the named element is used; a polled route is called again every 2 seconds while the screen is open (ADR-09). Section D.3 checks the mapping in the other direction.
 
 ## D.1 Customer Web App
 
@@ -314,5 +314,5 @@ The Back-office Web App runs in the browsers and phones of the **Manager**, the 
 
 ## D.3 Coverage
 
-Read the other way, every route of Table 6.9 is called by at least one screen, except the payment webhook, which the **Payment Gateway** calls. The screens also show one route that the back-office needs and Table 6.9 does not give: the round list of B3 must show the Draft rounds of the venue as well as the Published ones, while `GET /rounds` answers the **Customer**'s upcoming rounds only (getUpcomingRounds()). A listRounds() operation of the Concert Round Service, or a status query on the route, is to be decided before the back-office is built; until then B3 reopens a Draft round by its id.
+Read the other way, every route of Table 6.11 is called by at least one screen, except the payment webhook, which the **Payment Gateway** calls. The screens also show one route that the back-office needs and Table 6.11 does not give: the round list of B3 must show the Draft rounds of the venue as well as the Published ones, while `GET /rounds` answers the **Customer**'s upcoming rounds only (getUpcomingRounds()). A listRounds() operation of the Concert Round Service, or a status query on the route, is to be decided before the back-office is built; until then B3 reopens a Draft round by its id.
 

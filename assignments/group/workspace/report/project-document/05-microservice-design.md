@@ -51,18 +51,18 @@ SEATS is divided into three parts: the Frontend, the Backend and the External sy
 |---|---|---|---|
 | Frontend | API Gateway | REST: JSON over HTTPS | Every operation that an actor invokes (Appendix A) |
 | **Payment Gateway** | API Gateway | REST: signed webhook over HTTPS | Payment results |
-| API Gateway | Services | gRPC: Protocol Buffers over HTTP/2 on the private network | Each REST route is one gRPC method of the service that owns the operation (Section 6.4) |
+| API Gateway | Services | gRPC: Protocol Buffers over HTTP/2 on the private network | Each REST route is one gRPC method of the service that owns the operation (Section 6.7) |
 | Service | Service | gRPC: Protocol Buffers over HTTP/2 | Every collaboration between services in Table 5.3 |
 | Service or API Gateway | Its adapters | Call inside the same process | Reaching an external system |
 | Adapter | External system | The provider's HTTPS API | LINE ID token check, LINE push messages, checkout and payment results, storing the image of the venue |
 | Frontend | External systems | The provider's own SDK or page | LINE Login in the LIFF app; the hosted checkout of the **Payment Gateway** |
 | Service | Its database | Database driver (MongoDB, ADR-06) | A service reads and writes only its own database |
 
-Every service has one API, gRPC, described by its .proto file, and the API Gateway is the only REST API of the system: it turns each route into one gRPC call on the owning service (ADR-12, Section 6.4). The API Gateway authenticates every request before routing it: a **Customer** by the LINE ID token, checked through the LINE Login Adapter, and a member of staff by the session token issued by the Staff Account Service (ADR-07), whose role decides which operations the request may reach (FR-66). The payment webhook is the exception: the gateway passes it on, and the Payment Service verifies its signature (NFR-38).
+Every service has one API, gRPC, described by its .proto file, and the API Gateway is the only REST API of the system: it turns each route into one gRPC call on the owning service (ADR-12, Section 6.7). The API Gateway authenticates every request before routing it: a **Customer** by the LINE ID token, checked through the LINE Login Adapter, and a member of staff by the session token issued by the Staff Account Service (ADR-07), whose role decides which operations the request may reach (FR-66). The payment webhook is the exception: the gateway passes it on, and the Payment Service verifies its signature (NFR-38).
 
 ## 5.3 Service–Operations–Collaborators
 
-Operations are the business operations that a service exposes as gRPC methods, to the web apps through a route of the API Gateway or to other services; each operation is one function, so creating and updating a record are two operations, and Section 6.4 gives their routes, methods and messages. What a service does on its own timer, or as a step inside another operation, is not an operation and is described below the table. Collaborators are the services or adapters that the service invokes to complete its own operations; an em dash means the service completes its work without calling anyone else. A call to another service is a gRPC call, and a call to an adapter stays inside the service (Section 5.2).
+Operations are the business operations that a service exposes as gRPC methods, to the web apps through a route of the API Gateway or to other services; each operation is one function, so creating and updating a record are two operations, and Sections 6.3 to 6.7 give their methods, messages and routes. What a service does on its own timer, or as a step inside another operation, is not an operation and is described below the table. Collaborators are the services or adapters that the service invokes to complete its own operations; an em dash means the service completes its work without calling anyone else. A call to another service is a gRPC call, and a call to an adapter stays inside the service (Section 5.2).
 
 Note: the table lists only what the MVP builds. The operations and collaborators that Increment 2 and later increments add (Section 1.3) are not written here.
 

@@ -598,7 +598,7 @@ Options considered: REST everywhere; gRPC everywhere, with gRPC-Web for the brow
 
 - **Frontend to Backend:** REST, JSON over HTTPS, only through the API Gateway, which authenticates each request and routes it to the service that owns the operation.
 - **External systems to Backend:** the payment webhook is a REST call over HTTPS to the API Gateway, which passes it to the Payment Service.
-- **API Gateway to services:** gRPC. The API Gateway is the only component that speaks REST: it maps each of its routes to one gRPC method of the service that owns the operation, turns the path, the query and the JSON body into the request message, the response message into JSON and the gRPC status into the HTTP status (Section 6.4). It holds no business logic.
+- **API Gateway to services:** gRPC. The API Gateway is the only component that speaks REST: it maps each of its routes to one gRPC method of the service that owns the operation, turns the path, the query and the JSON body into the request message, the response message into JSON and the gRPC status into the HTTP status (Section 6.7). It holds no business logic.
 - **Service to service:** gRPC, Protocol Buffers over HTTP/2, with @grpc/grpc-js. Every service has exactly one API, described by one .proto file, from which the API Gateway and the other services generate their clients; every collaboration between services in Table 5.3 is a gRPC call. Every call carries a deadline, and only calls that are safe to repeat, such as releaseHold() (ADR-08), are retried.
 - **Backend to External systems:** through the adapters, over the provider's HTTPS API.
 - **No message broker in the MVP:** every call is synchronous.

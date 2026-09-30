@@ -8,7 +8,7 @@ figures). That repository is found as $REQ_REPO, else the tree this repository i
 running header are replaced here: they carry this course, group SE 101 and the version.
 
 Usage (from the repository root):
-    python3 assignments/group/tools/build_report.py                          # 2.0 draft 27
+    python3 assignments/group/tools/build_report.py                          # 2.0 draft 28
     python3 assignments/group/tools/build_report.py --changelog              # the separate change-log document
     python3 assignments/group/tools/build_report.py --version "2.0" --status final
 Output: assignments/group/workspace/report/build/seats_project_document_v<version>.pdf (git-ignored)
@@ -174,7 +174,7 @@ def check_use_cases(path: Path) -> None:
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--version", default="2.0 draft 27", help="version label on the cover (default: %(default)s)")
+    ap.add_argument("--version", default="2.0 draft 28", help="version label on the cover (default: %(default)s)")
     ap.add_argument("--date", default="29 September 2026")
     ap.add_argument("--status", default="draft for review by the group")
     ap.add_argument("--changelog", action="store_true", help="build the separate change-log document (project-document/change-log/) instead")
@@ -232,6 +232,8 @@ if __name__ == "__main__":
                       "\ndiv.msg table th:nth-child(1) { width: 13%; } div.msg table th:nth-child(2) { width: 20%; }"
                       "\ndiv.routes table { font-size: 10.5pt; } div.routes table th:nth-child(1) { width: 10%; } div.routes table th:nth-child(2) { width: 22%; } div.routes table th:nth-child(3) { width: 16%; }"
                       "\ndiv.routes table th:nth-child(4) { width: 10%; } div.routes table th:nth-child(5) { width: 10%; } div.routes table th:nth-child(6) { width: 18%; }")
+    # draft 28: div.msg2 = message | fields (one table per service)
+    build_pdf.CSS += "\ndiv.msg2 table { font-size: 11pt; line-height: 1.3; } div.msg2 th, div.msg2 td { padding: 3pt 4pt; } div.msg2 table th:nth-child(1) { width: 24%; }"
     # draft 27: Appendix D screen tables: screen | name | use case steps | main elements | routes called
     build_pdf.CSS += ("\ndiv.screens table { font-size: 10.5pt; line-height: 1.3; } div.screens th, div.screens td { padding: 3pt 4pt; }"
                       "\ndiv.screens table th:nth-child(1) { width: 8%; } div.screens table th:nth-child(2) { width: 15%; } div.screens table th:nth-child(3) { width: 16%; } div.screens table th:nth-child(4) { width: 30%; }")
