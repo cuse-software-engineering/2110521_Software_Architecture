@@ -199,6 +199,9 @@ if __name__ == "__main__":
     build_pdf.CSS += "\nimg[src*='use-case-diagram'] { max-height: 190mm; width: auto; }"
     build_pdf.CSS += ("\np > em:only-child { display: inline; text-align: inherit; font-size: inherit; margin-top: 0; }"
                       "\np[id^='fig-'] > em:only-child { display: block; text-align: center; font-size: 13pt; margin-top: -2pt; }")
+    # 2026-09-30: the base rule sets code at a fixed 11pt, which towers over the 12pt TH Sarabun of a table cell;
+    # size it relative to the text around it instead (about 9pt in a table, 11pt in body text)
+    build_pdf.CSS += "\ncode { font-size: 0.75em; }"
     build_pdf.markdown.Markdown = _Markdown
     stem = "seats_project_document_change_log" if a.changelog else "seats_project_document"
     out = OUT / f"{stem}_v{re.sub(r'[^0-9A-Za-z.]+', '-', a.version).strip('-')}.pdf"
