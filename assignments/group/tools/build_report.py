@@ -8,7 +8,7 @@ figures). That repository is found as $REQ_REPO, else the tree this repository i
 running header are replaced here: they carry this course, group SE 101 and the version.
 
 Usage (from the repository root):
-    python3 assignments/group/tools/build_report.py                          # 2.0 draft 23
+    python3 assignments/group/tools/build_report.py                          # 2.0 draft 24
     python3 assignments/group/tools/build_report.py --changelog              # the separate change-log document
     python3 assignments/group/tools/build_report.py --version "2.0" --status final
 Output: assignments/group/workspace/report/build/seats_project_document_v<version>.pdf (git-ignored)
@@ -155,7 +155,7 @@ class _Markdown(build_pdf.markdown.Markdown):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--version", default="2.0 draft 23", help="version label on the cover (default: %(default)s)")
+    ap.add_argument("--version", default="2.0 draft 24", help="version label on the cover (default: %(default)s)")
     ap.add_argument("--date", default="29 September 2026")
     ap.add_argument("--status", default="draft for review by the group")
     ap.add_argument("--changelog", action="store_true", help="build the separate change-log document (project-document/change-log/) instead")
@@ -202,6 +202,10 @@ if __name__ == "__main__":
     # 2026-09-30: the base rule sets code at a fixed 11pt, which towers over the 12pt TH Sarabun of a table cell;
     # size it relative to the text around it instead (about 9pt in a table, 11pt in body text)
     build_pdf.CSS += "\ncode { font-size: 0.75em; }"
+    # draft 24: the API tables of 6.4 (operation | gRPC method | route | request and response; Table 6.7 has a service column first)
+    build_pdf.CSS += ("\ndiv.api table, div.api5 table { font-size: 11pt; line-height: 1.3; } div.api table th, div.api table td, div.api5 table th, div.api5 table td { padding: 3pt 4pt; }"
+                      "\ndiv.api table th:nth-child(1) { width: 21%; } div.api table th:nth-child(2) { width: 19%; } div.api table th:nth-child(3) { width: 25%; }"
+                      "\ndiv.api5 table th:nth-child(1) { width: 12%; } div.api5 table th:nth-child(2) { width: 20%; } div.api5 table th:nth-child(3) { width: 19%; } div.api5 table th:nth-child(4) { width: 21%; }")
     build_pdf.markdown.Markdown = _Markdown
     stem = "seats_project_document_change_log" if a.changelog else "seats_project_document"
     out = OUT / f"{stem}_v{re.sub(r'[^0-9A-Za-z.]+', '-', a.version).strip('-')}.pdf"

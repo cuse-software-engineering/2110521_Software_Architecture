@@ -245,9 +245,9 @@ Table C.1 lists the business terms of this document: the words of the venue, its
 | Term | Definition |
 |---|---|
 | Adapter | A module of a service, or of the API Gateway, that talks to one external system (LINE Login, LINE Messaging, the Payment Gateway, Media Storage), so that the business logic never depends on the provider's API (ports and adapters, Section 5). |
-| API Gateway | The single public entry of the Backend: it authenticates the caller, checks its role and routes the request to the service that owns the operation (ADR-07, ADR-12). |
+| API Gateway | The single public entry of the Backend and its only REST API: it authenticates the caller, checks its role and turns each request into a gRPC call to the service that owns the operation (ADR-07, ADR-12). |
 | Bounded context | A part of the domain with its own model and vocabulary; each service owns one (Section 5.1). |
-| gRPC | Remote procedure calls over HTTP/2 with Protocol Buffers messages; the way the services call each other (ADR-12). |
+| gRPC | Remote procedure calls over HTTP/2 with Protocol Buffers messages; the only API of every service, called by the API Gateway and by the other services (ADR-12). |
 | Hosted checkout | The payment page of the Payment Gateway, opened inside the web app, where the Customer chooses a payment method and pays; no card data passes through the system (FR-71). |
 | ID token | The signed token that LINE Login gives the web app; the API Gateway verifies it and reads the LINE user id from it (FR-01, NFR-36). |
 | Idempotent | Said of an operation that can be repeated without changing the result, so that a retry is safe: releaseHold(), publishRound() and confirmBookingPayment() are idempotent (ADR-08, NFR-22). |
@@ -260,7 +260,7 @@ Table C.1 lists the business terms of this document: the words of the venue, its
 | node-cron | The scheduler in the Booking Service that runs the hold-expiry job every 5 seconds (ADR-03, ADR-08). |
 | Polling | The web app asks the API Gateway for the table status every 2 seconds (ADR-09); the answer carries a version, so an unchanged map costs one small response. |
 | Protocol Buffers | The typed message format of gRPC; the .proto file of a service is the contract of its gRPC API. |
-| REST | HTTP requests with JSON bodies; the way the web apps call the API Gateway, the gateway calls the services, and the Payment Gateway sends its webhook (ADR-12). |
+| REST | HTTP requests with JSON bodies; the way the web apps call the API Gateway and the Payment Gateway sends its webhook; the API Gateway is the only REST API of the system (ADR-12). |
 | Rich Menu | The menu of the LINE Official Account from which the Customer opens the web app. |
 | Session token | The token that the Staff Account Service issues at sign-in and that the API Gateway checks on every back-office request (ADR-07). |
 | Webhook | A call that an external system makes to the API Gateway when something happens; the Payment Gateway reports every payment result by a signed webhook (NFR-38). |

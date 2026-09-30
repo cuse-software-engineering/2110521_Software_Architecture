@@ -17,7 +17,7 @@ The ADRs follow the course template (Michael Nygard's format: Title, Context, De
 | ADR-09 | Table Status Updates in the MVP: Polling | Frontend, Backend | Accepted |
 | ADR-10 | **Customer** Notifications through the LINE Messaging API Only | Backend, External systems | Accepted |
 | ADR-11 | Simulated **Payment Gateway** for the MVP | Backend, External systems | Accepted |
-| ADR-12 | Communication: REST through the API Gateway, gRPC between Services | All three parts | Accepted |
+| ADR-12 | Communication: REST at the API Gateway, gRPC inside the Backend | All three parts | Accepted |
 | ADR-13 | The Booking Owns the Hold; the Table Map Is a Read Model | Backend | Accepted |
 
 ## 4.1 ADR-01: Frontend Architecture & Client Channel
@@ -565,16 +565,16 @@ Accepted on 2026-09-29.
 </tr>
 </table>
 
-## 4.12 ADR-12: Communication: REST through the API Gateway, gRPC between Services
+## 4.12 ADR-12: Communication: REST at the API Gateway, gRPC inside the Backend
 
-*Table 4.13 ADR-12 Communication: REST through the API Gateway, gRPC between Services*
+*Table 4.13 ADR-12 Communication: REST at the API Gateway, gRPC inside the Backend*
 
 <table class="adr" markdown="1">
 <tr markdown="1">
 <td class="k">Title</td>
 <td markdown="block">
 
-Communication: REST through the API Gateway, gRPC between Services
+Communication: REST at the API Gateway, gRPC inside the Backend
 
 </td>
 </tr>
@@ -588,7 +588,7 @@ SEATS has three parts (Section 5.2): the Frontend in the users' browsers, the Ba
 - Inside the Backend the services call each other on the busiest paths: holding a table calls the Concert Round Service and the Table Availability Service within one customer request, which must answer within 2 seconds at the 95th percentile (NFR-04) at 5 hold requests per second (NFR-01).
 - The backend is written in JavaScript (ADR-03), which is dynamically typed, so nothing checks that a caller and a service agree on the shape of their messages.
 
-Options considered: REST everywhere; gRPC everywhere, with gRPC-Web for the browsers; REST into and through the API Gateway with gRPC between the services; asynchronous messages through a message broker.
+Options considered: REST everywhere; gRPC everywhere, with gRPC-Web for the browsers; REST into the API Gateway and through it to the services, with gRPC only between the services; REST at the API Gateway only, which translates each call into gRPC; asynchronous messages through a message broker.
 
 </td>
 </tr>
@@ -598,8 +598,8 @@ Options considered: REST everywhere; gRPC everywhere, with gRPC-Web for the brow
 
 - **Frontend to Backend:** REST, JSON over HTTPS, only through the API Gateway, which authenticates each request and routes it to the service that owns the operation.
 - **External systems to Backend:** the payment webhook is a REST call over HTTPS to the API Gateway, which passes it to the Payment Service.
-- **API Gateway to services:** REST, JSON over HTTP on the private network. Every service that the web apps use offers a REST API, built with Express (ADR-03).
-- **Service to service:** gRPC, Protocol Buffers over HTTP/2, with @grpc/grpc-js. Every collaboration between services in Table 5.3 is a gRPC call. Each service publishes its gRPC API as a .proto file from which its callers generate their client. Every call carries a deadline, and only calls that are safe to repeat, such as releaseHold() (ADR-08), are retried.
+- **API Gateway to services:** gRPC. The API Gateway is the only component that speaks REST: it maps each of its routes to one gRPC method of the service that owns the operation, turns the path, the query and the JSON body into the request message, the response message into JSON and the gRPC status into the HTTP status (Section 6.4). It holds no business logic.
+- **Service to service:** gRPC, Protocol Buffers over HTTP/2, with @grpc/grpc-js. Every service has exactly one API, described by one .proto file, from which the API Gateway and the other services generate their clients; every collaboration between services in Table 5.3 is a gRPC call. Every call carries a deadline, and only calls that are safe to repeat, such as releaseHold() (ADR-08), are retried.
 - **Backend to External systems:** through the adapters, over the provider's HTTPS API.
 - **No message broker in the MVP:** every call is synchronous.
 
@@ -609,7 +609,7 @@ Options considered: REST everywhere; gRPC everywhere, with gRPC-Web for the brow
 <td class="k">Status</td>
 <td markdown="block">
 
-Accepted on 2026-09-29.
+Accepted on 2026-09-30.
 
 </td>
 </tr>
@@ -618,10 +618,10 @@ Accepted on 2026-09-29.
 <td markdown="block">
 
 - The browsers, the LIFF app and the payment webhook use plain HTTPS and JSON, so no gRPC-Web proxy is needed.
-- The .proto files are typed contracts between the services and generate their client and server code, which catches the type mismatches that ADR-03 warns about when a service changes its messages.
+- Each service has one API and one contract, its .proto file, which generates the client and server code and catches the type mismatches that ADR-03 warns about when a service changes its messages, in the API Gateway as in every other caller.
 - The calls between services use a compact binary encoding over long-lived HTTP/2 connections, which keeps the internal calls of a **hold** small within the 2-second budget of NFR-04.
-- The design itself contains REST services (for example the Concert Round Service for the **back-office**) and gRPC services (every service that another service calls), as the course project requires.
-- A service used by both the web apps and other services implements two APIs over the same application logic, and both must be tested; the team has to learn gRPC and Protocol Buffers.
+- The API Gateway is the REST service of the system: it offers the create, read, update and delete of **zone maps** and **concert rounds** over REST, served by the Concert Round Service over gRPC, and every service is a gRPC service, so the design contains the REST service and the gRPC service that the course project requires.
+- The API Gateway grows by one route per operation: the route table and the mapping of gRPC statuses to HTTP statuses live in one place, and the polled read of the table map (ADR-09) answers 304 at the gateway, which compares the version of the read model with the If-None-Match header of the request. The team has to learn gRPC and Protocol Buffers.
 - gRPC messages are binary and harder to inspect than JSON; debugging needs tools such as grpcurl and server reflection.
 - Every call is synchronous: when a service is down, the calls to it fail and so does the request that made them. Calls that can be delayed without harm, such as the LINE messages, are the first candidates for asynchronous messaging when a later ADR revisits it.
 - The services find each other by service names that the deployment resolves; how services are discovered is left to a later ADR.

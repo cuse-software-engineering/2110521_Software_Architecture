@@ -4,8 +4,9 @@
 Writes workspace/report/project-document/assets/architecture-diagram.html (one inline SVG, the editable source of the
 figure) and renders assets/architecture-diagram.png with headless Chromium at 2x (Playwright). Every element and arrow is
 placed by coordinates below: move a service by changing its hexagon() call and adjust the arrows that touch it.
-Only the MVP is drawn (Section 5 of the document). Arrows marked grpc=True are purple (gRPC between services, ADR-12);
-the others are REST or HTTPS. The three dashed boundaries are the parts of the system of Section 5.2.
+Only the MVP is drawn (Section 5 of the document). Arrows marked grpc=True are purple (gRPC: the API Gateway to the
+services and between services, ADR-12); the others are REST or HTTPS. Every service has one API, gRPC, drawn as a tab on
+each side it is called from; the API Gateway has the only REST tab. The three dashed boundaries are the parts of the system of Section 5.2.
 
 Usage (from the repository root):  python3 assignments/group/tools/draw_architecture.py
 """
@@ -53,7 +54,7 @@ def actor(x, y, name, sub=None, icon=True):
     box(x, y, 140, 50, name, sub, fill="#FFF6D5", stroke="#C9A227", r=25, tsize=16, ssize=11)
 
 def tab(x, y, kind):
-    """Driving port of a service: REST (called through the API Gateway) or gRPC (called by other services)."""
+    """Driving port: the REST tab of the API Gateway, or the gRPC tab of a service (drawn on each side it is called from)."""
     if kind == "REST":
         S.append(f'<rect x="{x-19}" y="{y-12}" width="38" height="24" rx="4" fill="#fff" stroke="{DARK}" stroke-width="1.6"/>')
         text(x, y, "REST", 11, "bold", color=DARK)
@@ -98,22 +99,22 @@ actor(90, 615, "Time", "scheduled triggers", icon=False)
 # ---------------- frontend, gateway
 box(280, 170, 196, 74, "Customer Web App", ["(LIFF, inside", "LINE Messenger)"], fill="#E3F0FC", stroke="#2B6CB0")
 box(280, 420, 196, 82, "Back-office Web App", ["rounds, live view,", "QR scan on phone"], fill="#E3F0FC", stroke="#2B6CB0")
-box(566, 330, 160, 124, "API Gateway", ["routes requests,", "verifies caller", "identity and role"], fill="#E6F4EA", stroke="#2F855A")
+box(566, 330, 160, 124, "API Gateway", ["REST in, gRPC out;", "verifies caller", "identity and role"], fill="#E6F4EA", stroke="#2F855A")
 tab(566, 392, "REST")                    # the REST API that the Frontend calls (FTGO draws the gateway the same way)
 
 # ---------------- services (hexagon = one business capability; tabs = its APIs)
 hexagon("Table Availability Service", 930, 232, 132, 72, 36, ["read model of the table map:", "per-round table status", "(ADR-13)"], "Table Status DB",
-        [("REST", "left", 0), ("gRPC", "right", 0)])
+        [("gRPC", "left", 0), ("gRPC", "right", 0)])
 hexagon("Concert Round Service", 1334, 262, 128, 88, 38, ["venue zone map, tables,", "table types; rounds,", "prices, check-in window,", "business parameters"], "Round DB",
-        [("REST", "top", -30), ("gRPC", "left", 0)], tsize=16)
+        [("gRPC", "top", -30), ("gRPC", "left", 0)], tsize=16)
 hexagon("Booking Service", 972, 490, 142, 100, 46, ["booking lifecycle: hold", "(first lock wins), fee,", "profile, terms,", "confirmation, e-ticket,", "check-in, hold expiry"], "Booking DB",
-        [("REST", "left", 0), ("gRPC", "bottom", 68)], desc_dx=-34, db_at=(80, 4))
+        [("gRPC", "left", 0), ("gRPC", "bottom", 68)], desc_dx=-34, db_at=(80, 4))
 hexagon("Payment Service", 990, 772, 128, 80, 38, ["payment requests,", "signed payment result", "(simulated gateway)"], "Payment DB",
-        [("REST", "left", 0), ("gRPC", "top", -10)])
+        [("gRPC", "left", 0), ("gRPC", "top", -10)])
 hexagon("Notification Service", 1382, 606, 110, 62, 28, ["LINE messages,", "retries"], "Notification DB",
         [("gRPC", "left", 0)], tsize=16, desc_dx=-30, db_at=(46, 18))
 hexagon("Staff Account Service", 660, 712, 124, 80, 32, ["back-office accounts,", "roles, sign-in"], "Staff Account DB",
-        [("REST", "top", 0)], tsize=15, desc_dx=0, db_at=(40, 44))
+        [("gRPC", "top", 0)], tsize=15, desc_dx=0, db_at=(40, 44))
 
 # ---------------- adapters (modules of the component that uses them) and external systems
 AD = "#FEF1E1"; ADS = "#DD6B20"; EX = "#FDECEC"; EXS = "#C53030"
@@ -139,12 +140,12 @@ arrow("M612,330 L612,67 L1490,67", label="verify ID token", lx=626, ly=56, lanch
 arrow("M1646,67 L1692,67")
 # payment result: the external gateway calls the API Gateway (signed webhook)
 arrow("M1880,837 L1914,837 L1914,104 L660,104 L660,324", label="payment result (signed webhook)", lx=1180, ly=94, lsize=11.5)
-# gateway to the services (REST)
-arrow("M700,330 L700,128 L1304,128 L1304,162")
-arrow("M726,344 C760,320 760,240 777,236")
-arrow("M726,404 C760,420 790,480 809,488")
-arrow("M726,446 C812,480 812,720 841,768")
-arrow("M660,454 L660,618")
+# gateway to the services (gRPC: one call per REST route, ADR-12)
+arrow("M700,330 L700,128 L1304,128 L1304,162", grpc=True)
+arrow("M726,344 C760,320 760,240 777,236", grpc=True)
+arrow("M726,404 C760,420 790,480 809,488", grpc=True)
+arrow("M726,446 C812,480 812,720 841,768", grpc=True)
+arrow("M660,454 L660,618", grpc=True)
 # service to service (gRPC)
 arrow("M1222,214 L1086,230", grpc=True, label=["createRoundTableStatus()", "getRoundTableStatus()", "countAvailableTables()"], lx=1150, ly=176, lsize=11)
 arrow("M1062,392 L1062,258", grpc=True, label=["holdTable(), releaseHold(),", "markTableBooked(),", "markTableOccupied()"], lx=1052, ly=346, lanchor="end", lsize=11)
@@ -170,7 +171,7 @@ text(lx + 14, ly + 18, "Legend (the MVP only)", 14, "bold", anchor="start")
 rows = [("part", "grey dashed outline: part of the system (Section 5.2)"),
         ("rest", "A → B: A invokes B by REST or HTTPS (JSON)"),
         ("grpc", "A → B: A invokes B by gRPC (ADR-12)"),
-        ("tabs", "REST / gRPC tab: an API the component offers"),
+        ("tabs", "REST / gRPC tab: the API a component offers"),
         ("hex", "hexagon: service; cylinder: its private database"),
         ("ad", "orange box: adapter, part of the component that uses it"),
         ("box", "red dashed box: external system")]
