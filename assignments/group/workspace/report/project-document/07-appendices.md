@@ -309,11 +309,17 @@ None: LINE Login runs in the LIFF app, and the ID token travels in the header of
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td colspan="2" markdown="block">
+<td class="ex" colspan="3" markdown="block">
 
-<pre class="call">GET /api/rounds
-x-user-id: U-somchai · x-role: customer   (progress 1; later Authorization: Bearer &lt;LINE ID token&gt;)</pre>
+**Example call**
+
+<!-- examples:C1 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">GET</span> /api/rounds</span>   <span class="note">progress 1; later Authorization: Bearer &lt;LINE ID token&gt; (ADR-01)</span>
+<span class="hd">x-user-id: U-somchai</span>
+<span class="hd">x-role: customer</span>
+→ <span class="ok">200</span>
+[<span class="el">…</span>]</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -356,14 +362,27 @@ Round list with artist, date, start time, **booking-open time** and status; a ro
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td colspan="2" markdown="block">
+<td class="ex" colspan="3" markdown="block">
 
-<pre class="call">GET /api/rounds
-→ 200 [ { "id": "r-friday", "name": "Friday Live", "artist": "The Band",
-  "date": "2026-10-09", "startAt": "2026-10-09T20:00:00Z",
-  "bookingOpenAt": "2026-10-02T18:00:00Z", "status": "open",
-  "availableTables": 28, "tablesForSale": 28 } ]</pre>
+**Example call**
+
+<!-- examples:C2 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">GET</span> /api/rounds</span>
+→ <span class="ok">200</span>
+[
+  {
+    <span class="k">&quot;id&quot;</span>: <span class="s">&quot;r-friday&quot;</span>,
+    <span class="k">&quot;name&quot;</span>: <span class="s">&quot;Friday Live&quot;</span>,
+    <span class="k">&quot;artist&quot;</span>: <span class="s">&quot;The Band&quot;</span>,
+    <span class="k">&quot;date&quot;</span>: <span class="s">&quot;2026-10-09&quot;</span>,
+    <span class="k">&quot;startAt&quot;</span>: <span class="s">&quot;2026-10-09T20:00:00Z&quot;</span>,
+    <span class="k">&quot;bookingOpenAt&quot;</span>: <span class="s">&quot;2026-10-02T18:00:00Z&quot;</span>,
+    <span class="k">&quot;status&quot;</span>: <span class="s">&quot;open&quot;</span>,
+    <span class="k">&quot;availableTables&quot;</span>: <span class="n">28</span>,
+    <span class="k">&quot;tablesForSale&quot;</span>: <span class="n">28</span>
+  }
+]</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -406,16 +425,31 @@ Stage, **zones**, a shape per table with number, **table type**, **package price
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td colspan="2" markdown="block">
+<td class="ex" colspan="3" markdown="block">
 
-<pre class="call">GET /api/rounds/r-friday/table-status   If-None-Match: 4
-→ 304, or → 200 ETag: 5 { "roundId": "r-friday", "version": 5,
-  "tables": [ { "tableNumber": 1, "status": "HELD", … },
-              { "tableNumber": 2, "status": "AVAILABLE", … } ] }
-POST /api/bookings { "roundId": "r-friday", "tableNumber": 2 }
-→ 200 { "id": "b-2", "status": "Held", "remainingHoldSeconds": 900, … }
-→ 409 { "error": "the table has just been taken by another customer" }</pre>
+**Example call**
+
+<!-- examples:C3 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">GET</span> /api/rounds/r-friday/table-status</span>
+<span class="hd">If-None-Match: 4</span>
+→ <span class="redir">304</span> <span class="note">unchanged since version 4</span>
+→ <span class="ok">200</span> <span class="note">ETag: 5</span>
+{
+  <span class="k">&quot;roundId&quot;</span>: <span class="s">&quot;r-friday&quot;</span>,
+  <span class="k">&quot;version&quot;</span>: <span class="n">5</span>,
+  <span class="k">&quot;tables&quot;</span>: [
+    {<span class="k">&quot;tableNumber&quot;</span>: <span class="n">1</span>, <span class="k">&quot;status&quot;</span>: <span class="s">&quot;HELD&quot;</span>, <span class="k">&quot;bookingId&quot;</span>: <span class="s">&quot;b-1&quot;</span>, <span class="k">&quot;holdEndsAt&quot;</span>: <span class="s">&quot;…T19:15:00Z&quot;</span>},
+    <span class="el">…</span>
+  ]
+}</span>
+
+<span class="call"><span class="rq"><span class="m">POST</span> /api/bookings</span>
+{<span class="k">&quot;roundId&quot;</span>: <span class="s">&quot;r-friday&quot;</span>, <span class="k">&quot;tableNumber&quot;</span>: <span class="n">2</span>}
+→ <span class="ok">200</span>
+{<span class="k">&quot;id&quot;</span>: <span class="s">&quot;b-2&quot;</span>, <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Held&quot;</span>, <span class="k">&quot;tableNumber&quot;</span>: <span class="n">2</span>, <span class="k">&quot;remainingHoldSeconds&quot;</span>: <span class="n">900</span>, <span class="el">…</span>}
+→ <span class="err">409</span> <span class="note">UC-01 AF-3</span>
+{<span class="k">&quot;error&quot;</span>: <span class="s">&quot;the table has just been taken by another customer&quot;</span>}</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -458,14 +492,31 @@ UC-01 steps 8–11, AF-4, EF-1
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td colspan="2" markdown="block">
+<td class="ex" colspan="3" markdown="block">
 
-<pre class="call">PUT /api/bookings/b-2/party-size { "partySize": 3 }
-→ 200 { "id": "b-2", "status": "Held", "partySize": 3,
-  "fee": { "packagePrice": 2400, "extraPersons": 1,
-           "extraPersonFee": 600, "fullTableFee": 3000 }, … }
-POST /api/bookings/b-2/cancel → 200 { "id": "b-2", "status": "Cancelled", … }</pre>
+**Example call**
+
+<!-- examples:C4 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">PUT</span> /api/bookings/b-2/party-size</span>
+{<span class="k">&quot;partySize&quot;</span>: <span class="n">3</span>}
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;id&quot;</span>: <span class="s">&quot;b-2&quot;</span>,
+  <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Held&quot;</span>,
+  <span class="k">&quot;partySize&quot;</span>: <span class="n">3</span>,
+  <span class="k">&quot;fee&quot;</span>: {<span class="k">&quot;packagePrice&quot;</span>: <span class="n">2400</span>, <span class="k">&quot;extraPersons&quot;</span>: <span class="n">1</span>, <span class="k">&quot;extraPersonFee&quot;</span>: <span class="n">600</span>, <span class="k">&quot;fullTableFee&quot;</span>: <span class="n">3000</span>},
+  <span class="el">…</span>
+}</span>
+
+<span class="call"><span class="rq"><span class="m">POST</span> /api/bookings/b-2/cancel</span>
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;id&quot;</span>: <span class="s">&quot;b-2&quot;</span>,
+  <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Cancelled&quot;</span>,
+  <span class="k">&quot;history&quot;</span>: [<span class="el">…</span>, {<span class="k">&quot;status&quot;</span>: <span class="s">&quot;Cancelled&quot;</span>, <span class="k">&quot;by&quot;</span>: <span class="s">&quot;U-somchai&quot;</span>, <span class="el">…</span>}],
+  <span class="el">…</span>
+}</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -508,14 +559,27 @@ On the first booking: the purpose of the data collection, consent, name and phon
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td colspan="2" markdown="block">
+<td class="ex" colspan="3" markdown="block">
 
-<pre class="call">GET /api/customers/me
-→ 404 { "error": "no profile yet: this is the first booking" }
-POST /api/customers/me { "name": "Somchai P.", "phone": "0812345678", "consent": true }
-→ 200 { "customerId": "U-somchai", "name": "Somchai P.",
-  "phone": "0812345678", "consentAt": "2026-10-03T12:00:00Z" }</pre>
+**Example call**
+
+<!-- examples:C5 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">GET</span> /api/customers/me</span>
+→ <span class="err">404</span>
+{<span class="k">&quot;error&quot;</span>: <span class="s">&quot;no profile yet: this is the first booking&quot;</span>}</span>
+
+<span class="call"><span class="rq"><span class="m">POST</span> /api/customers/me</span>
+{<span class="k">&quot;name&quot;</span>: <span class="s">&quot;Somchai P.&quot;</span>, <span class="k">&quot;phone&quot;</span>: <span class="s">&quot;0812345678&quot;</span>, <span class="k">&quot;consent&quot;</span>: <span class="b">true</span>}
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;customerId&quot;</span>: <span class="s">&quot;U-somchai&quot;</span>,
+  <span class="k">&quot;name&quot;</span>: <span class="s">&quot;Somchai P.&quot;</span>,
+  <span class="k">&quot;phone&quot;</span>: <span class="s">&quot;0812345678&quot;</span>,
+  <span class="k">&quot;consentAt&quot;</span>: <span class="s">&quot;2026-10-03T12:00:00Z&quot;</span>
+}
+→ <span class="err">400</span> <span class="note">UC-09 AF-2</span>
+{<span class="k">&quot;error&quot;</span>: <span class="s">&quot;invalid profile&quot;</span>, <span class="k">&quot;details&quot;</span>: [<span class="s">&quot;phone must be a Thai mobile number&quot;</span>]}</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -558,14 +622,27 @@ The **booking terms** with the **check-in window**, Accept, Pay with the amount,
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td colspan="2" markdown="block">
+<td class="ex" colspan="3" markdown="block">
 
-<pre class="call">GET /api/bookings/b-2/terms
-→ 200 { "bookingId": "b-2", "terms": [ "Full payment confirms the booking …", … ],
-  "checkInWindow": { "opensAt": "…T18:00:00Z", "startAt": "…T20:00:00Z",
-                     "graceEndsAt": "…T20:30:00Z" } }
-POST /api/bookings/b-2/terms-acceptance → 200 { …, "termsAccepted": true }</pre>
+**Example call**
+
+<!-- examples:C6 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">GET</span> /api/bookings/b-2/terms</span>
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;bookingId&quot;</span>: <span class="s">&quot;b-2&quot;</span>,
+  <span class="k">&quot;terms&quot;</span>: [<span class="s">&quot;Full payment confirms the booking; …&quot;</span>, <span class="el">…</span>],
+  <span class="k">&quot;checkInWindow&quot;</span>: {
+    <span class="k">&quot;opensAt&quot;</span>: <span class="s">&quot;2026-10-09T18:00:00Z&quot;</span>,
+    <span class="k">&quot;startAt&quot;</span>: <span class="s">&quot;2026-10-09T20:00:00Z&quot;</span>,
+    <span class="k">&quot;graceEndsAt&quot;</span>: <span class="s">&quot;2026-10-09T20:30:00Z&quot;</span>
+  }
+}</span>
+
+<span class="call"><span class="rq"><span class="m">POST</span> /api/bookings/b-2/terms-acceptance</span>
+→ <span class="ok">200</span>
+{<span class="k">&quot;id&quot;</span>: <span class="s">&quot;b-2&quot;</span>, <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Held&quot;</span>, <span class="k">&quot;termsAccepted&quot;</span>: <span class="b">true</span>, <span class="el">…</span>}</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -608,14 +685,21 @@ Amount, the hosted checkout of the **Payment Gateway** opened inside the web app
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td colspan="2" markdown="block">
+<td class="ex" colspan="3" markdown="block">
 
-<pre class="call">POST /api/bookings/b-2/payment
-→ 200 { "paymentId": "p-7", "checkoutUrl": "https://checkout.example/pay/p-7" }
-   (Increment 1: → 501 { "error": "startPayment() is built in progress 2" })
-GET /api/payments/p-7
-→ 200 { "paymentId": "p-7", "bookingId": "b-2", "status": "Paid", "amount": 3000 }</pre>
+**Example call**
+
+<!-- examples:C7 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">POST</span> /api/bookings/b-2/payment</span>
+→ <span class="ok">200</span>
+{<span class="k">&quot;paymentId&quot;</span>: <span class="s">&quot;p-7&quot;</span>, <span class="k">&quot;checkoutUrl&quot;</span>: <span class="s">&quot;https://checkout.example/pay/p-7&quot;</span>}
+→ <span class="err">501</span> <span class="note">Increment 1</span>
+{<span class="k">&quot;error&quot;</span>: <span class="s">&quot;startPayment() is built in progress 2&quot;</span>}</span>
+
+<span class="call"><span class="rq"><span class="m">GET</span> /api/payments/p-7</span>   <span class="note">polled until the result</span>
+→ <span class="ok">200</span>
+{<span class="k">&quot;paymentId&quot;</span>: <span class="s">&quot;p-7&quot;</span>, <span class="k">&quot;bookingId&quot;</span>: <span class="s">&quot;b-2&quot;</span>, <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Paid&quot;</span>, <span class="k">&quot;amount&quot;</span>: <span class="n">3000</span>}</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -658,14 +742,27 @@ Confirmed banner, QR **e-ticket** with the **booking reference**, booking detail
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td colspan="2" markdown="block">
+<td class="ex" colspan="3" markdown="block">
 
-<pre class="call">GET /api/bookings/b-2
-→ 200 { "id": "b-2", "status": "Confirmed", "tableNumber": 2, "zoneName": "Zone A",
-  "fee": { …, "fullTableFee": 3000 }, "history": [ …, { "status": "Confirmed", … } ] }
-GET /api/bookings/b-2/e-ticket
-→ 200 { "bookingId": "b-2", "bookingReference": "SEATS-261009-A02-7K3Q", "qrPayload": "…" }</pre>
+**Example call**
+
+<!-- examples:C8 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">GET</span> /api/bookings/b-2</span>
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;id&quot;</span>: <span class="s">&quot;b-2&quot;</span>,
+  <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Confirmed&quot;</span>,
+  <span class="k">&quot;tableNumber&quot;</span>: <span class="n">2</span>,
+  <span class="k">&quot;zoneName&quot;</span>: <span class="s">&quot;Zone A&quot;</span>,
+  <span class="k">&quot;partySize&quot;</span>: <span class="n">3</span>,
+  <span class="k">&quot;fee&quot;</span>: {<span class="el">…</span>, <span class="k">&quot;fullTableFee&quot;</span>: <span class="n">3000</span>},
+  <span class="el">…</span>
+}</span>
+
+<span class="call"><span class="rq"><span class="m">GET</span> /api/bookings/b-2/e-ticket</span>
+→ <span class="ok">200</span>
+{<span class="k">&quot;bookingId&quot;</span>: <span class="s">&quot;b-2&quot;</span>, <span class="k">&quot;bookingReference&quot;</span>: <span class="s">&quot;SEATS-261009-A02-7K3Q&quot;</span>, <span class="k">&quot;qrPayload&quot;</span>: <span class="el">…</span>}</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -708,12 +805,18 @@ The **Customer**'s bookings with status; a Confirmed booking opens its **e-ticke
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td colspan="2" markdown="block">
+<td class="ex" colspan="3" markdown="block">
 
-<pre class="call">GET /api/customers/me/bookings
-→ 200 [ { "id": "b-2", "roundId": "r-friday", "tableNumber": 2, "status": "Confirmed", … },
-        { "id": "b-1", "roundId": "r-sat", "tableNumber": 9, "status": "Expired", … } ]</pre>
+**Example call**
+
+<!-- examples:C9 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">GET</span> /api/customers/me/bookings</span>
+→ <span class="ok">200</span>
+[
+  {<span class="k">&quot;id&quot;</span>: <span class="s">&quot;b-2&quot;</span>, <span class="k">&quot;roundId&quot;</span>: <span class="s">&quot;r-friday&quot;</span>, <span class="k">&quot;tableNumber&quot;</span>: <span class="n">2</span>, <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Confirmed&quot;</span>, <span class="el">…</span>},
+  {<span class="k">&quot;id&quot;</span>: <span class="s">&quot;b-1&quot;</span>, <span class="k">&quot;roundId&quot;</span>: <span class="s">&quot;r-sat&quot;</span>, <span class="k">&quot;tableNumber&quot;</span>: <span class="n">9</span>, <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Expired&quot;</span>, <span class="el">…</span>}
+]</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -762,13 +865,22 @@ Username, password; Sign out on every other screen
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td markdown="block">
+<td class="ex" colspan="2" markdown="block">
 
-<pre class="call">POST /api/sessions { "username": "manager", "password": "…" }
-→ 200 { "token": "5e1f…", "role": "manager", "staffAccountId": "s-1" }
-→ 401 { "error": "wrong username or password" }
-DELETE /api/sessions/current   Authorization: Bearer 5e1f…  → 200</pre>
+**Example call**
+
+<!-- examples:B1 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">POST</span> /api/sessions</span>
+{<span class="k">&quot;username&quot;</span>: <span class="s">&quot;manager&quot;</span>, <span class="k">&quot;password&quot;</span>: <span class="el">…</span>}
+→ <span class="ok">200</span>
+{<span class="k">&quot;token&quot;</span>: <span class="s">&quot;5e1f…&quot;</span>, <span class="k">&quot;role&quot;</span>: <span class="s">&quot;manager&quot;</span>, <span class="k">&quot;staffAccountId&quot;</span>: <span class="s">&quot;s-1&quot;</span>}
+→ <span class="err">401</span>
+{<span class="k">&quot;error&quot;</span>: <span class="s">&quot;wrong username or password&quot;</span>}</span>
+
+<span class="call"><span class="rq"><span class="m">DELETE</span> /api/sessions/current</span>
+<span class="hd">Authorization: Bearer 5e1f…</span>
+→ <span class="ok">200</span></span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -813,14 +925,81 @@ Map list with status, new map, image upload, **zones** drawn on the image, table
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td markdown="block">
+<td class="ex" colspan="2" markdown="block">
 
-<pre class="call">POST /api/zone-maps { "name": "Main hall v2" } → 200 { "id": "m-2", "status": "Draft", … }
-PUT /api/zone-maps/m-2 { "zones": [ { "id": "A", "name": "Zone A · front stage" } ],
-  "tables": [ { "tableNumber": 1, "zoneId": "A", "tableTypeId": "round2", "capacity": 2, "x": 40, "y": 60 } ] }
-→ 200 { …, "summary": [ { "zoneId": "A", "name": "Zone A · front stage", "tables": 1, "capacity": 2 } ] }
-POST /api/zone-maps/m-2/activate → 400 { "error": "the zone map is not valid", "details": [ "table 17 has no table type" ] }</pre>
+**Example call**
+
+<!-- examples:B2 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">POST</span> /api/zone-maps</span>
+{<span class="k">&quot;name&quot;</span>: <span class="s">&quot;Main hall v2&quot;</span>}
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;id&quot;</span>: <span class="s">&quot;m-2&quot;</span>,
+  <span class="k">&quot;name&quot;</span>: <span class="s">&quot;Main hall v2&quot;</span>,
+  <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Draft&quot;</span>,
+  <span class="k">&quot;imageUrl&quot;</span>: <span class="s">&quot;&quot;</span>,
+  <span class="k">&quot;zones&quot;</span>: [],
+  <span class="k">&quot;tables&quot;</span>: [],
+  <span class="k">&quot;summary&quot;</span>: [],
+  <span class="el">…</span>
+}</span>
+
+<span class="call"><span class="rq"><span class="m">PUT</span> /api/zone-maps/m-2</span>
+{
+  <span class="k">&quot;zones&quot;</span>: [{<span class="k">&quot;id&quot;</span>: <span class="s">&quot;A&quot;</span>, <span class="k">&quot;name&quot;</span>: <span class="s">&quot;Zone A · front stage&quot;</span>}],
+  <span class="k">&quot;tables&quot;</span>: [
+    {
+      <span class="k">&quot;tableNumber&quot;</span>: <span class="n">1</span>,
+      <span class="k">&quot;zoneId&quot;</span>: <span class="s">&quot;A&quot;</span>,
+      <span class="k">&quot;tableTypeId&quot;</span>: <span class="s">&quot;round2&quot;</span>,
+      <span class="k">&quot;capacity&quot;</span>: <span class="n">2</span>,
+      <span class="k">&quot;x&quot;</span>: <span class="n">40</span>,
+      <span class="k">&quot;y&quot;</span>: <span class="n">60</span>
+    }
+  ]
+}
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;id&quot;</span>: <span class="s">&quot;m-2&quot;</span>,
+  <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Draft&quot;</span>,
+  <span class="k">&quot;zones&quot;</span>: [{<span class="k">&quot;id&quot;</span>: <span class="s">&quot;A&quot;</span>, <span class="k">&quot;name&quot;</span>: <span class="s">&quot;Zone A · front stage&quot;</span>}],
+  <span class="k">&quot;tables&quot;</span>: [
+    {
+      <span class="k">&quot;tableNumber&quot;</span>: <span class="n">1</span>,
+      <span class="k">&quot;zoneId&quot;</span>: <span class="s">&quot;A&quot;</span>,
+      <span class="k">&quot;tableTypeId&quot;</span>: <span class="s">&quot;round2&quot;</span>,
+      <span class="k">&quot;capacity&quot;</span>: <span class="n">2</span>,
+      <span class="k">&quot;x&quot;</span>: <span class="n">40</span>,
+      <span class="k">&quot;y&quot;</span>: <span class="n">60</span>
+    }
+  ],
+  <span class="k">&quot;summary&quot;</span>: [{<span class="k">&quot;zoneId&quot;</span>: <span class="s">&quot;A&quot;</span>, <span class="k">&quot;name&quot;</span>: <span class="s">&quot;Zone A · front stage&quot;</span>, <span class="k">&quot;tables&quot;</span>: <span class="n">1</span>, <span class="k">&quot;capacity&quot;</span>: <span class="n">2</span>}],
+  <span class="el">…</span>
+}</span>
+
+<span class="call"><span class="rq"><span class="m">POST</span> /api/zone-maps/m-2/validate</span>   <span class="note">UC-04 S-1</span>
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;valid&quot;</span>: <span class="b">false</span>,
+  <span class="k">&quot;problems&quot;</span>: [<span class="s">&quot;table 17 has no table type&quot;</span>, <span class="s">&quot;the zone containing table 17 has no name&quot;</span>]
+}</span>
+
+<span class="call"><span class="rq"><span class="m">POST</span> /api/zone-maps/m-2/activate</span>
+→ <span class="err">400</span>
+{<span class="k">&quot;error&quot;</span>: <span class="s">&quot;the zone map is not valid&quot;</span>, <span class="k">&quot;details&quot;</span>: [<span class="s">&quot;table 17 has no table type&quot;</span>, <span class="el">…</span>]}
+→ <span class="ok">200</span> <span class="note">once valid</span>
+{<span class="k">&quot;id&quot;</span>: <span class="s">&quot;m-2&quot;</span>, <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Active&quot;</span>, <span class="el">…</span>}</span>
+
+<span class="call"><span class="rq"><span class="m">PUT</span> /api/table-types/round2</span>
+{<span class="k">&quot;name&quot;</span>: <span class="s">&quot;2-person round table&quot;</span>, <span class="k">&quot;capacity&quot;</span>: <span class="n">2</span>, <span class="k">&quot;packageContent&quot;</span>: <span class="s">&quot;1 tower + 1 ice&quot;</span>}
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;id&quot;</span>: <span class="s">&quot;round2&quot;</span>,
+  <span class="k">&quot;name&quot;</span>: <span class="s">&quot;2-person round table&quot;</span>,
+  <span class="k">&quot;capacity&quot;</span>: <span class="n">2</span>,
+  <span class="k">&quot;packageContent&quot;</span>: <span class="s">&quot;1 tower + 1 ice&quot;</span>
+}</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -865,14 +1044,96 @@ Round list with status, new round, concert details and times, **zone map** choic
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td markdown="block">
+<td class="ex" colspan="2" markdown="block">
 
-<pre class="call">PUT /api/rounds/r-friday { "artist": "The Band", "date": "2026-10-09", "startAt": "2026-10-09T20:00:00Z",
-  "zoneMapId": "m-1", "tablesNotForSale": [ 6 ],
-  "prices": [ { "zoneId": "A", "tableTypeId": "sofa6", "packagePrice": 7200, "packageContent": "3 towers + 3 ice" } ] }
-→ 200 { …, "checkInWindow": { "opensAt": "…T18:00:00Z", "graceEndsAt": "…T20:30:00Z" } }
-POST /api/rounds/r-friday/publish → 200 { …, "status": "Published", "parameters": { "holdPeriodMinutes": 15, … } }</pre>
+**Example call**
+
+<!-- examples:B3 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">POST</span> /api/rounds</span>
+{<span class="k">&quot;name&quot;</span>: <span class="s">&quot;Friday Live&quot;</span>}
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;id&quot;</span>: <span class="s">&quot;r-friday&quot;</span>,
+  <span class="k">&quot;name&quot;</span>: <span class="s">&quot;Friday Live&quot;</span>,
+  <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Draft&quot;</span>,
+  <span class="k">&quot;checkInWindow&quot;</span>: <span class="b">null</span>,
+  <span class="k">&quot;parameters&quot;</span>: <span class="b">null</span>,
+  <span class="k">&quot;tables&quot;</span>: [],
+  <span class="el">…</span>
+}</span>
+
+<span class="call"><span class="rq"><span class="m">PUT</span> /api/rounds/r-friday</span>
+{
+  <span class="k">&quot;artist&quot;</span>: <span class="s">&quot;The Band&quot;</span>,
+  <span class="k">&quot;date&quot;</span>: <span class="s">&quot;2026-10-09&quot;</span>,
+  <span class="k">&quot;doorsOpenAt&quot;</span>: <span class="s">&quot;2026-10-09T18:00:00Z&quot;</span>,
+  <span class="k">&quot;startAt&quot;</span>: <span class="s">&quot;2026-10-09T20:00:00Z&quot;</span>,
+  <span class="k">&quot;bookingOpenAt&quot;</span>: <span class="s">&quot;2026-10-02T18:00:00Z&quot;</span>,
+  <span class="k">&quot;zoneMapId&quot;</span>: <span class="s">&quot;m-1&quot;</span>,
+  <span class="k">&quot;tablesNotForSale&quot;</span>: [<span class="n">6</span>],
+  <span class="k">&quot;prices&quot;</span>: [
+    {
+      <span class="k">&quot;zoneId&quot;</span>: <span class="s">&quot;A&quot;</span>,
+      <span class="k">&quot;tableTypeId&quot;</span>: <span class="s">&quot;sofa6&quot;</span>,
+      <span class="k">&quot;packagePrice&quot;</span>: <span class="n">7200</span>,
+      <span class="k">&quot;packageContent&quot;</span>: <span class="s">&quot;3 towers + 3 ice&quot;</span>
+    },
+    <span class="el">…</span>
+  ]
+}
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;id&quot;</span>: <span class="s">&quot;r-friday&quot;</span>,
+  <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Draft&quot;</span>,
+  <span class="k">&quot;artist&quot;</span>: <span class="s">&quot;The Band&quot;</span>,
+  <span class="k">&quot;date&quot;</span>: <span class="s">&quot;2026-10-09&quot;</span>,
+  <span class="k">&quot;zoneMapId&quot;</span>: <span class="s">&quot;m-1&quot;</span>,
+  <span class="k">&quot;tablesNotForSale&quot;</span>: [<span class="n">6</span>],
+  <span class="k">&quot;checkInWindow&quot;</span>: {
+    <span class="k">&quot;opensAt&quot;</span>: <span class="s">&quot;2026-10-09T18:00:00Z&quot;</span>,
+    <span class="k">&quot;startAt&quot;</span>: <span class="s">&quot;2026-10-09T20:00:00Z&quot;</span>,
+    <span class="k">&quot;graceEndsAt&quot;</span>: <span class="s">&quot;2026-10-09T20:30:00Z&quot;</span>
+  },
+  <span class="k">&quot;tables&quot;</span>: [
+    {
+      <span class="k">&quot;tableNumber&quot;</span>: <span class="n">1</span>,
+      <span class="k">&quot;zoneId&quot;</span>: <span class="s">&quot;A&quot;</span>,
+      <span class="k">&quot;tableTypeId&quot;</span>: <span class="s">&quot;sofa6&quot;</span>,
+      <span class="k">&quot;capacity&quot;</span>: <span class="n">6</span>,
+      <span class="k">&quot;forSale&quot;</span>: <span class="b">true</span>,
+      <span class="k">&quot;packagePrice&quot;</span>: <span class="n">7200</span>,
+      <span class="el">…</span>
+    },
+    <span class="el">…</span>
+  ],
+  <span class="el">…</span>
+}
+→ <span class="err">409</span> <span class="note">a Published round, UC-03 AF-3</span>
+{
+  <span class="k">&quot;error&quot;</span>: <span class="s">&quot;after the booking-open time these fields are fixed: zoneMapId&quot;</span>,
+  <span class="k">&quot;details&quot;</span>: {<span class="k">&quot;confirmedBookings&quot;</span>: <span class="n">12</span>}
+}</span>
+
+<span class="call"><span class="rq"><span class="m">POST</span> /api/rounds/r-friday/validate</span>   <span class="note">UC-03 S-1</span>
+→ <span class="ok">200</span>
+{<span class="k">&quot;valid&quot;</span>: <span class="b">false</span>, <span class="k">&quot;problems&quot;</span>: [<span class="s">&quot;no package price for table type seat1 in zone B&quot;</span>]}</span>
+
+<span class="call"><span class="rq"><span class="m">POST</span> /api/rounds/r-friday/publish</span>   <span class="note">creates the table map of the round; idempotent</span>
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;id&quot;</span>: <span class="s">&quot;r-friday&quot;</span>,
+  <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Published&quot;</span>,
+  <span class="k">&quot;parameters&quot;</span>: {
+    <span class="k">&quot;holdPeriodMinutes&quot;</span>: <span class="n">15</span>,
+    <span class="k">&quot;checkInWindowHours&quot;</span>: <span class="n">2</span>,
+    <span class="k">&quot;gracePeriodMinutes&quot;</span>: <span class="n">30</span>,
+    <span class="k">&quot;extraPersonFee&quot;</span>: <span class="n">600</span>
+  },
+  <span class="el">…</span>
+}
+→ <span class="err">400</span>
+{<span class="k">&quot;error&quot;</span>: <span class="s">&quot;the round is not valid&quot;</span>, <span class="k">&quot;details&quot;</span>: [<span class="el">…</span>]}</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -917,13 +1178,19 @@ Round choice, the table map with the status of every table, the bookings of the 
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td markdown="block">
+<td class="ex" colspan="2" markdown="block">
 
-<pre class="call">GET /api/rounds/r-friday/table-status   If-None-Match: 41  → 304, or → 200 ETag: 42 { "version": 42, "tables": [ … ] }
-GET /api/rounds/r-friday/bookings
-→ 200 [ { "id": "b-2", "tableNumber": 2, "customerId": "U-somchai", "partySize": 3, "status": "Checked-in",
-          "history": [ …, { "status": "Checked-in", "at": "…T19:05:00Z", "by": "door1" } ] }, … ]</pre>
+**Example call**
+
+<!-- examples:B4 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">GET</span> /api/rounds/r-friday/table-status</span>   <span class="note">polled every 2 seconds</span>
+<span class="hd">If-None-Match: 41</span>
+→ <span class="redir">304</span> <span class="note">unchanged since version 41; the 200 answer is that of C3</span></span>
+
+<span class="call"><span class="rq"><span class="m">GET</span> /api/rounds/r-friday/bookings</span>
+→ <span class="ok">200</span>
+[{<span class="k">&quot;id&quot;</span>: <span class="s">&quot;b-2&quot;</span>, <span class="k">&quot;tableNumber&quot;</span>: <span class="n">1</span>, <span class="k">&quot;partySize&quot;</span>: <span class="n">3</span>, <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Checked-in&quot;</span>, <span class="el">…</span>}, <span class="el">…</span>]</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -966,13 +1233,31 @@ Round and count, camera viewfinder, type the **booking reference**
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td colspan="2" markdown="block">
+<td class="ex" colspan="3" markdown="block">
 
-<pre class="call">POST /api/check-ins/verify { "bookingReference": "SEATS-261009-A02-7K3Q" }
-→ 200 { "valid": true, "booking": { "id": "b-2", "tableNumber": 2, "partySize": 3, … }, "reason": "" }
-→ 200 { "valid": false, "booking": null, "reason": "already checked in at 19:42 by door1" }
-   (progress 1: → 501)</pre>
+**Example call**
+
+<!-- examples:B5 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">POST</span> /api/check-ins/verify</span>
+{<span class="k">&quot;bookingReference&quot;</span>: <span class="s">&quot;SEATS-261009-A02-7K3Q&quot;</span>}
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;valid&quot;</span>: <span class="b">true</span>,
+  <span class="k">&quot;booking&quot;</span>: {
+    <span class="k">&quot;id&quot;</span>: <span class="s">&quot;b-2&quot;</span>,
+    <span class="k">&quot;tableNumber&quot;</span>: <span class="n">1</span>,
+    <span class="k">&quot;zoneName&quot;</span>: <span class="s">&quot;Zone A&quot;</span>,
+    <span class="k">&quot;partySize&quot;</span>: <span class="n">3</span>,
+    <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Confirmed&quot;</span>,
+    <span class="el">…</span>
+  },
+  <span class="k">&quot;reason&quot;</span>: <span class="s">&quot;&quot;</span>
+}
+→ <span class="ok">200</span> <span class="note">UC-02 EF-1</span>
+{<span class="k">&quot;valid&quot;</span>: <span class="b">false</span>, <span class="k">&quot;booking&quot;</span>: <span class="b">null</span>, <span class="k">&quot;reason&quot;</span>: <span class="s">&quot;already checked in at 19:42 by door1&quot;</span>}
+→ <span class="err">501</span> <span class="note">progress 1</span>
+{<span class="k">&quot;error&quot;</span>: <span class="s">&quot;verifyBookingReference() is built in progress 2&quot;</span>}</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -1017,13 +1302,23 @@ Result panel with the reason of a failure, booking details with the **party size
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td markdown="block">
+<td class="ex" colspan="2" markdown="block">
 
-<pre class="call">POST /api/check-ins { "bookingReference": "SEATS-261009-A02-7K3Q" }
-→ 200 { "id": "b-2", "status": "Checked-in",
-  "history": [ …, { "status": "Checked-in", "at": "2026-10-09T19:05:00Z", "by": "door1" } ] }
-   (progress 1: → 501)</pre>
+**Example call**
+
+<!-- examples:B6 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">POST</span> /api/check-ins</span>
+{<span class="k">&quot;bookingReference&quot;</span>: <span class="s">&quot;SEATS-261009-A02-7K3Q&quot;</span>}
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;id&quot;</span>: <span class="s">&quot;b-2&quot;</span>,
+  <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Checked-in&quot;</span>,
+  <span class="k">&quot;history&quot;</span>: [<span class="el">…</span>, {<span class="k">&quot;status&quot;</span>: <span class="s">&quot;Checked-in&quot;</span>, <span class="k">&quot;at&quot;</span>: <span class="s">&quot;2026-10-09T19:05:00Z&quot;</span>, <span class="k">&quot;by&quot;</span>: <span class="s">&quot;door1&quot;</span>}],
+  <span class="el">…</span>
+}
+→ <span class="err">501</span> <span class="note">progress 1</span>
+{<span class="k">&quot;error&quot;</span>: <span class="s">&quot;checkInBooking() is built in progress 2&quot;</span>}</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>
@@ -1068,13 +1363,49 @@ UC-07; UC-08
 </td>
 </tr>
 <tr markdown="1">
-<td class="k">Example call</td>
-<td markdown="block">
+<td class="ex" colspan="2" markdown="block">
 
-<pre class="call">PUT /api/business-parameters { "extraPersonFee": 600 }
-→ 200 { "holdPeriodMinutes": 15, "checkInWindowHours": 2, "gracePeriodMinutes": 30, "extraPersonFee": 600 }
-POST /api/staff-accounts { "username": "door2", "role": "front_staff", "password": "…" }
-→ 200 { "staffAccountId": "s-4", "username": "door2", "role": "front_staff", "status": "Active" }</pre>
+**Example call**
+
+<!-- examples:B7 -->
+<pre class="calls"><span class="call"><span class="rq"><span class="m">GET</span> /api/business-parameters</span>
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;holdPeriodMinutes&quot;</span>: <span class="n">15</span>,
+  <span class="k">&quot;checkInWindowHours&quot;</span>: <span class="n">2</span>,
+  <span class="k">&quot;gracePeriodMinutes&quot;</span>: <span class="n">30</span>,
+  <span class="k">&quot;extraPersonFee&quot;</span>: <span class="n">600</span>
+}</span>
+
+<span class="call"><span class="rq"><span class="m">PUT</span> /api/business-parameters</span>
+{<span class="k">&quot;extraPersonFee&quot;</span>: <span class="n">700</span>}
+→ <span class="ok">200</span>
+{
+  <span class="k">&quot;holdPeriodMinutes&quot;</span>: <span class="n">15</span>,
+  <span class="k">&quot;checkInWindowHours&quot;</span>: <span class="n">2</span>,
+  <span class="k">&quot;gracePeriodMinutes&quot;</span>: <span class="n">30</span>,
+  <span class="k">&quot;extraPersonFee&quot;</span>: <span class="n">700</span>
+}</span>
+
+<span class="call"><span class="rq"><span class="m">GET</span> /api/staff-accounts</span>
+→ <span class="ok">200</span>
+[
+  {<span class="k">&quot;staffAccountId&quot;</span>: <span class="s">&quot;s-1&quot;</span>, <span class="k">&quot;username&quot;</span>: <span class="s">&quot;manager&quot;</span>, <span class="k">&quot;role&quot;</span>: <span class="s">&quot;manager&quot;</span>, <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Active&quot;</span>},
+  {<span class="k">&quot;staffAccountId&quot;</span>: <span class="s">&quot;s-2&quot;</span>, <span class="k">&quot;username&quot;</span>: <span class="s">&quot;door1&quot;</span>, <span class="k">&quot;role&quot;</span>: <span class="s">&quot;front_staff&quot;</span>, <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Active&quot;</span>},
+  <span class="el">…</span>
+]</span>
+
+<span class="call"><span class="rq"><span class="m">POST</span> /api/staff-accounts</span>
+{<span class="k">&quot;username&quot;</span>: <span class="s">&quot;door2&quot;</span>, <span class="k">&quot;role&quot;</span>: <span class="s">&quot;front_staff&quot;</span>, <span class="k">&quot;password&quot;</span>: <span class="el">…</span>}
+→ <span class="ok">200</span>
+{<span class="k">&quot;staffAccountId&quot;</span>: <span class="s">&quot;s-4&quot;</span>, <span class="k">&quot;username&quot;</span>: <span class="s">&quot;door2&quot;</span>, <span class="k">&quot;role&quot;</span>: <span class="s">&quot;front_staff&quot;</span>, <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Active&quot;</span>}
+→ <span class="err">409</span>
+{<span class="k">&quot;error&quot;</span>: <span class="s">&quot;username door2 is taken&quot;</span>}</span>
+
+<span class="call"><span class="rq"><span class="m">DELETE</span> /api/staff-accounts/s-4</span>
+→ <span class="ok">200</span>
+{<span class="k">&quot;staffAccountId&quot;</span>: <span class="s">&quot;s-4&quot;</span>, <span class="k">&quot;username&quot;</span>: <span class="s">&quot;door2&quot;</span>, <span class="k">&quot;role&quot;</span>: <span class="s">&quot;front_staff&quot;</span>, <span class="k">&quot;status&quot;</span>: <span class="s">&quot;Disabled&quot;</span>}</span></pre>
+<!-- /examples -->
 
 </td>
 </tr>

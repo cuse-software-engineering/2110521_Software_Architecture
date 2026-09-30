@@ -8,7 +8,7 @@ figures). That repository is found as $REQ_REPO, else the tree this repository i
 running header are replaced here: they carry this course, group SE 101 and the version.
 
 Usage (from the repository root):
-    python3 assignments/group/tools/build_report.py                          # 2.0 draft 34
+    python3 assignments/group/tools/build_report.py                          # 2.0 draft 35
     python3 assignments/group/tools/build_report.py --changelog              # the separate change-log document
     python3 assignments/group/tools/build_report.py --version "2.0" --status final
 Output: assignments/group/workspace/report/build/seats_project_document_v<version>.pdf (git-ignored)
@@ -174,7 +174,7 @@ def check_use_cases(path: Path) -> None:
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--version", default="2.0 draft 34", help="version label on the cover (default: %(default)s)")
+    ap.add_argument("--version", default="2.0 draft 35", help="version label on the cover (default: %(default)s)")
     ap.add_argument("--date", default="29 September 2026")
     ap.add_argument("--status", default="draft for review by the group")
     ap.add_argument("--changelog", action="store_true", help="build the separate change-log document (project-document/change-log/) instead")
@@ -239,15 +239,20 @@ if __name__ == "__main__":
     build_pdf.CSS += "\ndiv.msg2 table { font-size: 11pt; line-height: 1.3; } div.msg2 th, div.msg2 td { padding: 3pt 4pt; } div.msg2 table th:nth-child(1) { width: 24%; }"
     # draft 31: Appendix D = one page per screen: div.screen (caption + table.screen) with the wireframe (td.shot, beside the rows for a
     # phone, across the top for a desktop window) and one row per concern; pre.call holds the example call
-    build_pdf.CSS += ("\ndiv.screen { break-before: page; page-break-before: always; break-inside: avoid; page-break-inside: avoid; }"
+    build_pdf.CSS += ("\ndiv.screen { break-before: page; page-break-before: always; }"   # a screen starts a page; its example row may follow on the next
                       "\ntable.screen { border: 1pt solid #4b5563; font-size: 11pt; line-height: 1.35; margin: 4pt 0 12pt; }"
                       "\ntable.screen td { border: 0.6pt solid #6b7280; padding: 4pt 7pt; vertical-align: top; }"
                       "\ntable.screen td.k { width: 15%; font-weight: bold; color: #0b2a4a; background: #eef2f7; }"
                       "\ntable.screen td.shot { width: 50%; text-align: center; padding: 6pt; } table.screen td.shot.wide { width: auto; }"
-                      "\ntable.screen td.shot img { max-height: 172mm; max-width: 100%; width: auto; margin: 0 auto; display: block; }"
-                      "\ntable.screen td.shot.wide img { max-height: 112mm; } table.screen td.shot.tall img { max-height: 150mm; }"
-                      "\ntable.screen p { margin: 0 0 3pt; text-align: left; } table.screen tr { page-break-inside: auto; break-inside: auto; }"
-                      "\ntable.screen pre.call { font-family: 'DejaVu Sans Mono', monospace; font-size: 8pt; line-height: 1.35; white-space: pre-wrap; margin: 0; }"
+                      "\ntable.screen td.shot img { max-height: 140mm; max-width: 100%; width: auto; margin: 0 auto; display: block; }"
+                      "\ntable.screen td.shot.wide img { max-height: 106mm; } table.screen td.shot.tall img { max-height: 150mm; }"
+                      "\ntable.screen p { margin: 0 0 3pt; text-align: left; } table.screen tr { page-break-inside: avoid; break-inside: avoid; }"
+                      "\ntable.screen tr:last-child { page-break-inside: auto; break-inside: auto; }"   # the example row may run on to the next page
+                      "\npre.calls { font-family: 'DejaVu Sans Mono', monospace; font-size: 8pt; line-height: 1.3; white-space: pre-wrap; margin: 0; padding: 4pt 6pt; background: #f8fafc; border-left: 2pt solid #cbd5e1; color: #1f2937; orphans: 6; widows: 6; }"
+                      "\ntable.screen td.ex > p { margin: 0 0 3pt; font-weight: bold; color: #0b2a4a; }"
+                      "\npre.calls .rq { font-weight: bold; color: #0b2a4a; } pre.calls .m { color: #7c2d12; } pre.calls .hd { color: #6b7280; } pre.calls .note { color: #6b7280; font-style: italic; font-weight: normal; }"
+                      "\npre.calls .ok { color: #166534; font-weight: bold; } pre.calls .redir { color: #1d4ed8; font-weight: bold; } pre.calls .err { color: #b91c1c; font-weight: bold; }"
+                      "\npre.calls .k { color: #1d4ed8; } pre.calls .s { color: #166534; } pre.calls .n { color: #7e22ce; } pre.calls .b { color: #b45309; } pre.calls .el { color: #6b7280; }"
                       "\n.keep:has(> table.screen) { break-inside: auto; page-break-inside: auto; }")
     # draft 27: Appendix D screen tables: screen | name | use case steps | main elements | routes called
     build_pdf.CSS += ("\ndiv.screens table { font-size: 10.5pt; line-height: 1.3; } div.screens th, div.screens td { padding: 3pt 4pt; }"

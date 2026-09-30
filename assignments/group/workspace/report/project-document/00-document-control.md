@@ -10,7 +10,7 @@
 | Product name | SEATS; Deliverables #1 and #2 called the system Concert Table Reservation System (CTRS) |
 | Course | 2110521 Software Architecture, Semester 1, Academic Year 2026 |
 | Group | SE 101 |
-| Version | 2.0 draft 34, 30 September 2026 |
+| Version | 2.0 draft 35, 30 September 2026 |
 | Status | Draft for review by the group; basis of the updated ADRs and microservice design of Deliverable #3 |
 | Previous version | 1.1: Deliverable #1 (version 1.0) and Deliverable #2 as submitted on 8 September 2026 |
 | Changes | The change log is a separate document of the same version, "SEATS Project Document — Change Log": every change since version 1.1 (CH-nn), how each teacher comment and known issue was resolved, and how to compare the versions |
@@ -57,3 +57,4 @@
 | 2.0 draft 32 | 2026-09-30 | Watayut A. | Chapter 6 links each contract to its file in the code repository; Table 6.11 gains a Status column with the answers of each route. Change CH-63. | owner |
 | 2.0 draft 33 | 2026-09-30 | Watayut A. | Table 6.11 is the public REST API alone; Table 6.12 maps the routes onto the gRPC methods. Change CH-64. | owner |
 | 2.0 draft 34 | 2026-09-30 | Watayut A. | ADR-14 Modular Monolith Mode for Development and Tests. Change CH-65. | owner |
+| 2.0 draft 35 | 2026-09-30 | Watayut A. | Appendix D: the example calls formatted and coloured, fuller for the back-office, generated from tools/api_examples.py; a screen may continue on a second page. Change CH-66. | owner |
