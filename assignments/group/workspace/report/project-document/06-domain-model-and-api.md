@@ -16,12 +16,12 @@ The domain model is the conceptual model of the concert-table business: the thin
 |---|---|---|---|
 | ConcertRound | One concert night at the venue, for which tables are sold in advance | name, date, doors-open time, start time, **booking-open time**, status (Draft, Published; then not yet open, open, sold out, finished, cancelled as seen by the **Customer**) | **concert round** |
 | Artist | The performer of a concert night | name | — |
-| ZoneMap | The plan of the venue used for a round; fixed for that round once booking opens (BRULE-07) | name, image of the venue | **zone map** |
+| ZoneMap | The plan of the venue; one map serves many rounds, and the map of a round is fixed once its booking opens (BRULE-07) | name, image of the venue | **zone map** |
 | Zone | A pricing area of the **zone map**, defined by the **Manager** per map | name | **zone** |
 | Table | A physical, numbered table inside a **zone** | number, capacity, position on the image | table |
 | TableType | The kind of table with its **package**, defined by the **Manager**; the same type may have a different price in each **zone** | name, capacity, package content | **table type**, **package** |
 | PackagePrice | The **package price** of one **table type** in one **zone** for one round (BRULE-08) | price, package content | **package price** |
-| BusinessParameters | The venue's settings that every round opening for booking afterwards uses (FR-38) | **hold period**, **check-in window**, **grace period**, **extra-person fee** | **business parameters** |
+| BusinessParameters | The venue's settings; a round uses the values in force at its **booking-open time** (FR-38) | **hold period**, **check-in window**, **grace period**, **extra-person fee** | **business parameters** |
 | Customer | A person identified by a LINE account who reserves tables (BRULE-12) | LINE user id, name, phone, consent given at | **Customer**, **customer profile** |
 | Booking | The reservation of one table for one round by one customer; the central record of the system | status (BookingStatus, Figure 6.2), **party size**, created at, **hold** expires at, confirmed at | booking, **hold** |
 | Payment | The payment of the **full table fee** for a booking through the **Payment Gateway** | amount, method, gateway reference, paid at, status | **full table fee** |
@@ -32,25 +32,11 @@ The domain model is the conceptual model of the concert-table business: the thin
 
 The invariants of the model are the business rules of Appendix B: a table has at most one active booking (Held, Confirmed or Checked-in) per round (BRULE-03, **first lock wins**); a booking is Confirmed only after the **full table fee** is verified (BRULE-01); a Held booking expires after the **hold period** (BRULE-02); check-in is accepted within the **check-in window** and the **grace period**, after which the booking is a **no-show** (BRULE-04, BRULE-05, BRULE-06); the **zone map** of a round does not change once booking is open (BRULE-07); and a customer is identified by exactly one LINE account (BRULE-12).
 
-*Table 6.2 Associations and invariants*
-
-| Association | Multiplicity | Meaning |
-|---|---|---|
-| ConcertRound – Artist | many to one | a concert night features one artist; an artist may play several nights |
-| ConcertRound – ZoneMap | many to one | each round uses one **zone map**; a map serves many rounds |
-| ZoneMap – Zone – Table | one to many, one to many | a map has **zones**; a **zone** has tables |
-| Zone – TableType, Table – TableType | one to many, many to one | a **zone** offers table types; a table is of one type, which sets its capacity and **package** |
-| ConcertRound – PackagePrice | one to many | a round prices each **table type** in each **zone** |
-| BusinessParameters – ConcertRound | one to many | a round uses the parameters in force at its **booking-open time** |
-| Booking – ConcertRound, Booking – Table, Booking – Customer | many to one each | a booking is for one round, one table and one customer |
-| Booking – Payment, Booking – ETicket | one to zero or one | a booking has a payment once the customer pays, and one **e-ticket** once it is Confirmed |
-| ETicket – CheckIn | one to zero or one | the **e-ticket** of a checked-in booking is redeemed by one check-in |
-
 ![Booking state machine](assets/booking-states.png)
 
 *Figure 6.2 Lifecycle of a booking (UML state machine); Transferred belongs to a later release*
 
-*Table 6.3 Booking states*
+*Table 6.2 Booking states*
 
 | State | Entered when | Leaves when |
 |---|---|---|
@@ -88,7 +74,7 @@ The booking is the source of truth of a table's occupation: at most one active b
 
 The types of the code, the gRPC messages and the REST bodies are all derived from the model, in that order, and a change is made in that order too:
 
-*Table 6.4 From the domain model to the contracts*
+*Table 6.3 From the domain model to the contracts*
 
 | Step | Artifact | What it holds | Example: the booking |
 |---|---|---|---|
@@ -104,7 +90,7 @@ Two consequences of the rule shape the design. First, a gRPC message is owned by
 
 The API Gateway routes every REST request to the owning service by its path prefix, stripping `/api`, and passes the caller's identity and role in the headers `x-user-id` and `x-role`; the roles a route accepts are those of Table 5.2. A service's REST API is JSON over HTTP; its gRPC API is the service of its `.proto` file. Every error is a JSON body `{error, details?}` with 400 (invalid input), 401 (no identity), 403 (role), 404 (not found), 409 (a rule refuses the change, for example the table was just taken) or 501 (not built in this increment); a gRPC error uses INVALID_ARGUMENT, NOT_FOUND and FAILED_PRECONDITION the same way.
 
-*Table 6.5 Concert Round Service, REST (port 4001) and gRPC (port 5001)*
+*Table 6.4 Concert Round Service, REST (port 4001) and gRPC (port 5001)*
 
 | Operation | Method and path | Request and response |
 |---|---|---|
@@ -129,7 +115,7 @@ The API Gateway routes every REST request to the owning service by its path pref
 | GetRoundPricing | gRPC | `{round_id}` → `{prices[], extra_person_fee}` |
 | GetCheckInWindow | gRPC | `{round_id}` → `{opens_at, start_at, grace_ends_at}` |
 
-*Table 6.6 Table Availability Service, gRPC (port 5003) and REST (port 4003)*
+*Table 6.5 Table Availability Service, gRPC (port 5003) and REST (port 4003)*
 
 | Operation | Method | Request and response |
 |---|---|---|
@@ -141,7 +127,7 @@ The API Gateway routes every REST request to the owning service by its path pref
 | markTableBooked(), markTableOccupied() | gRPC MarkTableBooked, MarkTableOccupied | `{round_id, table_number, booking_id}` → TableStatus; HELD → BOOKED, BOOKED → OCCUPIED |
 | removeRoundTableStatus() | gRPC RemoveRoundTableStatus | `{round_id}` → `{removed}`; refused while a table is held or booked |
 
-*Table 6.7 Booking Service, REST (port 4002) and gRPC (port 5002)*
+*Table 6.6 Booking Service, REST (port 4002) and gRPC (port 5002)*
 
 | Operation | Method and path | Request and response |
 |---|---|---|
@@ -157,7 +143,7 @@ The API Gateway routes every REST request to the owning service by its path pref
 | getRoundBookings() | `GET /rounds/{id}/bookings` | → [Booking] for the **live view** |
 | confirmBookingPayment() | gRPC ConfirmBookingPayment | `{booking_id, payment_id, amount}` → Booking (Confirmed) with its **e-ticket**; idempotent |
 
-*Table 6.8 Payment, Notification and Staff Account Services (MVP contracts)*
+*Table 6.7 Payment, Notification and Staff Account Services (MVP contracts)*
 
 | Service | Operation | Method | Request and response |
 |---|---|---|---|
