@@ -7,7 +7,7 @@
 | | |
 |---|---|
 | Document | Change Log of the Project Description, ADRs and Microservice Design of the Seating & Event Availability Tracking System (SEATS) |
-| Applies to | SEATS project document, version 2.0 draft 28, 30 September 2026 (its Section 0.2 lists the drafts) |
+| Applies to | SEATS project document, version 2.0 draft 29, 30 September 2026 (its Section 0.2 lists the drafts) |
 | Group | SE 101 |
 | Contents | Section 1.2: every change since version 1.1, with its type, section, description and source. Section 2.1: how each teacher comment and known issue of Deliverables #1 and #2 was resolved. Section 2.2: how to compare the versions. |
 
@@ -78,6 +78,7 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-57 | Restored | 2.2.1 | UC-01 gets back its Relationships tail, Preconditions, Postconditions, the Basic Flow heading and steps 1 to 11, which CH-50 (draft 21) had cut out by mistake while renumbering the steps; the text is that of draft 20 with the flow names of draft 21 (AF-5, EF-2, the UC-10 flows) and the two included use cases in the Relationships. Found by the owner while mapping screens to steps; the build now refuses a use case whose basic flow does not start at step 1. | owner (KI-16) |
 | CH-58 | Added | D, 6.4 | Appendix D Screens and the Routes They Call: the screens of the Customer Web App (C1 to C9) and of the Back-office Web App (B1 to B7), each with its use case steps and flows, its main elements and the routes of Table 6.9 it calls, and a coverage check in both directions, which shows that the back-office round list needs a route for Draft rounds (KI-17). | owner |
 | CH-59 | Modified | 6 | Chapter 6 regrouped by service so that the implementer of a service finds everything in one place: 6.1 domain model and 6.2 the model-to-contract rule stay global; 6.3 Concert Round, 6.4 Table Availability and 6.5 Booking Service each give the callers of the service, its data model, its gRPC API and the fields of its messages; 6.6 the contracts of the three later services; 6.7 the API Gateway with its conventions, the status mapping and the one routes table (Table 6.11). The tables are renumbered 6.4 to 6.11 and the cross-references in Chapter 5, ADR-12 and Appendix D follow. | owner |
+| CH-60 | Added | D | Low-fidelity wireframes of every screen of Appendix D, Figures D.1 to D.9: the nine customer screens as phone sheets of three, the seven back-office screens as desktop windows (B5 and B6 on the staff phone, B6 in its two states), drawn by tools/draw_screens.py in the same style as the user-interface prototype of the requirements phase, with the placeholder data of the walkthroughs. Reason: the team builds the pages from them. | owner |
 
 # 2 Resolution of Feedback and Known Issues
 
@@ -112,5 +113,5 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 ## 2.2 How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft27 the earlier drafts and doc-v2.0-draft28 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft28 the earlier drafts and doc-v2.0-draft29 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".

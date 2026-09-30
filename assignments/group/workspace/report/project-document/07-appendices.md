@@ -268,7 +268,7 @@ Table C.1 lists the business terms of this document: the words of the venue, its
 
 # Appendix D Screens and the Routes They Call
 
-The two web apps of Table 5.1 are, with the payment webhook, the only callers of the API Gateway. Tables D.1 and D.2 name the screens of each web app, the use case steps and flows that each screen serves, its main elements and the routes of Table 6.11 that it calls; the gRPC method behind each route is in Table 6.11. A screen is defined here by its elements, and its drawing is not part of this document. A route is called when the screen opens or when the named element is used; a polled route is called again every 2 seconds while the screen is open (ADR-09). Section D.3 checks the mapping in the other direction.
+The two web apps of Table 5.1 are, with the payment webhook, the only callers of the API Gateway. Tables D.1 and D.2 name the screens of each web app, the use case steps and flows that each screen serves, its main elements and the routes of Table 6.11 that it calls; the gRPC method behind each route is in Table 6.11. A screen is defined by its elements, and Figures D.1 to D.9 draw each one as a low-fidelity wireframe: grayscale, English placeholder data, the phone screens at the 360 by 640 viewport of the LIFF app and the back-office screens in a desktop window. A route is called when the screen opens or when the named element is used; a polled route is called again every 2 seconds while the screen is open (ADR-09). Section D.3 checks the mapping in the other direction.
 
 ## D.1 Customer Web App
 
@@ -292,6 +292,20 @@ The Customer Web App is the LIFF app inside LINE (ADR-01). Its screens follow th
 
 </div>
 
+Figures D.1 to D.3 draw the nine screens in the order of the flow.
+
+![Screens C1 to C3](assets/screens-c1-c3.png)
+
+*Figure D.1 Customer Web App, screens C1 to C3: Rich Menu and LINE Login, concert rounds, table map*
+
+![Screens C4 to C6](assets/screens-c4-c6.png)
+
+*Figure D.2 Customer Web App, screens C4 to C6: hold and booking summary, customer profile and consent, booking terms*
+
+![Screens C7 to C9](assets/screens-c7-c9.png)
+
+*Figure D.3 Customer Web App, screens C7 to C9: payment, confirmation and e-ticket, My Bookings*
+
 ## D.2 Back-office Web App
 
 The Back-office Web App runs in the browsers and phones of the **Manager**, the **Front Staff** and the **Owner**; every screen but B1 needs a signed-in staff account, and the role decides which screens open (FR-66).
@@ -311,6 +325,32 @@ The Back-office Web App runs in the browsers and phones of the **Manager**, the 
 | B7 | Business parameters and staff accounts | UC-07; UC-08 | **Hold period**, **check-in window**, **grace period**, **extra-person fee**; the staff accounts with role, create, change the role, disable | `GET /business-parameters`, `PUT /business-parameters`; `GET /staff-accounts`, `POST /staff-accounts`, `PUT /staff-accounts/{id}`, `DELETE /staff-accounts/{id}` |
 
 </div>
+
+Figures D.4 to D.9 draw the seven screens; B6 is drawn in its two states.
+
+![Screen B1](assets/screens-b1.png)
+
+*Figure D.4 Back-office Web App, screen B1: sign-in*
+
+![Screen B2](assets/screens-b2.png)
+
+*Figure D.5 Back-office Web App, screen B2: zone map editor, with the table types and a validation result*
+
+![Screen B3](assets/screens-b3.png)
+
+*Figure D.6 Back-office Web App, screen B3: round editor, with the prices per zone and table type and a validation result*
+
+![Screen B4](assets/screens-b4.png)
+
+*Figure D.7 Back-office Web App, screen B4: live view of a round*
+
+![Screens B5 and B6](assets/screens-b5-b6.png)
+
+*Figure D.8 Back-office Web App, screens B5 and B6 on the staff phone: check-in scanner, verification result, entry confirmed*
+
+![Screen B7](assets/screens-b7.png)
+
+*Figure D.9 Back-office Web App, screen B7: business parameters and staff accounts*
 
 ## D.3 Coverage
 

@@ -1,0 +1,122 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Customer Web App C1-C3: LINE Login, concert rounds, table map</title><style>
+  body { margin: 0; background: #fff; font-family: "Noto Sans", "Liberation Sans", Arial, sans-serif; color: #222; }
+  .figure { display: flex; gap: 26px; padding: 16px; background: #fff; align-items: flex-start; width: max-content; }
+  .figure.desk { padding: 8px; }
+  .cell { width: 380px; }
+  .cell.desk { width: 1100px; }
+  .cell .cap { font-size: 15px; font-weight: 600; margin: 0 0 8px 2px; line-height: 1.3; }
+  .cell.ph .cap { min-height: 39px; }
+  .cell .cap span { font-weight: 400; color: #555; font-size: 13.5px; }
+  .cell .cap .nb { white-space: nowrap; }
+  .phone { width: 360px; border: 2px solid #555; border-radius: 22px; overflow: hidden; background: #fff; position: relative; flex: none; }
+  .statusbar { height: 20px; background: #ddd; font-size: 10.5px; display: flex; justify-content: space-between; padding: 0 14px; align-items: center; color: #444; }
+  .browserbar { height: 36px; background: #e8e8e8; border-bottom: 1px solid #bbb; display: flex; align-items: center; gap: 10px; padding: 0 12px; font-size: 12px; color: #444; }
+  .browserbar .x { font-size: 15px; }
+  .browserbar .url { flex: 1; background: #fff; border: 1px solid #bbb; border-radius: 10px; padding: 2px 10px; color: #666; font-size: 11.5px; }
+  .viewport { width: 360px; height: 640px; position: relative; overflow: hidden; background: #fff; }
+  .appbar { height: 48px; display: flex; align-items: center; gap: 10px; padding: 0 14px; border-bottom: 1px solid #bbb; font-weight: 600; font-size: 16px; background: #f5f5f5; box-sizing: border-box; }
+  .appbar .back { font-size: 20px; color: #444; font-weight: 400; }
+  .appbar .right { margin-left: auto; font-weight: 700; font-size: 15px; }
+  .content { padding: 12px 14px; font-size: 14px; line-height: 1.35; }
+  .card { border: 1px solid #999; border-radius: 6px; padding: 10px 12px; margin: 10px 0; background: #fff; }
+  .card.soft { background: #f4f4f4; border-style: dashed; }
+  .btn { display: block; width: 100%; box-sizing: border-box; text-align: center; padding: 11px 0; border-radius: 6px; font-weight: 600; font-size: 15px; margin-top: 10px; border: 1.5px solid #444; }
+  .btn.primary { background: #444; color: #fff; }
+  .btn.secondary { background: #fff; color: #333; }
+  .btn.small { padding: 7px 0; font-size: 13px; margin-top: 8px; }
+  .btn.disabled { border-color: #bbb; color: #999; background: #f3f3f3; }
+  .btn.half { display: inline-block; width: 48.5%; }
+  .input { border: 1.5px solid #999; border-radius: 5px; padding: 9px 10px; color: #777; margin: 4px 0 8px; background: #fff; }
+  .input.err { border-color: #222; border-width: 2px; }
+  .errtext { font-size: 12px; color: #222; font-weight: 600; margin: -4px 0 8px; }
+  .label { font-size: 11.5px; color: #555; text-transform: uppercase; letter-spacing: .3px; margin-top: 8px; }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .muted { color: #666; font-size: 13px; }
+  .tiny { color: #666; font-size: 11.5px; }
+  .b { font-weight: 700; }
+  .badge { display: inline-block; border: 1px solid #666; border-radius: 10px; padding: 1px 9px; font-size: 11px; font-weight: 600; background: #fff; white-space: nowrap; }
+  .badge.fill { background: #666; color: #fff; border-color: #666; }
+  .badge.hatch { background: repeating-linear-gradient(45deg, #bbb 0 3px, #fff 3px 6px); }
+  .badge.dim { color: #777; border-color: #aaa; }
+  .hr { border-top: 1px solid #ccc; margin: 10px 0; }
+  .check { display: inline-block; width: 16px; height: 16px; border: 1.5px solid #555; border-radius: 3px; vertical-align: -3px; margin-right: 8px; text-align: center; font-size: 12px; line-height: 15px; background: #fff; }
+  .check.on { background: #444; color: #fff; }
+  .stepper { display: inline-flex; border: 1.5px solid #555; border-radius: 6px; overflow: hidden; }
+  .stepper span { width: 36px; text-align: center; padding: 5px 0; font-size: 16px; }
+  .stepper .v { width: 44px; border-left: 1.5px solid #555; border-right: 1.5px solid #555; font-weight: 700; background: #f4f4f4; }
+  .toast { position: absolute; left: 14px; right: 14px; bottom: 16px; background: #333; color: #fff; padding: 10px 12px; border-radius: 6px; font-size: 13px; line-height: 1.3; }
+  .modal-bg { position: absolute; inset: 0; background: rgba(0, 0, 0, .38); }
+  .modal { position: absolute; left: 22px; right: 22px; background: #fff; border: 1.5px solid #444; border-radius: 8px; padding: 14px; font-size: 14px; }
+  .qr { width: 140px; height: 140px; margin: 6px auto; background: conic-gradient(#222 25%, #fff 0 50%, #222 0 75%, #fff 0); background-size: 20px 20px; border: 6px solid #fff; outline: 1.5px solid #555; }
+  .qr.small { width: 110px; height: 110px; background-size: 16px 16px; }
+  .placeholder { background: repeating-linear-gradient(-45deg, #eee 0 6px, #f8f8f8 6px 12px); border: 1px dashed #999; color: #666; display: flex; align-items: center; justify-content: center; font-size: 12.5px; text-align: center; box-sizing: border-box; }
+  .mono { font-family: "DejaVu Sans Mono", "Liberation Mono", monospace; letter-spacing: .5px; }
+  .chat { padding: 10px 12px; }
+  .bubble { max-width: 250px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 12px; padding: 8px 11px; font-size: 13px; margin: 8px 0; line-height: 1.3; }
+  .bubble.me { margin-left: auto; background: #dcdcdc; }
+  .richmenu { position: absolute; left: 0; right: 0; bottom: 0; height: 180px; background: #e6e6e6; border-top: 1px solid #aaa; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; }
+  .richmenu div { background: #f4f4f4; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: #333; text-align: center; padding: 4px; }
+  .richmenu div.hi { background: #cfcfcf; outline: 2px solid #333; outline-offset: -3px; }
+  .legend { display: flex; gap: 12px; font-size: 11.5px; margin: 6px 0 2px; flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .sw { display: inline-block; width: 14px; height: 14px; border: 1.2px solid #444; border-radius: 3px; background: #fff; }
+  .sw.hatch { background: repeating-linear-gradient(45deg, #888 0 2px, #fff 2px 5px); }
+  .sw.fill { background: #777; }
+  .sw.dark { background: #333; }
+  .result { border: 2.5px solid #222; border-radius: 8px; padding: 10px 12px; text-align: center; margin: 8px 0; }
+  .result .big { font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+  .kv { display: grid; grid-template-columns: 112px 1fr; gap: 3px 8px; font-size: 13.5px; margin: 6px 0; }
+  .kv .k { color: #666; }
+  .banner { padding: 9px 11px; border: 1.5px solid #444; border-radius: 6px; background: repeating-linear-gradient(-45deg, #f3f3f3 0 8px, #fff 8px 16px); font-size: 13px; margin: 8px 0; }
+  .viewfinder { width: 300px; height: 230px; margin: 14px auto 10px; position: relative; background: repeating-linear-gradient(-45deg, #e9e9e9 0 6px, #f6f6f6 6px 12px); border: 1px solid #999; }
+  .viewfinder .frame { position: absolute; left: 60px; top: 30px; width: 170px; height: 170px; border: 2.5px dashed #333; }
+  .viewfinder .hint { position: absolute; left: 0; right: 0; bottom: 6px; text-align: center; font-size: 12px; color: #444; }
+
+  /* desktop browser window of the back-office */
+  .win { width: 1100px; height: 680px; border: 2px solid #555; border-radius: 8px; overflow: hidden; background: #fff; display: flex; flex-direction: column; box-sizing: border-box; }
+  .win .browserbar { flex: none; }
+  .topbar { flex: none; height: 44px; background: #3a3a3a; color: #fff; display: flex; align-items: center; padding: 0 16px; font-weight: 700; font-size: 16px; gap: 12px; }
+  .topbar .who { margin-left: auto; font-weight: 400; font-size: 12.5px; color: #ddd; }
+  .wbody { display: flex; flex: 1; min-height: 0; }
+  .nav { width: 180px; flex: none; background: #f0f0f0; border-right: 1px solid #bbb; padding: 8px 0; font-size: 14px; box-sizing: border-box; }
+  .nav div { padding: 9px 16px; color: #333; }
+  .nav div.cur { background: #d4d4d4; font-weight: 700; border-left: 4px solid #333; padding-left: 12px; }
+  .nav .sep { border-top: 1px solid #bbb; margin: 8px 12px; padding: 0; }
+  .main { flex: 1; min-width: 0; padding: 14px 16px; font-size: 13.5px; line-height: 1.35; overflow: hidden; box-sizing: border-box; }
+  .main h1 { font-size: 17px; margin: 0 0 10px; }
+  .cols { display: flex; gap: 12px; align-items: flex-start; }
+  .panel { border: 1px solid #999; border-radius: 6px; padding: 8px 12px; background: #fff; box-sizing: border-box; }
+  .panel + .panel { margin-top: 8px; }
+  .main .tiny { font-size: 12px; }
+  .tbl.small { font-size: 12px; }
+  .pt { font-weight: 700; font-size: 13.5px; margin: 0 0 6px; }
+  .frow { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  .frow .fl { width: 92px; flex: none; color: #555; font-size: 12px; }
+  .frow .fin { flex: 1; }
+  .frow .unit { color: #666; font-size: 12px; flex: none; }
+  .fin { min-width: 0; border: 1.5px solid #999; border-radius: 5px; padding: 4px 8px; font-size: 13px; background: #fff; white-space: nowrap; overflow: hidden; box-sizing: border-box; }
+  .fin.sel { display: flex; justify-content: space-between; gap: 6px; }
+  .fin.err { border-color: #222; border-width: 2px; }
+  .tbl { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+  .tbl th, .tbl td { border: 1px solid #bbb; padding: 4px 7px; text-align: left; vertical-align: top; }
+  .tbl th { background: #eee; font-weight: 700; font-size: 11.5px; }
+  .tbl tr.sel td { background: #e2e2e2; font-weight: 600; }
+  .tbl td.num, .tbl th.num { text-align: right; }
+  .tbl td.err { border: 2px solid #222; }
+  .chip { display: inline-block; border: 1px solid #666; border-radius: 12px; padding: 1px 9px; font-size: 12px; margin: 2px 4px 2px 0; background: #fff; }
+  .chip.add { border-style: dashed; color: #555; }
+  .btnrow { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
+  .btn.inline { display: inline-block; width: auto; padding: 7px 14px; margin: 0; font-size: 13px; }
+  .list .it { border: 1px solid #aaa; border-radius: 6px; padding: 7px 10px; margin: 6px 0; font-size: 13px; line-height: 1.3; }
+  .list .it .badge { margin-top: 4px; }
+  .list .hd { font-weight: 700; font-size: 13.5px; margin-bottom: 2px; }
+  .list .it.cur { background: #e2e2e2; border-color: #333; border-width: 2px; }
+  .vbox { border: 2px solid #222; border-radius: 6px; padding: 8px 12px; font-size: 12.5px; background: #fff; }
+  .vbox.ok { border-style: dashed; }
+  .vbox .t { font-weight: 700; margin-bottom: 3px; }
+  .vbox ul { margin: 0; padding-left: 18px; }
+  .counts { display: flex; gap: 10px; margin: 8px 0 0; font-size: 13px; }
+  .counts span { border: 1px solid #999; border-radius: 6px; padding: 4px 10px; background: #f7f7f7; white-space: nowrap; }
+  .signin { width: 360px; margin: 110px auto 0; border: 1px solid #999; border-radius: 8px; padding: 22px 26px; box-sizing: border-box; }
+  .signin .title { font-size: 20px; font-weight: 700; margin-bottom: 2px; }
+</style></head><body><div class="figure"><div class="cell ph"><div class="cap">C1 &middot; Rich Menu and LINE Login <span>&middot; <span class="nb">UC-01 steps 1&ndash;2</span>, <span class="nb">EF-2</span></span></div><div class="phone"><div class="statusbar"><span>19:02</span><span>LTE 78%</span></div><div class="viewport"><div class="appbar"><span class="back">&#8249;</span>La Loy Bar <span class="tiny" style="margin-left:6px">Official Account</span></div><div class="chat"><div class="bubble">Booking for <b>Sat 26 Sep 2026 &middot; 20:00</b> (Artist name) is open now. Tap <b>Reserve a table</b> below.</div><div class="bubble me">Hi, is a 4-person table still free?</div><div class="bubble">Please use the menu below: the map shows what is free right now and your table is held while you pay.</div></div><div class="richmenu"><div class="hi">Reserve a table</div><div>My bookings</div><div>Contact us</div><div>Booking terms</div></div><div class="modal-bg"></div><div class="modal" style="top:150px"><div class="b" style="font-size:15px">LINE Login</div><div class="muted" style="margin:4px 0 8px">SEATS Booking (La Loy Bar) wants to use:</div><div>&#8226; your LINE profile name<br>&#8226; your LINE user ID</div><div class="tiny" style="margin-top:6px">No separate registration: one LINE account is one customer.</div><div class="btn primary small">Allow</div><div class="btn secondary small">Cancel</div></div></div></div></div><div class="cell ph"><div class="cap">C2 &middot; Concert rounds <span>&middot; <span class="nb">UC-01 steps 3&ndash;4</span>, <span class="nb">AF-1</span>, <span class="nb">AF-2</span></span></div><div class="phone"><div class="statusbar"><span>19:02</span><span>LTE 78%</span></div><div class="browserbar"><span class="x">&#10005;</span><span class="url">liff.line.me/seats &middot; La Loy Bar</span><span>&#8942;</span></div><div class="viewport"><div class="appbar">Concert rounds</div><div class="content"><div class="card"><div class="row"><span class="b">Sat 26 Sep 2026 &middot; 20:00</span><span class="badge">Open</span></div><div>Artist name</div><div class="muted">Booking opened Fri 18 Sep 18:00</div><div class="btn primary small">Select this round</div></div><div class="card"><div class="row"><span class="b">Sat 3 Oct 2026 &middot; 20:00</span><span class="badge hatch">Not yet open</span></div><div>Artist name</div><div class="muted">Booking opens Fri 25 Sep 18:00</div><div class="btn small disabled">Opens in 9 days</div></div><div class="card"><div class="row"><span class="b">Fri 25 Sep 2026 &middot; 20:00</span><span class="badge fill">Sold out</span></div><div>Artist name</div><div class="muted">All tables booked</div><div class="btn small disabled">Sold out</div></div><div class="tiny" style="margin-top:8px">Rounds are listed by date. Prices and the zone map are shown after you select a round.</div></div></div></div></div><div class="cell ph"><div class="cap">C3 &middot; Table map <span>&middot; <span class="nb">UC-01 steps 5&ndash;8</span>, <span class="nb">AF-3</span></span></div><div class="phone"><div class="statusbar"><span>19:02</span><span>LTE 78%</span></div><div class="browserbar"><span class="x">&#10005;</span><span class="url">liff.line.me/seats &middot; La Loy Bar</span><span>&#8942;</span></div><div class="viewport"><div class="appbar"><span class="back">&#8249;</span>Sat 26 Sep &middot; 20:00 &middot; Artist name</div><div class="content" style="padding-top:8px"><div class="row"><span class="muted">Zone map &middot; refreshed live</span><span class="tiny">Tap an available table</span></div><svg xmlns="http://www.w3.org/2000/svg" width="332" height="300" viewBox="0 0 332 300" style="display:block"><defs><pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6"><path d="M0 6 L6 0 M-1 1 L1 -1 M5 7 L7 5" stroke="#777" stroke-width="1.4"/></pattern><pattern id="img" patternUnits="userSpaceOnUse" width="12" height="12" patternTransform="rotate(-45)"><rect width="12" height="12" fill="#f5f5f5"/><rect width="6" height="12" fill="#ebebeb"/></pattern></defs><rect x="0" y="0" width="332" height="300" fill="#fff"/><rect x="96" y="4" width="140" height="20" fill="#ddd" stroke="#666"/><text x="166" y="18" text-anchor="middle" font-size="11" font-weight="700" fill="#333">STAGE</text><text x="8" y="41" font-size="10.5" font-weight="700" fill="#333">ZONE A</text><circle cx="38.0" cy="64" r="12" fill="#777" stroke="#444" stroke-width="1.2"/><text x="38.0" y="68" text-anchor="middle" font-size="8.5" font-weight="600" fill="#fff">A1</text><circle cx="102.0" cy="64" r="12" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="102.0" y="68" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">A2</text><circle cx="166.0" cy="64" r="12" fill="#777" stroke="#444" stroke-width="1.2"/><text x="166.0" y="68" text-anchor="middle" font-size="8.5" font-weight="600" fill="#fff">A3</text><rect x="218.0" y="52" width="24" height="24" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="230.0" y="68" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">A4</text><rect x="282.0" y="52" width="24" height="24" fill="#777" stroke="#444" stroke-width="1.2"/><text x="294.0" y="68" text-anchor="middle" font-size="8.5" font-weight="600" fill="#fff">A5</text><rect x="14.0" y="93" width="48" height="22" rx="4" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="38.0" y="108" text-anchor="middle" font-size="9" font-weight="600" fill="#222">A6</text><rect x="78.0" y="93" width="48" height="22" rx="4" fill="url(#hatch)" stroke="#444" stroke-width="1.2"/><text x="102.0" y="108" text-anchor="middle" font-size="9" font-weight="600" fill="#222">A7</text><circle cx="166.0" cy="104" r="12" fill="#777" stroke="#444" stroke-width="1.2"/><text x="166.0" y="108" text-anchor="middle" font-size="8.5" font-weight="600" fill="#fff">A8</text><circle cx="230.0" cy="104" r="12" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="230.0" y="108" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">A9</text><circle cx="294.0" cy="104" r="12" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="294.0" y="108" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">A10</text><rect x="26.0" y="132" width="24" height="24" fill="#777" stroke="#444" stroke-width="1.2"/><text x="38.0" y="148" text-anchor="middle" font-size="8.5" font-weight="600" fill="#fff">A11</text><rect x="90.0" y="132" width="24" height="24" fill="#fff" stroke="#444" stroke-width="2.6"/><text x="102.0" y="148" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">A12</text><circle cx="102.0" cy="144" r="19" fill="none" stroke="#111" stroke-width="1.5" stroke-dasharray="3 3"/><rect x="154.0" y="132" width="24" height="24" fill="#777" stroke="#444" stroke-width="1.2"/><text x="166.0" y="148" text-anchor="middle" font-size="8.5" font-weight="600" fill="#fff">A13</text><circle cx="230.0" cy="144" r="12" fill="url(#hatch)" stroke="#444" stroke-width="1.2"/><text x="230.0" y="148" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">A14</text><circle cx="294.0" cy="144" r="12" fill="#777" stroke="#444" stroke-width="1.2"/><text x="294.0" y="148" text-anchor="middle" font-size="8.5" font-weight="600" fill="#fff">A15</text><text x="8" y="175" font-size="10.5" font-weight="700" fill="#333">ZONE B</text><circle cx="38.0" cy="198" r="12" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="38.0" y="202" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">B1</text><circle cx="102.0" cy="198" r="12" fill="#777" stroke="#444" stroke-width="1.2"/><text x="102.0" y="202" text-anchor="middle" font-size="8.5" font-weight="600" fill="#fff">B2</text><rect x="154.0" y="186" width="24" height="24" fill="url(#hatch)" stroke="#444" stroke-width="1.2"/><text x="166.0" y="202" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">B3</text><rect x="218.0" y="186" width="24" height="24" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="230.0" y="202" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">B4</text><rect x="270.0" y="187" width="48" height="22" rx="4" fill="#777" stroke="#444" stroke-width="1.2"/><text x="294.0" y="202" text-anchor="middle" font-size="9" font-weight="600" fill="#fff">B5</text><circle cx="38.0" cy="238" r="12" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="38.0" y="242" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">B6</text><circle cx="102.0" cy="238" r="12" fill="#777" stroke="#444" stroke-width="1.2"/><text x="102.0" y="242" text-anchor="middle" font-size="8.5" font-weight="600" fill="#fff">B7</text><circle cx="166.0" cy="238" r="12" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="166.0" y="242" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">B8</text><rect x="218.0" y="226" width="24" height="24" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="230.0" y="242" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">B9</text><rect x="282.0" y="226" width="24" height="24" fill="#777" stroke="#444" stroke-width="1.2"/><text x="294.0" y="242" text-anchor="middle" font-size="8.5" font-weight="600" fill="#fff">B10</text><polygon points="32.7,265 45.7,288 19.7,288" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="32.7" y="285" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">B11</text><polygon points="86.0,265 99.0,288 73.0,288" fill="#777" stroke="#444" stroke-width="1.2"/><text x="86.0" y="285" text-anchor="middle" font-size="8.5" font-weight="600" fill="#fff">B12</text><polygon points="139.3,265 152.3,288 126.3,288" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="139.3" y="285" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">B13</text><polygon points="192.7,265 205.7,288 179.7,288" fill="#777" stroke="#444" stroke-width="1.2"/><text x="192.7" y="285" text-anchor="middle" font-size="8.5" font-weight="600" fill="#fff">B14</text><polygon points="246.0,265 259.0,288 233.0,288" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="246.0" y="285" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">B15</text><polygon points="299.3,265 312.3,288 286.3,288" fill="#fff" stroke="#444" stroke-width="1.2"/><text x="299.3" y="285" text-anchor="middle" font-size="8.5" font-weight="600" fill="#222">B16</text></svg><div class="legend"><span><i class="sw"></i>Available</span><span><i class="sw hatch"></i>Held (15 min)</span><span><i class="sw fill"></i>Booked</span></div><div class="tiny">Zone A: &#9675; 2 p 2,400 &middot; &#9633; 4 p 4,800 &middot; sofa 6 p 7,200 THB<br>Zone B: &#9675; 2,000 &middot; &#9633; 4,000 &middot; sofa 6,000 &middot; &#9651; 1 p 700 THB<br>Extra person +600 THB each (added with the party size)</div></div><div class="toast">Table A7 was just taken by another customer. The map has been refreshed.</div></div></div></div></div></body></html>
