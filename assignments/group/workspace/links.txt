@@ -1,0 +1,31 @@
+SEATS — links (as of 30 September 2026)
+
+REPOSITORIES
+- Software Architecture course (project document, tools, the code as a submodule at assignments/group/code)
+  https://github.com/cuse-software-engineering/2110521_Software_Architecture
+  document version 2.0 = tag doc-v2.0 (drafts: doc-v2.0-draft1 .. doc-v2.0-draft35; Deliverables #1/#2 as submitted: doc-v1.1-submitted)
+  clone with: git clone --recurse-submodules <url>   (or: git submodule update --init after cloning)
+- SEATS implementation (the team works here: PRs, tests, deployments)
+  https://github.com/cuse-software-engineering/SEATS
+- Requirements Engineering course (the earlier project; its PDF builder is reused by the document tools)
+  https://github.com/cuse-software-engineering/2110628_Requirement_Engineering
+  final hand-in = tag group_project_final
+
+DEPLOYMENTS (demo; the microservices themselves run with docker compose)
+- Backend, the monolith on Render (free plan)
+  https://seats-monolith.onrender.com          health: https://seats-monolith.onrender.com/health
+  sleeps after 15 min without traffic and wakes up EMPTY; before a demo, from the SEATS repo:
+      GATEWAY=https://seats-monolith.onrender.com npm run smoke
+- Customer Web App on Vercel
+  https://seats-customer.vercel.app            (type any LINE user id on the first screen)
+- Back-office Web App on Vercel
+  https://seats-back-office.vercel.app         (sign in: manager / manager; also door1 / door1, owner / owner)
+  Both apps rewrite /api and /health to the Render backend (frontend/*/vercel.json); every push to main redeploys all three.
+
+DOCUMENTS IN THE SEATS REPO
+- README.md            what the system is, how to run, test and deploy
+- docs/team.md         who owns what, how we work
+- docs/contracts.md    the route table with the gRPC method behind each route
+- docs/openapi.yaml    the public REST API (OpenAPI)
+- docs/data-model.md   the data model per service
+- docs/test-traceability.md   every MVP use case scenario and the test that covers it
