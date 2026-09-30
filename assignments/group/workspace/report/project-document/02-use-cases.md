@@ -155,7 +155,7 @@ Business / Transactional
 #### Basic Flow
 
 {Open the Customer Frontend}
-1. The use case begins when the **Customer** opens the **Rich Menu** of the **LINE Official Account** and chooses "Reserve a table".
+1. The use case begins when the **Customer** opens the Rich Menu of the **LINE Official Account** and chooses "Reserve a table".
 2. System signs the **Customer** in through LINE Login and uses the LINE user id as the customer identity. **{LINE Login Result}**
 
 {Browse Rounds}
@@ -183,7 +183,7 @@ Business / Transactional
 14. **Customer** accepts the terms.
 
 {Pay the Full Table Fee}
-15. System creates a payment request for the **full table fee** with the **Payment Gateway** and opens the gateway's **hosted checkout** inside the web app.
+15. System creates a payment request for the **full table fee** with the **Payment Gateway** and opens the gateway's hosted checkout inside the web app.
 16. **Customer** chooses a payment method (PromptPay QR, card, mobile banking, e-wallet); in the MVP the simulated gateway offers a successful and a declined payment.
 17. **Customer** submits the payment through the chosen method before the **hold** expires.
 
@@ -315,7 +315,7 @@ At {Payment Completed}, if no payment result has arrived within 60 seconds after
 
 At {LINE Login Result}, if LINE Login fails or the **Customer** cancels it,
 
-1. System explains that reservation requires a LINE account and returns to the **Rich Menu**.
+1. System explains that reservation requires a LINE account and returns to the Rich Menu.
 2. The use case ends.
 
 ##### EF-6 Confirmation Message Cannot Be Sent

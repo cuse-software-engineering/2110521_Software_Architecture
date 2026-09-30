@@ -80,7 +80,7 @@ Tables A.2 to A.6 are the evidence behind Table A.1: each row follows one step, 
 
 | Steps | Invoked by | Operation | Collaborations | Data stored | Requirements |
 |---|---|---|---|---|---|
-| 1–2, EF-5 | **Customer** | API Gateway: check the LINE ID token that LINE Login gave the **LIFF** app | LINE Login Adapter, which asks the **LINE Platform** | — | FR-01, FR-02 |
+| 1–2, EF-5 | **Customer** | API Gateway: check the LINE ID token that LINE Login gave the LIFF app | LINE Login Adapter, which asks the **LINE Platform** | — | FR-01, FR-02 |
 | 3, AF-2 | **Customer** | Concert Round Service: getUpcomingRounds(), with the status of each round | Table Availability Service: countAvailableTables(), for the sold-out status | — | FR-03 |
 | 4, AF-1 | **Customer** | Concert Round Service: getRound() | — | — | FR-03, FR-04 |
 | 5, AF-2 | **Customer** | Concert Round Service: getRoundTables()<br>Table Availability Service: getRoundTableStatus(), polled every 2 seconds | — | — | FR-05, FR-06 |
@@ -94,7 +94,7 @@ Tables A.2 to A.6 are the evidence behind Table A.1: each row follows one step, 
 | 14 | **Customer** | Booking Service: acceptBookingTerms() | — | Booking DB: **booking terms** accepted | FR-12 |
 | 15 | **Customer** | Booking Service: startPayment() | Payment Service: createPaymentRequest() | Booking DB: payment started | FR-13 |
 | 15 | Booking Service | Payment Service: createPaymentRequest() | Payment Gateway Adapter: createCheckoutSession() | Payment DB: payment request | FR-13 |
-| 16–17 | **Customer** | No operation of SEATS: the **Customer** pays in the **hosted checkout** of the **Payment Gateway**, simulated in the MVP (ADR-11) | — | — | FR-13 |
+| 16–17 | **Customer** | No operation of SEATS: the **Customer** pays in the hosted checkout of the **Payment Gateway**, simulated in the MVP (ADR-11) | — | — | FR-13 |
 | 18, AF-5 | **Payment Gateway** | Payment Service: receivePaymentResult(), the signed webhook routed by the API Gateway; a duplicate result is ignored | Payment Gateway Adapter: verifyWebhookSignature()<br>Booking Service: confirmBookingPayment(), when paid<br>Notification Service: sendPaymentFailedNotice(), when declined | Payment DB: payment result, processed once | FR-14, FR-16, FR-21 |
 | 19–20 | Payment Service | Booking Service: confirmBookingPayment(), which also issues the **e-ticket** | Table Availability Service: markTableBooked() | Booking DB: payment recorded, booking Confirmed, **e-ticket** with the signed **booking reference**<br>Table Status DB: table booked | FR-16, FR-19 |
 | 21, AF-5 | **Customer** | Payment Service: getPaymentStatus()<br>Booking Service: getBooking(), getETicket() | — | — | FR-14, FR-19 |

@@ -22,7 +22,7 @@ The services follow the bounded contexts of the domain, and each is named by the
 
 Table Availability and Booking stay two services although every booking state change has a matching table status change: the table status is also written by the Concert Round Service when a round is published, it is read by every open map, and its consistency with the booking is handled by ADR-08.
 
-The architecture diagram of Section 5.4 (Figure 5.1) is drawn in the ports-and-adapters style: every service is a hexagon whose business logic is reached only through the ports on its edges, a REST tab for the calls routed by the API Gateway and a gRPC tab for the calls of other services, and that reaches the external systems only through adapters. The API Gateway carries the REST tab that the Frontend calls: it is the only API that the web apps use. An arrow A → B means A invokes B; response paths are not drawn. The three dashed boundaries are the parts of Section 5.2. The **hosted checkout** page of the **Payment Gateway** is opened by the customer's browser inside the web app and is therefore not shown as a service call. The web apps read the table status by polling through the API Gateway (ADR-09), and the **Payment Gateway** is the simulated gateway of ADR-11.
+The architecture diagram of Section 5.4 (Figure 5.1) is drawn in the ports-and-adapters style: every service is a hexagon whose business logic is reached only through the ports on its edges, a REST tab for the calls routed by the API Gateway and a gRPC tab for the calls of other services, and that reaches the external systems only through adapters. The API Gateway carries the REST tab that the Frontend calls: it is the only API that the web apps use. An arrow A → B means A invokes B; response paths are not drawn. The three dashed boundaries are the parts of Section 5.2. The hosted checkout page of the **Payment Gateway** is opened by the customer's browser inside the web app and is therefore not shown as a service call. The web apps read the table status by polling through the API Gateway (ADR-09), and the **Payment Gateway** is the simulated gateway of ADR-11.
 
 ## 5.2 Parts of the System and Communication
 
@@ -32,7 +32,7 @@ SEATS is divided into three parts: the Frontend, the Backend and the External sy
 
 | Part | Component | Responsibility | API it offers | Data it owns |
 |---|---|---|---|---|
-| **Frontend** | Customer Web App | The **LIFF** app inside LINE: **concert rounds**, the **zone map**, the **hold**, the **customer profile**, the **booking terms**, the **hosted checkout** and My Bookings (UC-01) | None; it calls the API Gateway by REST | None |
+| **Frontend** | Customer Web App | The LIFF app inside LINE: **concert rounds**, the **zone map**, the **hold**, the **customer profile**, the **booking terms**, the hosted checkout and My Bookings (UC-01) | None; it calls the API Gateway by REST | None |
 | | Back-office Web App | **Zone maps**, **concert rounds** and **business parameters** for the **Manager**, the **live view** for the **Manager** and the **Owner**, the QR scan and check-in for the **Front Staff** (UC-02 to UC-04) | None; it calls the API Gateway by REST | None |
 | **Backend** | API Gateway | The only public entry: authenticates the caller (the LINE ID token through the LINE Login Adapter, the staff session token), checks the role of the route (FR-66) and routes the request to the service that owns the operation | REST, for the Frontend and for the payment webhook | None |
 | | Concert Round Service | The venue and events context: **zone maps**, **table types**, **concert rounds**, **package prices** and **business parameters**; stores the image of the venue through the Media Storage Adapter | REST (**back-office** and customer reads), gRPC (reads for the Booking Service) | Round DB |
@@ -41,8 +41,8 @@ SEATS is divided into three parts: the Frontend, the Backend and the External sy
 | | Payment Service | Payment requests and results, reached through the Payment Gateway Adapter (ADR-11) | REST (the webhook and the payment status), gRPC (payment request) | Payment DB |
 | | Notification Service | LINE messages to the **Customer** through the LINE Messaging Adapter (ADR-10); its own job retries failed messages | gRPC | Notification DB |
 | | Staff Account Service | **Back-office** accounts, roles and sign-in (ADR-07) | REST | Staff Account DB |
-| **External systems** | **LINE Platform** | LINE Login and **LIFF** for the customer's identity, the Messaging API for push messages | The provider's API | — |
-| | **Payment Gateway** | The **hosted checkout**, the signed payment results and, from Increment 2, refunds; simulated in the MVP | The provider's API and its webhook | — |
+| **External systems** | **LINE Platform** | LINE Login and LIFF for the customer's identity, the Messaging API for push messages | The provider's API | — |
+| | **Payment Gateway** | The hosted checkout, the signed payment results and, from Increment 2, refunds; simulated in the MVP | The provider's API and its webhook | — |
 | | Cloud Object Storage | The image of the venue behind each **zone map** | The provider's API | — |
 
 *Table 5.2 Communication between and inside the parts (ADR-12)*
@@ -55,7 +55,7 @@ SEATS is divided into three parts: the Frontend, the Backend and the External sy
 | Service | Service | gRPC: Protocol Buffers over HTTP/2 | Every collaboration between services in Table 5.3 |
 | Service or API Gateway | Its adapters | Call inside the same process | Reaching an external system |
 | Adapter | External system | The provider's HTTPS API | LINE ID token check, LINE push messages, checkout and payment results, storing the image of the venue |
-| Frontend | External systems | The provider's own SDK or page | LINE Login in the **LIFF** app; the **hosted checkout** of the **Payment Gateway** |
+| Frontend | External systems | The provider's own SDK or page | LINE Login in the LIFF app; the hosted checkout of the **Payment Gateway** |
 | Service | Its database | Database driver (MongoDB, ADR-06) | A service reads and writes only its own database |
 
 Every service that the web apps use offers a REST API to the API Gateway, and every service that another service calls offers a gRPC API: the Notification Service has only a gRPC API and the Staff Account Service only a REST API. The API Gateway authenticates every request before routing it: a **Customer** by the LINE ID token, checked through the LINE Login Adapter, and a member of staff by the session token issued by the Staff Account Service (ADR-07), whose role decides which operations the request may reach (FR-66). The payment webhook is the exception: the gateway passes it on, and the Payment Service verifies its signature (NFR-38).

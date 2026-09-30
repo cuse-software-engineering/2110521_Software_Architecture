@@ -44,7 +44,7 @@ Target users primarily interact via mobile phones while coordinating nightlife p
 <td class="k">Decision</td>
 <td markdown="block">
 
-Use Next.js (React) bundled as a LINE Front-end Framework (**LIFF**) Web App, with fallback access via standard mobile browsers.
+Use Next.js (React) bundled as a LINE Front-end Framework (LIFF) Web App, with fallback access via standard mobile browsers.
 
 </td>
 </tr>
@@ -62,7 +62,7 @@ Accepted
 
 - Eliminates app install friction; customers book directly inside the LINE app.
 - Allows seamless integration with LINE Login and LINE Messaging API.
-- Requires compliance with **LIFF** webview constraints and in-app browser caching behaviors.
+- Requires compliance with LIFF webview constraints and in-app browser caching behaviors.
 
 </td>
 </tr>
@@ -134,7 +134,7 @@ Backend Language & Framework
 <td class="k">Context</td>
 <td markdown="block">
 
-The system requires rapid development cycles while supporting RESTful APIs, real-time bi-directional communication for **zone map** updates, seamless integration with the LINE Messaging API/**LIFF** SDK, and scheduled background tasks to automatically release expired table reservations past the cutoff window. Options considered include Go, Java, and Node.js (JavaScript). Given that the frontend is built using Next.js/React, adopting a unified language stack across client and server significantly streamlines development.
+The system requires rapid development cycles while supporting RESTful APIs, real-time bi-directional communication for **zone map** updates, seamless integration with the LINE Messaging API/LIFF SDK, and scheduled background tasks to automatically release expired table reservations past the cutoff window. Options considered include Go, Java, and Node.js (JavaScript). Given that the frontend is built using Next.js/React, adopting a unified language stack across client and server significantly streamlines development.
 
 </td>
 </tr>
@@ -481,7 +481,7 @@ Accepted on 2026-09-29. Supersedes the real-time part of ADR-02.
 <td class="k">Context</td>
 <td markdown="block">
 
-ADR-04 chose LINE Messaging API push messages supplemented by Web Push, mainly for reminders before cutoff times with "On My Way" and "Postpone 30 mins" buttons. The requirements now use the **check-in window** and the **grace period** as the arrival rule; reminders and the grace extension are planned for a later release and are out of scope (Section 3.1.7). The customer web app runs inside LINE's in-app browser (**LIFF**), which does not support the Push API that Web Push needs, and the system is LINE-only. The messages in scope are the booking confirmation with the **e-ticket**, the hold-expired and payment-failed notices and, from Increment 2, the refund and slip-decision notices (FR-20, FR-21), each retried 3 times within 5 minutes (FR-22) and sent within the Official Account's monthly push quota.
+ADR-04 chose LINE Messaging API push messages supplemented by Web Push, mainly for reminders before cutoff times with "On My Way" and "Postpone 30 mins" buttons. The requirements now use the **check-in window** and the **grace period** as the arrival rule; reminders and the grace extension are planned for a later release and are out of scope (Section 3.1.7). The customer web app runs inside LINE's in-app browser (LIFF), which does not support the Push API that Web Push needs, and the system is LINE-only. The messages in scope are the booking confirmation with the **e-ticket**, the hold-expired and payment-failed notices and, from Increment 2, the refund and slip-decision notices (FR-20, FR-21), each retried 3 times within 5 minutes (FR-22) and sent within the Official Account's monthly push quota.
 
 </td>
 </tr>
@@ -539,7 +539,7 @@ UC-01 pays the **full table fee** through a payment gateway (BRULE-01, FR-13, FR
 <td class="k">Decision</td>
 <td markdown="block">
 
-The Payment Service reaches a gateway only through the Payment Gateway Adapter, the port of Section 5 (createCheckoutSession(), verifyWebhookSignature(), queryPaymentStatus(), refundPayment()). In the MVP the adapter is backed by a simulated gateway: a small checkout page, opened inside the web app like a **hosted checkout**, where the tester chooses to pay or to decline, after which it sends a signed webhook to the API Gateway as a real gateway would. In Increment 2 a Beam Checkout adapter replaces it, first against Beam's sandbox, together with status polling, automatic refund of a late payment and the **degraded mode**.
+The Payment Service reaches a gateway only through the Payment Gateway Adapter, the port of Section 5 (createCheckoutSession(), verifyWebhookSignature(), queryPaymentStatus(), refundPayment()). In the MVP the adapter is backed by a simulated gateway: a small checkout page, opened inside the web app like a hosted checkout, where the tester chooses to pay or to decline, after which it sends a signed webhook to the API Gateway as a real gateway would. In Increment 2 a Beam Checkout adapter replaces it, first against Beam's sandbox, together with status polling, automatic refund of a late payment and the **degraded mode**.
 
 </td>
 </tr>
@@ -583,7 +583,7 @@ Communication: REST through the API Gateway, gRPC between Services
 
 SEATS has three parts (Section 5.2): the Frontend in the users' browsers, the Backend on the servers of SEATS, and the External systems. Version 1 of the architecture (Deliverable #2) used REST for every call, as the Deliverable #2 brief allowed for a first version; the brief asks the later versions to choose REST, gRPC or asynchronous messaging for each part according to its work, and the minimum requirements of the course project include at least one REST service and one gRPC service. Three kinds of call cross or stay inside the parts:
 
-- The web apps run in LINE's in-app browser (**LIFF**, ADR-01) and in ordinary browsers, which speak HTTP and JSON; the **Payment Gateway** reports payment results by an HTTPS webhook.
+- The web apps run in LINE's in-app browser (LIFF, ADR-01) and in ordinary browsers, which speak HTTP and JSON; the **Payment Gateway** reports payment results by an HTTPS webhook.
 - Inside the Backend the services call each other on the busiest paths: holding a table calls the Concert Round Service and the Table Availability Service within one customer request, which must answer within 2 seconds at the 95th percentile (NFR-04) at 5 hold requests per second (NFR-01).
 - The backend is written in JavaScript (ADR-03), which is dynamically typed, so nothing checks that a caller and a service agree on the shape of their messages.
 
@@ -616,7 +616,7 @@ Accepted on 2026-09-29.
 <td class="k">Consequences</td>
 <td markdown="block">
 
-- The browsers, the **LIFF** app and the payment webhook use plain HTTPS and JSON, so no gRPC-Web proxy is needed.
+- The browsers, the LIFF app and the payment webhook use plain HTTPS and JSON, so no gRPC-Web proxy is needed.
 - The .proto files are typed contracts between the services and generate their client and server code, which catches the type mismatches that ADR-03 warns about when a service changes its messages.
 - The calls between services use a compact binary encoding over long-lived HTTP/2 connections, which keeps the internal calls of a **hold** small within the 2-second budget of NFR-04.
 - The design itself contains REST services (for example the Concert Round Service for the **back-office**) and gRPC services (every service that another service calls), as the course project requires.

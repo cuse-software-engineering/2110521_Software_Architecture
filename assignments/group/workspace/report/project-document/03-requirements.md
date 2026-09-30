@@ -11,7 +11,7 @@ The functional and non-functional requirements below are those that the four use
 | ID | Requirement | Use case | Increment |
 |---|---|---|---|
 | FR-01 | The system shall allow customers to authenticate using LINE Login; the LINE user id is the customer identity and there is no separate registration. | UC-01 | MVP |
-| FR-02 | If LINE Login fails or is cancelled, the system shall explain that a LINE account is required and return to the **Rich Menu**. | UC-01 | MVP |
+| FR-02 | If LINE Login fails or is cancelled, the system shall explain that a LINE account is required and return to the Rich Menu. | UC-01 | MVP |
 | FR-40 | The system shall allow customers to access only their own reservations and **e-tickets**: My Bookings lists each booking with its round, table, status and **e-ticket**. | UC-01 | MVP |
 | FR-65 | The system shall authenticate all internal role accounts (**Manager**, **Front Staff**, and the **Owner** with read-only access) with a username and password issued by the venue, separately from customer LINE Login; the **Manager** creates and disables the accounts and assigns their roles. | UC-02 to UC-04 | MVP |
 | FR-66 | The system shall give each role access only to the functions it owns; the **Owner** can read everything. | UC-02 to UC-04 | MVP |
@@ -56,7 +56,7 @@ The functional and non-functional requirements below are those that the four use
 
 | ID | Requirement | Use case | Increment |
 |---|---|---|---|
-| FR-13 | The system shall create a payment request for the **full table fee** and present the gateway's payment methods in its **hosted checkout** inside the web app. | UC-01 | MVP (simulated gateway, ADR-11) |
+| FR-13 | The system shall create a payment request for the **full table fee** and present the gateway's payment methods in its hosted checkout inside the web app. | UC-01 | MVP (simulated gateway, ADR-11) |
 | FR-14 | After a declined or failed payment, the system shall allow a retry while the **hold** remains. | UC-01 | MVP |
 | FR-16 | The system shall verify the signature and the amount of every payment result, process it exactly once, record the payment and confirm the booking. | UC-01 | MVP |
 | FR-17 | A successful payment result that arrives after the **hold** expired shall confirm the booking if the table is still free; otherwise the system refunds it through the gateway and informs the customer. | UC-01 | Increment 2 |
@@ -64,7 +64,7 @@ The functional and non-functional requirements below are those that the four use
 | FR-69 | If the gateway does not answer within 30 seconds, the system shall switch new payments to **degraded mode** (bank transfer, slip, **Manager** confirmation) and return to gateway mode within 1 minute after it answers again. | UC-01 | Increment 2 |
 | FR-15 | In **degraded mode** the system shall keep the **hold**, show the shop's bank account, accept a **transfer slip**, extend the **hold** until the **Manager** decides and notify the **Manager**. | UC-01 | Increment 2 |
 | FR-44 | The system shall queue the slip bookings for the **Manager** to confirm or reject; a confirmed slip continues the booking as a gateway payment would. | UC-01 | Increment 2 |
-| FR-71 | The system shall accept cards only through the gateway's **hosted checkout**; no card data is entered in or stored by the system. | UC-01 | Increment 2 |
+| FR-71 | The system shall accept cards only through the gateway's hosted checkout; no card data is entered in or stored by the system. | UC-01 | Increment 2 |
 
 ### 3.1.5 E-Ticket & Check-In System
 
@@ -108,7 +108,7 @@ The following are planned for a later release, and this project does not build t
 | ID | Requirement |
 |---|---|
 | NFR-03 | The customer web app shall work in the current LINE in-app browser on iOS and Android; the **back-office** in the last two versions of Chrome, Safari and Edge and in the staff's phone browsers. |
-| NFR-34 | The customer web app shall open from the **Rich Menu** of the **LINE Official Account**, and the payment checkout shall run inside the same **LIFF** session. |
+| NFR-34 | The customer web app shall open from the Rich Menu of the **LINE Official Account**, and the payment checkout shall run inside the same LIFF session. |
 | NFR-06 | The system shall back up reservation and venue data daily; a restore loses at most 24 hours of data. |
 | NFR-31 | Test and production shall be separated (simulated or sandbox payment gateway, LINE test channel); no production key is kept in the source code. |
 | NFR-32 | The operating cost shall stay within 1,000 THB per month at 60 bookings per concert night. |
@@ -170,7 +170,7 @@ The following are planned for a later release, and this project does not build t
 | ID | Requirement |
 |---|---|
 | NFR-13 | The customer web app shall fit a 360 × 640 px viewport in the LINE in-app browser without horizontal scrolling, with touch targets of at least 44 px. |
-| NFR-14 | A first-time customer shall get from the **Rich Menu** to the start of payment within 3 minutes, tested with 5 users. |
+| NFR-14 | A first-time customer shall get from the Rich Menu to the start of payment within 3 minutes, tested with 5 users. |
 | NFR-16 | Table status shall be shown by colour plus a label or pattern, with a contrast of at least 4.5:1. |
 | NFR-17 | The **back-office** shall work on a desktop and on the staff's phone; the verification result is one tap after the scan. |
 | NFR-18 | Every customer-facing failure message shall say what happened and what to do next. |
