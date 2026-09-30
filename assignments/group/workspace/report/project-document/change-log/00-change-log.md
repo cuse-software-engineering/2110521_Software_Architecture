@@ -7,7 +7,7 @@
 | | |
 |---|---|
 | Document | Change Log of the Project Description, ADRs and Microservice Design of the Seating & Event Availability Tracking System (SEATS) |
-| Applies to | SEATS project document, version 2.0 draft 30, 30 September 2026 (its Section 0.2 lists the drafts) |
+| Applies to | SEATS project document, version 2.0 draft 31, 30 September 2026 (its Section 0.2 lists the drafts) |
 | Group | SE 101 |
 | Contents | Section 1.2: every change since version 1.1, with its type, section, description and source. Section 2.1: how each teacher comment and known issue of Deliverables #1 and #2 was resolved. Section 2.2: how to compare the versions. |
 
@@ -80,6 +80,7 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-59 | Modified | 6 | Chapter 6 regrouped by service so that the implementer of a service finds everything in one place: 6.1 domain model and 6.2 the model-to-contract rule stay global; 6.3 Concert Round, 6.4 Table Availability and 6.5 Booking Service each give the callers of the service, its data model, its gRPC API and the fields of its messages; 6.6 the contracts of the three later services; 6.7 the API Gateway with its conventions, the status mapping and the one routes table (Table 6.11). The tables are renumbered 6.4 to 6.11 and the cross-references in Chapter 5, ADR-12 and Appendix D follow. | owner |
 | CH-60 | Added | D | Low-fidelity wireframes of every screen of Appendix D, Figures D.1 to D.9: the nine customer screens as phone sheets of three, the seven back-office screens as desktop windows (B5 and B6 on the staff phone, B6 in its two states), drawn by tools/draw_screens.py in the same style as the user-interface prototype of the requirements phase, with the placeholder data of the walkthroughs. Reason: the team builds the pages from them. | owner |
 | CH-61 | Modified | D | Table D.1 merges the customer screens with their drawings: one page per screen, the phone wireframe in the left column and the name, steps, main elements and routes beside it; the three phone sheets and Figures D.1 to D.3 go, and the back-office figures become D.1 to D.6, since a desktop window cannot shrink into a table column and stay legible. Reason: the screen and its description read together. | owner |
+| CH-62 | Modified | D | Every screen of both web apps gets one page, Tables D.1 to D.16: the wireframe (beside the rows for a phone screen, across the top for a desktop window), then one row each for the use case steps, the main elements, the routes called and an example call with the gateway's answer. The summary tables and the back-office figures go. Reason: one concern per row reads faster, and the example shows the team the JSON of the route. | owner |
 
 # 2 Resolution of Feedback and Known Issues
 
@@ -114,5 +115,5 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 ## 2.2 How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft29 the earlier drafts and doc-v2.0-draft30 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft30 the earlier drafts and doc-v2.0-draft31 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".

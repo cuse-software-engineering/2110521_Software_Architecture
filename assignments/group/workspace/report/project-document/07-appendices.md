@@ -268,77 +268,821 @@ Table C.1 lists the business terms of this document: the words of the venue, its
 
 # Appendix D Screens and the Routes They Call
 
-The two web apps of Table 5.1 are, with the payment webhook, the only callers of the API Gateway. Tables D.1 and D.2 name the screens of each web app, the use case steps and flows that each screen serves, its main elements and the routes of Table 6.11 that it calls; the gRPC method behind each route is in Table 6.11. A screen is defined by its elements and drawn as a low-fidelity wireframe, in Table D.1 beside its description for the Customer Web App and in Figures D.1 to D.6 for the Back-office Web App: grayscale, English placeholder data, the phone screens at the 360 by 640 viewport of the LIFF app and the back-office screens in a desktop window. A route is called when the screen opens or when the named element is used; a polled route is called again every 2 seconds while the screen is open (ADR-09). Section D.3 checks the mapping in the other direction.
+The two web apps of Table 5.1 are, with the payment webhook, the only callers of the API Gateway. Tables D.1 to D.9 give the screens of the Customer Web App and Tables D.10 to D.16 those of the Back-office Web App, one page per screen: the wireframe, the use case steps and flows the screen serves, its main elements, the routes of Table 6.11 it calls, and an example of one call as the web app makes it, with the answer of the gateway. The wireframes are low fidelity: grayscale, English placeholder data, the phone screens at the 360 by 640 viewport of the LIFF app and the back-office screens in a desktop window. In the examples the identity headers of every call (`x-user-id` and `x-role` in progress 1) are left out, `…` stands for the fields not shown, and the gRPC method behind each route is in Table 6.11. A route is called when the screen opens or when the named element is used; a polled route is called again every 2 seconds while the screen is open (ADR-09). Section D.3 checks the mapping in the other direction.
 
 ## D.1 Customer Web App
 
-The Customer Web App is the LIFF app inside LINE (ADR-01). Its screens follow the basic flow of UC-01 in order; C9 stands alone. Table D.1 gives one page per screen.
+The Customer Web App is the LIFF app inside LINE (ADR-01). Its screens follow the basic flow of UC-01 in order; C9 stands alone.
 
-<div class="screenrows" markdown="1">
+<div class="screen" markdown="1">
 
-*Table D.1 Screens of the Customer Web App, one per page: the wireframe beside its steps, elements and routes*
+*Table D.1 Screen C1, Rich Menu and LINE Login*
 
-| Screen | Description |
-|---|---|
-| ![C1 Rich Menu and LINE Login](assets/screen-c1.png) | **C1 · Rich Menu and LINE Login**<br>UC-01 steps 1–2, EF-2<br><br>**Main elements.** LINE chat, Rich Menu "Reserve a table", LINE Login dialog<br><br>**Routes called.** None: LINE Login runs in the LIFF app, and the ID token travels in the header of every later call (Table 5.2) |
-| ![C2 Concert rounds](assets/screen-c2.png) | **C2 · Concert rounds**<br>UC-01 steps 3–4, AF-1, AF-2<br><br>**Main elements.** Round list with artist, date, start time, **booking-open time** and status; a round not yet open shows its **booking-open time**, a sold-out round is marked<br><br>**Routes called.** `GET /rounds` |
-| ![C3 Table map](assets/screen-c3.png) | **C3 · Table map**<br>UC-01 steps 5–8, AF-3<br><br>**Main elements.** Stage, **zones**, a shape per table with number, **table type**, **package price** and status; a tap on an available table holds it<br><br>**Routes called.** `GET /rounds/{id}`, `GET /rounds/{id}/tables`; `GET /rounds/{id}/table-status` polled; `POST /bookings` on the tap |
-| ![C4 Hold and booking summary](assets/screen-c4.png) | **C4 · Hold and booking summary**<br>UC-01 steps 8–11, AF-4, EF-1<br><br>**Main elements.** **Hold** countdown, booking summary, **party size** stepper, fee breakdown with the **full table fee**, Cancel the hold; on expiry the message of EF-1<br><br>**Routes called.** `GET /bookings/{id}`, `PUT /bookings/{id}/party-size`, `POST /bookings/{id}/cancel` |
-| ![C5 Customer profile and consent](assets/screen-c5.png) | **C5 · Customer profile and consent**<br>UC-01 step 12, AF-5; UC-09 steps 1–8, AF-1, AF-2<br><br>**Main elements.** On the first booking: the purpose of the data collection, consent, name and phone with validation, Decline; later: the stored name and phone to confirm or correct<br><br>**Routes called.** `GET /customers/me`, `POST /customers/me`, `PUT /customers/me`; `POST /bookings/{id}/cancel` on Decline |
-| ![C6 Booking terms](assets/screen-c6.png) | **C6 · Booking terms**<br>UC-01 steps 13–14<br><br>**Main elements.** The **booking terms** with the **check-in window**, Accept, Pay with the amount, Decline and cancel the booking<br><br>**Routes called.** `GET /bookings/{id}/terms`, `POST /bookings/{id}/terms-acceptance`; `POST /bookings/{id}/cancel` on Decline |
-| ![C7 Payment](assets/screen-c7.png) | **C7 · Payment**<br>UC-01 step 15; UC-10 steps 1–7, AF-1, EF-4<br><br>**Main elements.** Amount, the hosted checkout of the **Payment Gateway** opened inside the web app, Cancel the booking; the payment status while the result is awaited<br><br>**Routes called.** `POST /bookings/{id}/payment` (501 in Increment 1), `GET /payments/{id}` polled until the result; `POST /bookings/{id}/cancel` |
-| ![C8 Confirmation and e-ticket](assets/screen-c8.png) | **C8 · Confirmation and e-ticket**<br>UC-01 steps 16–20, EF-3<br><br>**Main elements.** Confirmed banner, QR **e-ticket** with the **booking reference**, booking details, **check-in window**, note that the LINE copy was sent<br><br>**Routes called.** `GET /bookings/{id}`, `GET /bookings/{id}/e-ticket` |
-| ![C9 My Bookings](assets/screen-c9.png) | **C9 · My Bookings**<br>UC-06<br><br>**Main elements.** The **Customer**'s bookings with status; a Confirmed booking opens its **e-ticket**<br><br>**Routes called.** `GET /customers/me/bookings`, `GET /bookings/{id}/e-ticket` |
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot" rowspan="3" markdown="block">
+
+![C1 Rich Menu and LINE Login](assets/screen-c1.png)
+
+</td>
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-01 steps 1–2, EF-2
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+LINE chat, Rich Menu "Reserve a table", LINE Login dialog
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+None: LINE Login runs in the LIFF app, and the ID token travels in the header of every later call (Table 5.2)
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td colspan="2" markdown="block">
+
+<pre class="call">GET /api/rounds
+x-user-id: U-somchai · x-role: customer   (progress 1; later Authorization: Bearer &lt;LINE ID token&gt;)</pre>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<div class="screen" markdown="1">
+
+*Table D.2 Screen C2, Concert rounds*
+
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot" rowspan="3" markdown="block">
+
+![C2 Concert rounds](assets/screen-c2.png)
+
+</td>
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-01 steps 3–4, AF-1, AF-2
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+Round list with artist, date, start time, **booking-open time** and status; a round not yet open shows its **booking-open time**, a sold-out round is marked
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`GET /rounds`
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td colspan="2" markdown="block">
+
+<pre class="call">GET /api/rounds
+→ 200 [ { "id": "r-friday", "name": "Friday Live", "artist": "The Band",
+  "date": "2026-10-09", "startAt": "2026-10-09T20:00:00Z",
+  "bookingOpenAt": "2026-10-02T18:00:00Z", "status": "open",
+  "availableTables": 28, "tablesForSale": 28 } ]</pre>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<div class="screen" markdown="1">
+
+*Table D.3 Screen C3, Table map*
+
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot" rowspan="3" markdown="block">
+
+![C3 Table map](assets/screen-c3.png)
+
+</td>
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-01 steps 5–8, AF-3
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+Stage, **zones**, a shape per table with number, **table type**, **package price** and status; a tap on an available table holds it
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`GET /rounds/{id}`, `GET /rounds/{id}/tables`; `GET /rounds/{id}/table-status` polled; `POST /bookings` on the tap
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td colspan="2" markdown="block">
+
+<pre class="call">GET /api/rounds/r-friday/table-status   If-None-Match: 4
+→ 304, or → 200 ETag: 5 { "roundId": "r-friday", "version": 5,
+  "tables": [ { "tableNumber": 1, "status": "HELD", … },
+              { "tableNumber": 2, "status": "AVAILABLE", … } ] }
+POST /api/bookings { "roundId": "r-friday", "tableNumber": 2 }
+→ 200 { "id": "b-2", "status": "Held", "remainingHoldSeconds": 900, … }
+→ 409 { "error": "the table has just been taken by another customer" }</pre>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<div class="screen" markdown="1">
+
+*Table D.4 Screen C4, Hold and booking summary*
+
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot" rowspan="3" markdown="block">
+
+![C4 Hold and booking summary](assets/screen-c4.png)
+
+</td>
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-01 steps 8–11, AF-4, EF-1
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+**Hold** countdown, booking summary, **party size** stepper, fee breakdown with the **full table fee**, Cancel the hold; on expiry the message of EF-1
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`GET /bookings/{id}`, `PUT /bookings/{id}/party-size`, `POST /bookings/{id}/cancel`
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td colspan="2" markdown="block">
+
+<pre class="call">PUT /api/bookings/b-2/party-size { "partySize": 3 }
+→ 200 { "id": "b-2", "status": "Held", "partySize": 3,
+  "fee": { "packagePrice": 2400, "extraPersons": 1,
+           "extraPersonFee": 600, "fullTableFee": 3000 }, … }
+POST /api/bookings/b-2/cancel → 200 { "id": "b-2", "status": "Cancelled", … }</pre>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<div class="screen" markdown="1">
+
+*Table D.5 Screen C5, Customer profile and consent*
+
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot" rowspan="3" markdown="block">
+
+![C5 Customer profile and consent](assets/screen-c5.png)
+
+</td>
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-01 step 12, AF-5; UC-09 steps 1–8, AF-1, AF-2
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+On the first booking: the purpose of the data collection, consent, name and phone with validation, Decline; later: the stored name and phone to confirm or correct
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`GET /customers/me`, `POST /customers/me`, `PUT /customers/me`; `POST /bookings/{id}/cancel` on Decline
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td colspan="2" markdown="block">
+
+<pre class="call">GET /api/customers/me
+→ 404 { "error": "no profile yet: this is the first booking" }
+POST /api/customers/me { "name": "Somchai P.", "phone": "0812345678", "consent": true }
+→ 200 { "customerId": "U-somchai", "name": "Somchai P.",
+  "phone": "0812345678", "consentAt": "2026-10-03T12:00:00Z" }</pre>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<div class="screen" markdown="1">
+
+*Table D.6 Screen C6, Booking terms*
+
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot" rowspan="3" markdown="block">
+
+![C6 Booking terms](assets/screen-c6.png)
+
+</td>
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-01 steps 13–14
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+The **booking terms** with the **check-in window**, Accept, Pay with the amount, Decline and cancel the booking
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`GET /bookings/{id}/terms`, `POST /bookings/{id}/terms-acceptance`; `POST /bookings/{id}/cancel` on Decline
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td colspan="2" markdown="block">
+
+<pre class="call">GET /api/bookings/b-2/terms
+→ 200 { "bookingId": "b-2", "terms": [ "Full payment confirms the booking …", … ],
+  "checkInWindow": { "opensAt": "…T18:00:00Z", "startAt": "…T20:00:00Z",
+                     "graceEndsAt": "…T20:30:00Z" } }
+POST /api/bookings/b-2/terms-acceptance → 200 { …, "termsAccepted": true }</pre>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<div class="screen" markdown="1">
+
+*Table D.7 Screen C7, Payment*
+
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot" rowspan="3" markdown="block">
+
+![C7 Payment](assets/screen-c7.png)
+
+</td>
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-01 step 15; UC-10 steps 1–7, AF-1, EF-4
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+Amount, the hosted checkout of the **Payment Gateway** opened inside the web app, Cancel the booking; the payment status while the result is awaited
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`POST /bookings/{id}/payment` (501 in Increment 1), `GET /payments/{id}` polled until the result; `POST /bookings/{id}/cancel`
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td colspan="2" markdown="block">
+
+<pre class="call">POST /api/bookings/b-2/payment
+→ 200 { "paymentId": "p-7", "checkoutUrl": "https://checkout.example/pay/p-7" }
+   (Increment 1: → 501 { "error": "startPayment() is built in progress 2" })
+GET /api/payments/p-7
+→ 200 { "paymentId": "p-7", "bookingId": "b-2", "status": "Paid", "amount": 3000 }</pre>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<div class="screen" markdown="1">
+
+*Table D.8 Screen C8, Confirmation and e-ticket*
+
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot" rowspan="3" markdown="block">
+
+![C8 Confirmation and e-ticket](assets/screen-c8.png)
+
+</td>
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-01 steps 16–20, EF-3
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+Confirmed banner, QR **e-ticket** with the **booking reference**, booking details, **check-in window**, note that the LINE copy was sent
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`GET /bookings/{id}`, `GET /bookings/{id}/e-ticket`
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td colspan="2" markdown="block">
+
+<pre class="call">GET /api/bookings/b-2
+→ 200 { "id": "b-2", "status": "Confirmed", "tableNumber": 2, "zoneName": "Zone A",
+  "fee": { …, "fullTableFee": 3000 }, "history": [ …, { "status": "Confirmed", … } ] }
+GET /api/bookings/b-2/e-ticket
+→ 200 { "bookingId": "b-2", "bookingReference": "SEATS-261009-A02-7K3Q", "qrPayload": "…" }</pre>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<div class="screen" markdown="1">
+
+*Table D.9 Screen C9, My Bookings*
+
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot" rowspan="3" markdown="block">
+
+![C9 My Bookings](assets/screen-c9.png)
+
+</td>
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-06
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+The **Customer**'s bookings with status; a Confirmed booking opens its **e-ticket**
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`GET /customers/me/bookings`, `GET /bookings/{id}/e-ticket`
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td colspan="2" markdown="block">
+
+<pre class="call">GET /api/customers/me/bookings
+→ 200 [ { "id": "b-2", "roundId": "r-friday", "tableNumber": 2, "status": "Confirmed", … },
+        { "id": "b-1", "roundId": "r-sat", "tableNumber": 9, "status": "Expired", … } ]</pre>
+
+</td>
+</tr>
+</table>
 
 </div>
 
 ## D.2 Back-office Web App
 
-The Back-office Web App runs in the browsers and phones of the **Manager**, the **Front Staff** and the **Owner**; every screen but B1 needs a signed-in staff account, and the role decides which screens open (FR-66).
+The Back-office Web App runs in the browsers and phones of the **Manager**, the **Front Staff** and the **Owner**; every screen but B1 needs a signed-in staff account, and the role decides which screens open (FR-66). B5 and B6 run on the staff phone at the door; B6 is drawn in its two states.
 
-<div class="screens" markdown="1">
+<div class="screen" markdown="1">
 
-*Table D.2 Screens of the Back-office Web App*
+*Table D.10 Screen B1, Sign-in*
 
-| Screen | Name | Use case steps | Main elements | Routes called |
-|---|---|---|---|---|
-| B1 | Sign-in | UC-08 (sign in and log out) | Username, password; Sign out on every other screen | `POST /sessions`, `DELETE /sessions/current` |
-| B2 | Zone map editor | UC-04 steps 1–13, S-1, AF-1, AF-3, EF-1 to EF-3; **table types** (FR-37) | Map list with status, new map, image upload, **zones** drawn on the image, tables placed with number, **table type** and capacity, tables and capacity per **zone**, validation result, preview, Activate; the **table types** with capacity and **package** content | `GET /zone-maps`, `POST /zone-maps`, `GET /zone-maps/{id}`, `PUT /zone-maps/{id}`, `POST /zone-maps/{id}/image`, `POST /zone-maps/{id}/validate`, `POST /zone-maps/{id}/activate`, `DELETE /zone-maps/{id}`; `GET /table-types`, `PUT /table-types/{id}` |
-| B3 | Round editor | UC-03 steps 1–16, S-1, AF-1, AF-3, EF-1, EF-2 | Round list with status, new round, concert details and times, **zone map** choice, tables not for sale, **package price** and content per **zone** and **table type**, tables for sale and capacity per **zone**, validation result, preview as the **Customer** sees it (the elements of C3), Publish | `GET /rounds`, `POST /rounds`, `GET /rounds/{id}`, `PUT /rounds/{id}`, `GET /zone-maps?status=Active`, `GET /zone-maps/{id}`, `POST /rounds/{id}/validate`, `GET /rounds/{id}/tables` for the preview, `POST /rounds/{id}/publish`, `DELETE /rounds/{id}` |
-| B4 | Live view | UC-05; UC-02 step 7 | Round choice, the table map with the status of every table, the bookings of the round with **party size** and check-in time, counts of available, held, booked and occupied tables | `GET /rounds`, `GET /rounds/{id}/tables`, `GET /rounds/{id}/table-status` polled, `GET /rounds/{id}/bookings` |
-| B5 | Check-in scanner | UC-02 steps 1–2, AF-2 | Round and count, camera viewfinder, type the **booking reference** | `POST /check-ins/verify` |
-| B6 | Verification result and entry confirmed | UC-02 steps 3–8, S-1, AF-3 to AF-5, EF-1, EF-2, EF-5 | Result panel with the reason of a failure, booking details with the **party size** paid for, Confirm entry; then the Checked-in banner with time and staff, Next scan | `POST /check-ins` |
-| B7 | Business parameters and staff accounts | UC-07; UC-08 | **Hold period**, **check-in window**, **grace period**, **extra-person fee**; the staff accounts with role, create, change the role, disable | `GET /business-parameters`, `PUT /business-parameters`; `GET /staff-accounts`, `POST /staff-accounts`, `PUT /staff-accounts/{id}`, `DELETE /staff-accounts/{id}` |
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot wide" colspan="2" markdown="block">
+
+![B1 Sign-in](assets/screen-b1.png)
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-08 (sign in and log out)
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+Username, password; Sign out on every other screen
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`POST /sessions`, `DELETE /sessions/current`
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td markdown="block">
+
+<pre class="call">POST /api/sessions { "username": "manager", "password": "…" }
+→ 200 { "token": "5e1f…", "role": "manager", "staffAccountId": "s-1" }
+→ 401 { "error": "wrong username or password" }
+DELETE /api/sessions/current   Authorization: Bearer 5e1f…  → 200</pre>
+
+</td>
+</tr>
+</table>
 
 </div>
 
-Figures D.1 to D.6 draw the seven screens in the order of Table D.2; B6 is drawn in its two states.
+<div class="screen" markdown="1">
 
-![Screen B1](assets/screens-b1.png)
+*Table D.11 Screen B2, Zone map editor*
 
-*Figure D.1 Back-office Web App, screen B1: sign-in*
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot wide" colspan="2" markdown="block">
 
-![Screen B2](assets/screens-b2.png)
+![B2 Zone map editor](assets/screen-b2.png)
 
-*Figure D.2 Back-office Web App, screen B2: zone map editor, with the table types and a validation result*
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Use case steps</td>
+<td markdown="block">
 
-![Screen B3](assets/screens-b3.png)
+UC-04 steps 1–13, S-1, AF-1, AF-3, EF-1 to EF-3; **table types** (FR-37)
 
-*Figure D.3 Back-office Web App, screen B3: round editor, with the prices per zone and table type and a validation result*
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
 
-![Screen B4](assets/screens-b4.png)
+Map list with status, new map, image upload, **zones** drawn on the image, tables placed with number, **table type** and capacity, tables and capacity per **zone**, validation result, preview, Activate; the **table types** with capacity and **package** content
 
-*Figure D.4 Back-office Web App, screen B4: live view of a round*
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
 
-![Screens B5 and B6](assets/screens-b5-b6.png)
+`GET /zone-maps`, `POST /zone-maps`, `GET /zone-maps/{id}`, `PUT /zone-maps/{id}`, `POST /zone-maps/{id}/image`, `POST /zone-maps/{id}/validate`, `POST /zone-maps/{id}/activate`, `DELETE /zone-maps/{id}`; `GET /table-types`, `PUT /table-types/{id}`
 
-*Figure D.5 Back-office Web App, screens B5 and B6 on the staff phone: check-in scanner, verification result, entry confirmed*
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td markdown="block">
 
-![Screen B7](assets/screens-b7.png)
+<pre class="call">POST /api/zone-maps { "name": "Main hall v2" } → 200 { "id": "m-2", "status": "Draft", … }
+PUT /api/zone-maps/m-2 { "zones": [ { "id": "A", "name": "Zone A · front stage" } ],
+  "tables": [ { "tableNumber": 1, "zoneId": "A", "tableTypeId": "round2", "capacity": 2, "x": 40, "y": 60 } ] }
+→ 200 { …, "summary": [ { "zoneId": "A", "name": "Zone A · front stage", "tables": 1, "capacity": 2 } ] }
+POST /api/zone-maps/m-2/activate → 400 { "error": "the zone map is not valid", "details": [ "table 17 has no table type" ] }</pre>
 
-*Figure D.6 Back-office Web App, screen B7: business parameters and staff accounts*
+</td>
+</tr>
+</table>
+
+</div>
+
+<div class="screen" markdown="1">
+
+*Table D.12 Screen B3, Round editor*
+
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot wide" colspan="2" markdown="block">
+
+![B3 Round editor](assets/screen-b3.png)
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-03 steps 1–16, S-1, AF-1, AF-3, EF-1, EF-2
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+Round list with status, new round, concert details and times, **zone map** choice, tables not for sale, **package price** and content per **zone** and **table type**, tables for sale and capacity per **zone**, validation result, preview as the **Customer** sees it (the elements of C3), Publish
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`GET /rounds`, `POST /rounds`, `GET /rounds/{id}`, `PUT /rounds/{id}`, `GET /zone-maps?status=Active`, `GET /zone-maps/{id}`, `POST /rounds/{id}/validate`, `GET /rounds/{id}/tables` for the preview, `POST /rounds/{id}/publish`, `DELETE /rounds/{id}`
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td markdown="block">
+
+<pre class="call">PUT /api/rounds/r-friday { "artist": "The Band", "date": "2026-10-09", "startAt": "2026-10-09T20:00:00Z",
+  "zoneMapId": "m-1", "tablesNotForSale": [ 6 ],
+  "prices": [ { "zoneId": "A", "tableTypeId": "sofa6", "packagePrice": 7200, "packageContent": "3 towers + 3 ice" } ] }
+→ 200 { …, "checkInWindow": { "opensAt": "…T18:00:00Z", "graceEndsAt": "…T20:30:00Z" } }
+POST /api/rounds/r-friday/publish → 200 { …, "status": "Published", "parameters": { "holdPeriodMinutes": 15, … } }</pre>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<div class="screen" markdown="1">
+
+*Table D.13 Screen B4, Live view*
+
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot wide" colspan="2" markdown="block">
+
+![B4 Live view](assets/screen-b4.png)
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-05; UC-02 step 7
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+Round choice, the table map with the status of every table, the bookings of the round with **party size** and check-in time, counts of available, held, booked and occupied tables
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`GET /rounds`, `GET /rounds/{id}/tables`, `GET /rounds/{id}/table-status` polled, `GET /rounds/{id}/bookings`
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td markdown="block">
+
+<pre class="call">GET /api/rounds/r-friday/table-status   If-None-Match: 41  → 304, or → 200 ETag: 42 { "version": 42, "tables": [ … ] }
+GET /api/rounds/r-friday/bookings
+→ 200 [ { "id": "b-2", "tableNumber": 2, "customerId": "U-somchai", "partySize": 3, "status": "Checked-in",
+          "history": [ …, { "status": "Checked-in", "at": "…T19:05:00Z", "by": "door1" } ] }, … ]</pre>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<div class="screen" markdown="1">
+
+*Table D.14 Screen B5, Check-in scanner*
+
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot" rowspan="3" markdown="block">
+
+![B5 Check-in scanner](assets/screen-b5.png)
+
+</td>
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-02 steps 1–2, AF-2
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+Round and count, camera viewfinder, type the **booking reference**
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`POST /check-ins/verify`
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td colspan="2" markdown="block">
+
+<pre class="call">POST /api/check-ins/verify { "bookingReference": "SEATS-261009-A02-7K3Q" }
+→ 200 { "valid": true, "booking": { "id": "b-2", "tableNumber": 2, "partySize": 3, … }, "reason": "" }
+→ 200 { "valid": false, "booking": null, "reason": "already checked in at 19:42 by door1" }
+   (progress 1: → 501)</pre>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<div class="screen" markdown="1">
+
+*Table D.15 Screen B6, Verification result and entry confirmed*
+
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot wide tall" colspan="2" markdown="block">
+
+![B6 Verification result and entry confirmed](assets/screen-b6.png)
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-02 steps 3–8, S-1, AF-3 to AF-5, EF-1, EF-2, EF-5
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+Result panel with the reason of a failure, booking details with the **party size** paid for, Confirm entry; then the Checked-in banner with time and staff, Next scan
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`POST /check-ins`
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td markdown="block">
+
+<pre class="call">POST /api/check-ins { "bookingReference": "SEATS-261009-A02-7K3Q" }
+→ 200 { "id": "b-2", "status": "Checked-in",
+  "history": [ …, { "status": "Checked-in", "at": "2026-10-09T19:05:00Z", "by": "door1" } ] }
+   (progress 1: → 501)</pre>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+<div class="screen" markdown="1">
+
+*Table D.16 Screen B7, Business parameters and staff accounts*
+
+<table class="screen" markdown="1">
+<tr markdown="1">
+<td class="shot wide" colspan="2" markdown="block">
+
+![B7 Business parameters and staff accounts](assets/screen-b7.png)
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Use case steps</td>
+<td markdown="block">
+
+UC-07; UC-08
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Main elements</td>
+<td markdown="block">
+
+**Hold period**, **check-in window**, **grace period**, **extra-person fee**; the staff accounts with role, create, change the role, disable
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Routes called</td>
+<td markdown="block">
+
+`GET /business-parameters`, `PUT /business-parameters`; `GET /staff-accounts`, `POST /staff-accounts`, `PUT /staff-accounts/{id}`, `DELETE /staff-accounts/{id}`
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Example call</td>
+<td markdown="block">
+
+<pre class="call">PUT /api/business-parameters { "extraPersonFee": 600 }
+→ 200 { "holdPeriodMinutes": 15, "checkInWindowHours": 2, "gracePeriodMinutes": 30, "extraPersonFee": 600 }
+POST /api/staff-accounts { "username": "door2", "role": "front_staff", "password": "…" }
+→ 200 { "staffAccountId": "s-4", "username": "door2", "role": "front_staff", "status": "Active" }</pre>
+
+</td>
+</tr>
+</table>
+
+</div>
 
 ## D.3 Coverage
 
-Read the other way, every route of Table 6.11 is called by at least one screen, except the payment webhook, which the **Payment Gateway** calls. The screens also show one route that the back-office needs and Table 6.11 does not give: the round list of B3 must show the Draft rounds of the venue as well as the Published ones, while `GET /rounds` answers the **Customer**'s upcoming rounds only (getUpcomingRounds()). A listRounds() operation of the Concert Round Service, or a status query on the route, is to be decided before the back-office is built; until then B3 reopens a Draft round by its id.
+Read the other way, every route of Table 6.11 is called by at least one screen of Tables D.1 to D.16, except the payment webhook, which the **Payment Gateway** calls. The screens also show one route that the back-office needs and Table 6.11 does not give: the round list of B3 must show the Draft rounds of the venue as well as the Published ones, while `GET /rounds` answers the **Customer**'s upcoming rounds only (getUpcomingRounds()). A listRounds() operation of the Concert Round Service, or a status query on the route, is to be decided before the back-office is built; until then B3 reopens a Draft round by its id.
 

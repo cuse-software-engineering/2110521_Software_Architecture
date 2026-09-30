@@ -639,14 +639,12 @@ def cell(sid, title, steps, inner, desk=False):
     return f'<div class="cell {"desk" if desk else "ph"}"><div class="cap">{sid} &middot; {title} <span>&middot; {st}</span></div>{inner}</div>'
 
 
-FIGURES = [  # (file stem, page title, screen functions, desktop?)
-    ("screens-b1", "Back-office B1: sign-in", [b1], True),
-    ("screens-b2", "Back-office B2: zone map editor", [b2], True),
-    ("screens-b3", "Back-office B3: round editor", [b3], True),
-    ("screens-b4", "Back-office B4: live view", [b4], True),
-    ("screens-b5-b6", "Back-office B5-B6: check-in scanner, verification result, entry confirmed", [b5, b6_result, b6_confirmed], False),
-    ("screens-b7", "Back-office B7: business parameters and staff accounts", [b7], True),
-]
+# One image per screen, no caption: the document puts the description beside or under it (Appendix D). B6 shows its
+# two states side by side, each with a state label.
+SINGLES = [("screen-c1", [c1], False), ("screen-c2", [c2], False), ("screen-c3", [c3], False), ("screen-c4", [c4], False),
+           ("screen-c5", [c5], False), ("screen-c6", [c6], False), ("screen-c7", [c7], False), ("screen-c8", [c8], False),
+           ("screen-c9", [c9], False), ("screen-b1", [b1], True), ("screen-b2", [b2], True), ("screen-b3", [b3], True),
+           ("screen-b4", [b4], True), ("screen-b5", [b5], False), ("screen-b6", [b6_result, b6_confirmed], False), ("screen-b7", [b7], True)]
 
 
 def png_size(path):
@@ -655,29 +653,25 @@ def png_size(path):
         return struct.unpack(">II", f.read(8))
 
 
-SINGLES = [c1, c2, c3, c4, c5, c6, c7, c8, c9]   # one phone each, no caption: Table D.1 puts the description beside it
 
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     pages = []
-    for stem, title, fns, desk in FIGURES:
-        cells = "".join(cell(*fn(), desk=desk) for fn in fns)
+    for stem, fns, desk in SINGLES:
+        cells = []
+        for fn in fns:
+            sid, title, _steps, inner = fn()
+            label = f'<div class="cap">{title}</div>' if len(fns) > 1 else ""   # the state of a two-state screen
+            cells.append(f'<div class="cell {"desk" if desk else "ph"}">{label}{inner}</div>')
         f = OUT / f"{stem}.html"
-        f.write_text(page(title, cells, desk=desk), encoding="utf-8")
+        f.write_text(page(stem, "".join(cells), desk=desk), encoding="utf-8")
         pages.append(f)
         print("wrote", f.relative_to(GROUP))
-    for fn in SINGLES:
-        sid, title, _steps, ph = fn()
-        f = OUT / f"screen-{sid.lower()}.html"
-        f.write_text(page(f"{sid} {title}", f'<div class="cell ph">{ph}</div>'), encoding="utf-8")
-        pages.append(f)
-        print("wrote", f.relative_to(GROUP))
-
     from playwright.sync_api import sync_playwright  # imported lazily: slow
     with sync_playwright() as p:
         browser = p.chromium.launch()
-        ctx = browser.new_context(device_scale_factor=2.2, viewport={"width": 1600, "height": 1200})
+        ctx = browser.new_context(device_scale_factor=2, viewport={"width": 1600, "height": 1200})
         page_ = ctx.new_page()
         for f in pages:
             page_.goto(f.as_uri(), wait_until="networkidle")
