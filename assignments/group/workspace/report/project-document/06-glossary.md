@@ -13,7 +13,7 @@ The business terms of this document. In the text they are set in bold, and in th
 | Booking-open time | The time, set by the Manager for each concert round, from which its tables can be selected; before it the round is visible but not bookable (BRULE-07). |
 | Business parameters | The venue's settings that apply to every round opening for booking afterwards: hold period, grace period, check-in window and extra-person fee (FR-38). |
 | Check-in window | The period in which an e-ticket can be checked in: from 2 hours before the concert start to the end of the grace period (BRULE-04, BRULE-05). |
-| Concert round | One scheduled live performance on a given date and start time, featuring one artist, for which every table is sold in advance; it has a booking-open time and a fixed zone map. UC-03 calls it a concert event. |
+| Concert round | One scheduled live performance on a given date and start time, featuring one artist, for which every table is sold in advance; it has a booking-open time and a fixed zone map. |
 | Customer | A LINE user who reserves a table for a concert night, for a party of 1 to 6 people. |
 | Customer profile | The Customer's name, phone and LINE user id, collected once with consent and pre-filled for later bookings (BRULE-11). |
 | Degraded mode | The payment mode used while the payment gateway is unreachable: the Customer transfers the full table fee to the venue's bank account and attaches the transfer slip, and the Manager confirms or rejects it (Increment 2). |
@@ -44,4 +44,4 @@ The business terms of this document. In the text they are set in bold, and in th
 | Waitlist | A queue of customers for a sold-out round, planned for a later release; a no-show table is never offered to it. |
 | Walk-in | Guests without a booking; they can only take the tables of no-shows, seated and paid by hand at the venue (FR-72). |
 | Zone | A pricing area of the venue, for example Zone A near the stage and Zone B behind it. |
-| Zone map | The plan of the venue with its zones, tables and table types, drawn on an uploaded image of the venue and shown as the real-time floor plan of a concert round. |
+| Zone map | The plan of the venue with its zones, tables and table types, drawn on an uploaded image of the venue and shown to the Customer as the real-time map of a concert round; the "floor plan" of ADR-02 and ADR-05. |

@@ -12,7 +12,7 @@ The functional and non-functional requirements below are those that the four use
 |---|---|---|---|
 | FR-01 | The system shall allow customers to authenticate using LINE Login; the LINE user id is the customer identity and there is no separate registration. | UC-01 | MVP |
 | FR-02 | If LINE Login fails or is cancelled, the system shall explain that a LINE account is required and return to the **Rich Menu**. | UC-01 | MVP |
-| FR-40 | The system shall allow customers to access only their own reservations and digital tickets: My Bookings lists each booking with its round, table, status and **e-ticket**. | UC-01 | MVP |
+| FR-40 | The system shall allow customers to access only their own reservations and **e-tickets**: My Bookings lists each booking with its round, table, status and **e-ticket**. | UC-01 | MVP |
 | FR-65 | The system shall authenticate all internal role accounts (**Manager**, **Front Staff**, and the **Owner** with read-only access) with a username and password issued by the venue, separately from customer LINE Login; the **Manager** creates and disables the accounts and assigns their roles. | UC-02 to UC-04 | MVP |
 | FR-66 | The system shall give each role access only to the functions it owns; the **Owner** can read everything. | UC-02 to UC-04 | MVP |
 | FR-73 | The system shall allow all users to log out securely. | all | MVP |
@@ -27,7 +27,7 @@ The functional and non-functional requirements below are those that the four use
 | FR-39 | The system shall allow the **Manager** to upload the image of the venue's **zone map** and place each table on it. | UC-04 | MVP |
 | FR-74 | The system shall validate a **zone map** before activation: every **zone** named and non-empty, table numbers unique, and every table with a **table type** and a seating capacity. | UC-04 | MVP |
 | FR-34 | The system shall allow the **Manager** to create and edit a **concert round** with its artist, date, start time, **booking-open time** and status (not yet open, open, sold out, finished, cancelled). | UC-03 | MVP |
-| FR-35 | The system shall assign a **zone map** to each round and lock the layout once the **booking-open time** has passed. | UC-03 | MVP |
+| FR-35 | The system shall assign a **zone map** to each round and lock it once the **booking-open time** has passed. | UC-03 | MVP |
 | FR-75 | The system shall validate a **concert round** before publishing and prevent overlapping published rounds. | UC-03 | MVP |
 | FR-36 | The system shall allow the **Manager** to withdraw a round that has no Confirmed booking. | UC-03 | Increment 2 |
 | FR-38 | The system shall keep the **business parameters** (**hold period**, **grace period**, **check-in window**, **extra-person fee**) as settings that change without a code change and apply to rounds that open for booking afterwards. | UC-03 | MVP |
@@ -66,9 +66,9 @@ The functional and non-functional requirements below are those that the four use
 | FR-44 | The system shall queue the slip bookings for the **Manager** to confirm or reject; a confirmed slip continues the booking as a gateway payment would. | UC-01 | Increment 2 |
 | FR-71 | The system shall accept cards only through the gateway's **hosted checkout**; no card data is entered in or stored by the system. | UC-01 | Increment 2 |
 
-### 3.1.5 Digital Ticket & Check-In System
+### 3.1.5 E-Ticket & Check-In System
 
-*Table 3.5 Digital ticket and check-in*
+*Table 3.5 E-ticket and check-in*
 
 | ID | Requirement | Use case | Increment |
 |---|---|---|---|
@@ -148,7 +148,7 @@ The following are planned for a later release, and this project does not build t
 | NFR-36 | The identity tokens of LINE Login (OpenID Connect) shall be validated on the server. |
 | NFR-38 | The payment webhook shall verify the signature of every call and reject calls older than 5 minutes or with a reused id. |
 | NFR-39 | All traffic shall use HTTPS with TLS 1.2 or later; there is no plain-text endpoint. |
-| NFR-44 | The system shall protect customer information and authentication credentials; access to reservations and digital tickets follows FR-40 and FR-66. |
+| NFR-44 | The system shall protect customer information and authentication credentials; access to reservations and **e-tickets** follows FR-40 and FR-66. |
 | NFR-42 | No card data shall pass through the system; the PCI DSS scope stays with the gateway (Increment 2, real gateway). |
 
 ### 3.2.5 Cultural and Legal

@@ -18,7 +18,7 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-10 | Modified | 2.2.4 | UC-04: the zones are drawn on an uploaded image of the venue; seat-view photographs are out of scope; EF-3 is an image upload failure. | Req. update |
 | CH-11 | Modified | 3.1 | Functional requirements completed and given identifiers, use cases and increments: payment, hold, e-ticket, check-in, escalation, no-show and live view added; cutoff reminders, extensions and walk-in bookings replaced; "admins" is "Manager"; out-of-scope list added. | KI-02, KI-03, KI-05, Req. update |
 | CH-12 | Modified | 3.2 | Non-functional requirements with identifiers and measurable targets (for example table status within 2 seconds instead of 3); Reliability and Interfaces added. | Req. update |
-| CH-13 | Modified | 4.6 | ADR-06: the need for a flexible schema for layouts moved from Consequences to Context; the consequences now include the negative ones; the TTL-index consequence is removed. | FB-D1-01, KI-06 |
+| CH-13 | Modified | 4.6 | ADR-06: the need for a flexible schema for **zone maps** moved from Consequences to Context; the consequences now include the negative ones; the TTL-index consequence is removed. | FB-D1-01, KI-06 |
 | CH-14 | Added, Modified | 4, 4.2, 4.3, 4.8, 4.9 | ADR index (Table 4.1) and the rule that a changed decision gets a new ADR. ADR-08 Table Hold and Concurrency Control and ADR-09 Table Status Updates in the MVP: Polling added; ADR-02 superseded; ADR-03 amended. | KI-06, KI-07, FB-D2-01 |
 | CH-15 | Added, Modified | 4.4, 4.10 | ADR-10 Customer Notifications through the LINE Messaging API Only added; ADR-04 superseded. | KI-03, KI-08 |
 | CH-16 | Added | 4.11 | ADR-11 Simulated Payment Gateway for the MVP. | FB-D2-01 |
@@ -50,6 +50,9 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-42 | Modified | 5.3, 5.4 | Table 5.3 lists only the operations a service exposes: expireUnpaidBookings() and retryFailedMessages() are the jobs of a timer, and calculateTableFee() and issueETicket() are steps inside setPartySize() and confirmBookingPayment(); all four are described below the table. previewRound() is removed (the preview is getRound() and getRoundTables()), editPublishedRound() is folded into updateRound() (one operation per resource, rules by status), and listTableTypes() is added for the map editor. 55 operations; the traceability rows follow. | owner |
 | CH-43 | Modified, Added | 5.4, D | Section 5.4 is a one-page matrix of the operations by use case (Table 5.4), with a System-wide column for the functions not tied to one step; the step-by-step tables with the collaborations, the data stored and the requirements move to Appendix D (Tables D.1 to D.5) as the evidence. | owner |
 | CH-44 | Modified | 5.2 | Table 5.1 has one row per deployable component, grouped by part (two web apps, the API Gateway, six services, three external systems), with the responsibility, the API it offers (REST, gRPC or the provider's API) and the data it owns; the trust properties of the parts (untrusted Frontend, the gateway as the only public entry, private network, third parties) move to the paragraph above the table. | owner |
+| CH-45 | Modified | 1, 2, 3, 4, 5, 6 | One term for each thing: "concert round" (UC-03 is Create Concert Round; "concert event" removed), "zone map" ("floor plan", "layout" and "table map" replaced in the bodies; the titles of ADR-02 and ADR-05 stay as written and the glossary notes the term), and "e-ticket" (UC-02 is Check In with E-Ticket; "digital QR ticket" and "digital ticket" replaced). The phase {View the Table Map} of UC-01 is {View the Zone Map}. | owner |
+| CH-46 | Added | 2.3 | Domain model: the class diagram (Figure 2.2), the business entities (Table 2.6), the associations and invariants (Table 2.7), and the booking state machine (Figure 2.3) with its states (Table 2.8); WaitlistEntry, BookingTransfer and the Transferred state are marked as a later release. | owner |
+| CH-47 | Added, Modified | 2.1, 5.4, D | UC-05 View Live Booking Status, UC-06 View My Bookings, UC-07 Set Business Parameters and UC-08 Manage Staff Accounts added by name to Figure 2.1 and Table 2.1, with the Owner as an actor; Table 5.4 has one column per use case instead of a System-wide column, and Table D.5 traces UC-05 to UC-08. | owner |
 
 # Appendix B Resolution of Feedback and Known Issues
 
@@ -80,12 +83,12 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 # Appendix C How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft16 the earlier drafts and doc-v2.0-draft17 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft17 the earlier drafts and doc-v2.0-draft18 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".
 
 # Appendix D Use Case Traceability, Step by Step
 
-Tables D.1 to D.5 are the evidence behind Table 5.4: each row follows one step, or the consecutive steps served by one operation, of a use case: who invokes the operation (an actor, through the API Gateway, or a service), the service and operation that carry the step out, the collaborations the operation needs, the data it stores, and the requirements it realises. Steps in which the actor acts without the system, such as UC-02 step 5, are left out unless a rule applies to them. Only the flows that the MVP builds are listed (Section 1.3), and Table D.5 covers the requirements that are not tied to one step. Every operation of Table 5.3 appears in at least one row, the two jobs appear as jobs, and every MVP requirement of Section 3.1 is realised by at least one row.
+Tables D.1 to D.5 are the evidence behind Table 5.4: each row follows one step, or the consecutive steps served by one operation, of a use case: who invokes the operation (an actor, through the API Gateway, or a service), the service and operation that carry the step out, the collaborations the operation needs, the data it stores, and the requirements it realises. Steps in which the actor acts without the system, such as UC-02 step 5, are left out unless a rule applies to them. Only the flows that the MVP builds are listed (Section 1.3), and Table D.5 covers UC-05 to UC-08, which have no description. Every operation of Table 5.3 appears in at least one row, the two jobs appear as jobs, and every MVP requirement of Section 3.1 is realised by at least one row.
 
 <div class="trace" markdown="1">
 
@@ -118,7 +121,7 @@ Tables D.1 to D.5 are the evidence behind Table 5.4: each row follows one step, 
 | EF-1, S-1 | Booking Service | Notification Service: sendHoldExpiredNotice() | LINE Messaging Adapter: pushLineMessage() | Notification DB: message and delivery result | FR-21 |
 | EF-6 | Time | Notification Service: the retry job, 3 times within 5 minutes; not an operation | LINE Messaging Adapter: pushLineMessage() | Notification DB: delivery result | FR-22 |
 
-*Table D.2 Traceability of Check In Using Digital QR Ticket*
+*Table D.2 Traceability of Check In with E-Ticket*
 
 | Steps | Invoked by | Operation | Collaborations | Data stored | Requirements |
 |---|---|---|---|---|---|
@@ -127,7 +130,7 @@ Tables D.1 to D.5 are the evidence behind Table 5.4: each row follows one step, 
 | 7 | **Manager** | Booking Service: getRoundBookings()<br>Table Availability Service: getRoundTableStatus(), polled every 2 seconds | — | — | FR-06, FR-42 |
 | AF-4 | **Front Staff** | No operation of SEATS: extra guests are handled by hand (BRULE-09) | — | — | — |
 
-*Table D.3 Traceability of Create Concert Event*
+*Table D.3 Traceability of Create Concert Round*
 
 | Steps | Invoked by | Operation | Collaborations | Data stored | Requirements |
 |---|---|---|---|---|---|
@@ -158,15 +161,15 @@ Tables D.1 to D.5 are the evidence behind Table 5.4: each row follows one step, 
 | AF-1 | **Manager** | Concert Round Service: listZoneMaps(), getZoneMap(), then updateZoneMap(), which allows only the changes of AF-1 | Table Availability Service: getRoundTableStatus(), for the Published rounds that use the map | Round DB: the changed **zones** and tables | FR-37 |
 | AF-3 | **Manager** | Concert Round Service: updateZoneMap(); the map stays Draft | — | Round DB: the map as entered | FR-37 |
 
-*Table D.5 Traceability of the requirements not tied to one step*
+*Table D.5 Traceability of UC-05 to UC-08, the use cases without a description*
 
-| Function | Invoked by | Operation | Collaborations | Data stored | Requirements |
+| Use case | Invoked by | Operation | Collaborations | Data stored | Requirements |
 |---|---|---|---|---|---|
-| **Business parameters** | **Manager** | Concert Round Service: getBusinessParameters(), updateBusinessParameters() | — | Round DB: the **business parameters**; a round uses the values in force at its **booking-open time** | FR-38 |
-| My Bookings | **Customer** | Booking Service: getCustomerBookings(), getETicket() | — | — | FR-40 |
-| **Live view** | **Manager**, **Owner** | Booking Service: getRoundBookings()<br>Table Availability Service: getRoundTableStatus() | — | — | FR-42 |
-| Staff accounts | **Manager** | Staff Account Service: createStaffAccount(), listStaffAccounts(), updateStaffAccount() for the role, disableStaffAccount() | — | Staff Account DB: accounts, roles and password hashes | FR-65 |
-| Sign-in and roles | **Front Staff**, **Manager**, **Owner** | Staff Account Service: signIn(); the API Gateway checks the role of every request | — | — | FR-65, FR-66 |
-| Log out | All users | Staff Account Service: signOut(); a **Customer** logs out of LINE Login in the web app | — | — | FR-73 |
+| UC-07 | **Manager** | Concert Round Service: getBusinessParameters(), updateBusinessParameters() | — | Round DB: the **business parameters**; a round uses the values in force at its **booking-open time** | FR-38 |
+| UC-06 | **Customer** | Booking Service: getCustomerBookings(), getETicket() | — | — | FR-40 |
+| UC-05 | **Manager**, **Owner** | Booking Service: getRoundBookings()<br>Table Availability Service: getRoundTableStatus() | — | — | FR-42 |
+| UC-08 | **Manager** | Staff Account Service: createStaffAccount(), listStaffAccounts(), updateStaffAccount() for the role, disableStaffAccount() | — | Staff Account DB: accounts, roles and password hashes | FR-65 |
+| UC-08 | **Front Staff**, **Manager**, **Owner** | Staff Account Service: signIn(); the API Gateway checks the role of every request | — | — | FR-65, FR-66 |
+| UC-08 | All users | Staff Account Service: signOut(); a **Customer** logs out of LINE Login in the web app | — | — | FR-73 |
 
 </div>

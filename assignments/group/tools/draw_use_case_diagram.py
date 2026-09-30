@@ -16,34 +16,43 @@ DIAGRAMS = Path(__file__).resolve().parent.parent / "workspace" / "report" / "pr
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else DIAGRAMS / "use-case-diagram.html"
 OVR = json.loads(os.environ.get("UCD_OVR", "{}"))
 
-W, H = 1200, 745
+W, H = 1200, 1130
 RX, RY = 118, 38
 BOX_W, BOX_H = 176, 66
 FS_NAME, FS_ID, FS_ACT, FS_REL = 19, 15, 18, 15
 LINE_H = 21
 
-# Use cases in one column in the order of use (UC-04 -> UC-03 -> UC-01 -> UC-02); people on the left, the external
-# systems and Time on the right. The Manager's associations with UC-01 (transfer-slip review) and UC-02 (escalation)
-# are secondary and belong to Increment 2 flows; the one crossing they cause (Manager-UC-02 over Customer-UC-01) is
-# accepted rather than leaving them out, so that the diagram shows every actor of Table 2.1.
-BOUND = dict(x=250, y=15, w=700, h=710)
+# Use cases in one column, grouped by their primary actor from the top: the Manager's set-up use cases (UC-04, UC-03,
+# UC-07, UC-08), the live view (UC-05, Manager and Owner), the Customer's (UC-01, UC-06) and the door (UC-02). People
+# on the left, the Owner (read-only, UC-05 only), the external systems and Time on the right. UC-05 to UC-08 have no
+# description (Table 2.1). The
+# Manager's associations with UC-01 (transfer-slip review) and UC-02 (escalation) are secondary, Increment 2 flows; the
+# crossings they cause are accepted rather than leaving them out, so that the diagram shows every actor of Table 2.1.
+BOUND = dict(x=250, y=15, w=700, h=1095)
 UC = {
-    "UC-04": dict(x=600, y=115, name=["Create Venue", "Zone Map"]),
-    "UC-03": dict(x=600, y=250, name=["Create", "Concert Event"]),
-    "UC-01": dict(x=600, y=430, name=["Reserve a", "Specific Table"]),
-    "UC-02": dict(x=600, y=620, name=["Check In Using", "Digital QR Ticket"]),
+    "UC-04": dict(x=600, y=110, name=["Create Venue", "Zone Map"]),
+    "UC-03": dict(x=600, y=230, name=["Create", "Concert Round"]),
+    "UC-07": dict(x=600, y=350, name=["Set Business", "Parameters"]),
+    "UC-08": dict(x=600, y=470, name=["Manage Staff", "Accounts"]),
+    "UC-05": dict(x=600, y=600, name=["View Live", "Booking Status"]),
+    "UC-01": dict(x=600, y=740, name=["Reserve a", "Specific Table"]),
+    "UC-06": dict(x=770, y=880, name=["View My", "Bookings"]),
+    "UC-02": dict(x=600, y=1020, name=["Check In", "with E-Ticket"]),
 }
 ACT = {
-    "Manager":    dict(x=100, y=182, name=["Manager"]),
-    "Customer":   dict(x=100, y=480, name=["Customer"]),
-    "FrontStaff": dict(x=100, y=660, name=["Front Staff"]),
-    "PG":         dict(x=1080, y=320, box=True, name=["Payment Gateway"]),
-    "LINE":       dict(x=1080, y=450, box=True, name=["LINE Platform"]),
-    "Time":       dict(x=1080, y=600, name=["Time"], stereo="«timer»"),
+    "Manager":    dict(x=100, y=420, name=["Manager"]),
+    "Customer":   dict(x=100, y=800, name=["Customer"]),
+    "FrontStaff": dict(x=100, y=1040, name=["Front Staff"]),
+    "Owner":      dict(x=1080, y=520, name=["Owner"]),
+    "PG":         dict(x=1080, y=680, box=True, name=["Payment Gateway"]),
+    "LINE":       dict(x=1080, y=800, box=True, name=["LINE Platform"]),
+    "Time":       dict(x=1080, y=930, name=["Time"], stereo="«timer»"),
 }
 ASSOC = [
-    ("Manager", "UC-04"), ("Manager", "UC-03"), ("Manager", "UC-01"), ("Manager", "UC-02"),
-    ("Customer", "UC-01"), ("Customer", "UC-02"),
+    ("Manager", "UC-04"), ("Manager", "UC-03"), ("Manager", "UC-07"), ("Manager", "UC-08"), ("Manager", "UC-05"),
+    ("Manager", "UC-01"), ("Manager", "UC-02"),
+    ("Owner", "UC-05"),
+    ("Customer", "UC-01"), ("Customer", "UC-06"), ("Customer", "UC-02"),
     ("FrontStaff", "UC-02"),
     ("PG", "UC-01"), ("LINE", "UC-01"), ("Time", "UC-01"), ("Time", "UC-02"),
 ]

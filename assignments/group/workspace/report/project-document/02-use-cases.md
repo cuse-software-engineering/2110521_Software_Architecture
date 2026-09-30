@@ -6,20 +6,24 @@
 
 *Figure 2.1 Use case diagram of the Seating & Event Availability Tracking System (SEATS)*
 
-The diagram names each use case as its description does and shows every actor that takes part in it: the **Customer**, the **Front Staff** and the **Manager**, and the secondary actors **LINE Platform** (LINE Login and the Messaging API), **Payment Gateway** and Time. There is no «include» or «extend» relationship: UC-04, UC-03, UC-01 and UC-02 follow one another because each produces what the next one needs (**zone map**, **concert round**, confirmed booking), which is an order of use, not a relationship between use cases.
+The diagram names each use case as its description does and shows every actor that takes part in it: the **Customer**, the **Front Staff**, the **Manager** and the **Owner**, and the secondary actors **LINE Platform** (LINE Login and the Messaging API), **Payment Gateway** and Time. UC-01 to UC-04 are the business use cases and are described in Section 2.2; UC-05 to UC-08 are the reads and the back-office settings that the same actors need, each one operation or a few reads of Section 5, and they are listed by name only. There is no «include» or «extend» relationship: UC-04, UC-03, UC-01 and UC-02 follow one another because each produces what the next one needs (**zone map**, **concert round**, confirmed booking), which is an order of use, not a relationship between use cases.
 
 *Table 2.1 Use cases, actors and increments*
 
 | Use case | Primary actor | Secondary actors | Increment |
 |---|---|---|---|
 | UC-01 Reserve a Specific Table | **Customer** | **LINE Platform**, **Payment Gateway**, Time (hold expiry), **Manager** (transfer-slip review, Increment 2) | MVP |
-| UC-02 Check In Using Digital QR Ticket | **Front Staff** | **Customer**, **Manager** (**escalation**, Increment 2), Time (**no-show** marking, Increment 2) | MVP |
-| UC-03 Create Concert Event | **Manager** | — | MVP |
+| UC-02 Check In with E-Ticket | **Front Staff** | **Customer**, **Manager** (**escalation**, Increment 2), Time (**no-show** marking, Increment 2) | MVP |
+| UC-03 Create Concert Round | **Manager** | — | MVP |
 | UC-04 Create Venue Zone Map | **Manager** | — | MVP |
+| UC-05 View Live Booking Status | **Manager** | **Owner** (reads the same view) | MVP |
+| UC-06 View My Bookings | **Customer** | — | MVP |
+| UC-07 Set Business Parameters | **Manager** | — | MVP |
+| UC-08 Manage Staff Accounts | **Manager** | **Front Staff**, **Owner** (sign in and log out with the accounts) | MVP |
 
 ## 2.2 Use Case Descriptions
 
-Each use case is described in a table after Dennis, Wixom and Tegarden: name, identifier and importance, actors and type, stakeholders, brief description, trigger, relationships, pre- and postconditions, then the basic flow with its phases in braces and its extension points in bold, the subflows, the alternative flows and the exception flows. Flows that the MVP does not build are marked *(Increment 2)*.
+The four business use cases are described in a table after Dennis, Wixom and Tegarden: name, identifier and importance, actors and type, stakeholders, brief description, trigger, relationships, pre- and postconditions, then the basic flow with its phases in braces and its extension points in bold, the subflows, the alternative flows and the exception flows. Flows that the MVP does not build are marked *(Increment 2)*.
 
 ### 2.2.1 UC-01 Reserve a Specific Table
 
@@ -158,7 +162,7 @@ Business / Transactional
 3. System displays the upcoming **concert rounds** with artist, date, start time, **booking-open time** and status: not yet open, open, sold out.
 4. **Customer** selects a round that is open for booking.
 
-{View the Table Map}
+{View the Zone Map}
 5. System displays the **zone map** of the round: every table with its number, **zone**, **table type**, **package price** and status (available, held, booked), refreshed within 2 seconds of any change (FR-06).
 6. **Customer** selects an available table.
 
@@ -223,7 +227,7 @@ At {Browse Rounds}, if the **Customer** selects a round whose **booking-open tim
 
 ##### AF-2 Round Sold Out
 
-At {Browse Rounds}, if the **Customer** selects a round whose status is sold out, or at {View the Table Map}, if the last available table of the round is taken while the map is displayed,
+At {Browse Rounds}, if the **Customer** selects a round whose status is sold out, or at {View the Zone Map}, if the last available table of the round is taken while the map is displayed,
 
 1. System shows the round as sold out and closes the **zone map** if it is displayed.
 2. Resume the basic flow at {Browse Rounds}.
@@ -233,7 +237,7 @@ At {Browse Rounds}, if the **Customer** selects a round whose status is sold out
 At {Hold the Table}, if the verification finds that the selected table has already been held or booked by another customer (**first lock wins**),
 
 1. System informs the **Customer** that the table has just been taken and refreshes the **zone map**.
-2. Resume the basic flow at {View the Table Map}.
+2. Resume the basic flow at {View the Zone Map}.
 
 ##### AF-4 Customer Cancels During the Hold
 
@@ -325,9 +329,9 @@ At {Confirmation Delivery Result}, if the LINE Messaging API rejects the message
 </tr>
 </table>
 
-### 2.2.2 UC-02 Check In Using Digital QR Ticket
+### 2.2.2 UC-02 Check In with E-Ticket
 
-*Table 2.3 Use-case description of Check In Using Digital QR Ticket*
+*Table 2.3 Use-case description of Check In with E-Ticket*
 
 <table class="uc" markdown="1">
 <tr markdown="1">
@@ -335,7 +339,7 @@ At {Confirmation Delivery Result}, if the LINE Messaging API rejects the message
 
 #### Use Case Name
 
-Check In Using Digital QR Ticket
+Check In with E-Ticket
 
 </td>
 <td class="c2" markdown="block">
@@ -579,9 +583,9 @@ At {Confirm Entry}, if System cannot save the check-in when **Front Staff** conf
 </tr>
 </table>
 
-### 2.2.3 UC-03 Create Concert Event
+### 2.2.3 UC-03 Create Concert Round
 
-*Table 2.4 Use-case description of Create Concert Event*
+*Table 2.4 Use-case description of Create Concert Round*
 
 <table class="uc" markdown="1">
 <tr markdown="1">
@@ -589,7 +593,7 @@ At {Confirm Entry}, if System cannot save the check-in when **Front Staff** conf
 
 #### Use Case Name
 
-Create Concert Event
+Create Concert Round
 
 </td>
 <td class="c2" markdown="block">
@@ -630,7 +634,7 @@ Business / Creation
 
 #### Stakeholders and Interests
 
-- **Manager**: Wants to publish a **concert round** quickly with the right **zone map**, **table types**, **package prices** and **booking-open time**, priced according to the venue's policy, and to see it in the **back-office** **live view** so that bookings and check-ins can be handled.
+- **Manager**: Wants to publish a **concert round** quickly with the right **zone map**, **table types**, **package prices** and **booking-open time**, priced according to the venue's policy, and to see it in the **back-office live view** so that bookings and check-ins can be handled.
 - **Customer**: Wants accurate round information, table availability and prices before reserving (UC-01).
 - **Front Staff**: Wants the round's **check-in window** and **grace period** defined so that check-in works on the night (UC-02).
 
@@ -663,7 +667,7 @@ Business / Creation
 - Include: none.
 - Extend: none.
 - Generalization: none.
-- Related use cases: Requires the venue **zone map** (**zones**, tables and **table types**) created in UC-04 and the venue-issued **back-office** account of the **Manager**. Produces the **concert round** used in UC-01 (rounds, table map, fees) and in UC-02 (**check-in window** and **grace period**). The **live view** of published rounds is shared by the **Manager**.
+- Related use cases: Requires the venue **zone map** (**zones**, tables and **table types**) created in UC-04 and the venue-issued **back-office** account of the **Manager**. Produces the **concert round** used in UC-01 (rounds, **zone map**, fees) and in UC-02 (**check-in window** and **grace period**). The **live view** of published rounds is shared by the **Manager**.
 - Business rules: BRULE-04, 05, 07, 08.
 
 </td>
@@ -726,7 +730,7 @@ Business / Creation
 12. System validates the round (subflow S-1). **{Validation Result}**
 13. System shows a preview of the round as **Customers** will see it in UC-01.
 14. **Manager** publishes the round.
-15. System saves the round as Published, makes it visible to **Customers** from its **booking-open time** and updates the **back-office** **live view**. **{Round Saved}**
+15. System saves the round as Published, makes it visible to **Customers** from its **booking-open time** and updates the **back-office live view**. **{Round Saved}**
 16. The use case ends.
 
 </td>
@@ -867,7 +871,7 @@ Business / Creation
 
 - **Manager**: Wants the digital **zone map** to match the physical venue so that every **concert round** can be set up on it without rework, with the **zones**, tables and **table types** ready to select when creating a **concert round** (UC-03), and the layout reflecting the venue's capacity and policy.
 - **Customer**: Wants accurate table positions and **table types** before reserving (UC-01).
-- **Front Staff**: Wants the live floor plan used at check-in to match the actual room layout (UC-02).
+- **Front Staff**: Wants the live **zone map** used at check-in to match the actual room (UC-02).
 
 </td>
 </tr>
@@ -876,7 +880,7 @@ Business / Creation
 
 #### Brief Description
 
-**Manager** creates or edits the venue **zone map** in the **back-office**: uploads an image of the venue, defines the **zones** on it, places the tables on the map, gives each table a table number, a **table type** and a seating capacity, and activates the map. System validates the map (named **zones**, unique table numbers, every table typed and sized) before it can be activated. Seat-view photographs of the tables are out of scope (a future feature). An Active **zone map** can be selected by the **Manager** when creating a **concert round** in UC-03 and is rendered as the floor plan seen by **Customers** in UC-01 and by **Front Staff** in UC-02.
+**Manager** creates or edits the venue **zone map** in the **back-office**: uploads an image of the venue, defines the **zones** on it, places the tables on the map, gives each table a table number, a **table type** and a seating capacity, and activates the map. System validates the map (named **zones**, unique table numbers, every table typed and sized) before it can be activated. Seat-view photographs of the tables are out of scope (a future feature). An Active **zone map** can be selected by the **Manager** when creating a **concert round** in UC-03 and is rendered as the **zone map** seen by **Customers** in UC-01 and by **Front Staff** in UC-02.
 
 </td>
 </tr>
@@ -885,7 +889,7 @@ Business / Creation
 
 #### Trigger
 
-**Manager** wants to set up the venue layout for the first time or change the layout of the venue. Trigger type: external.
+**Manager** wants to set up the **zone map** of the venue for the first time or change it. Trigger type: external.
 
 </td>
 </tr>
@@ -1036,3 +1040,63 @@ At {Define the Zones}, if the image of the venue cannot be uploaded,
 </td>
 </tr>
 </table>
+
+## 2.3 Domain Model
+
+The domain model is the conceptual model of the concert-table business: the things that exist in the domain, their attributes, how they relate, and the rules that constrain them. It is the shared vocabulary behind the use cases, the requirements, the glossary and the services of Section 5: every entity is a glossary term, every invariant is a business rule of Section 3.3, and the booking lifecycle supplies the alternative and exception flows of UC-01 and UC-02. Actors (**Customer**, **Manager**, **Front Staff**, **Owner**) are not entities; the **Customer** entity is the **customer profile** that a LINE account owns. The model is drawn without instance data: the current **zones**, **table types**, **package prices** and the **extra-person fee** are maintained by the **Manager** and stated as BRULE-08 and BRULE-09, not as values on the diagram.
+
+![SEATS domain model](assets/domain-model.png)
+
+*Figure 2.2 Domain model of SEATS (UML class diagram); WaitlistEntry and BookingTransfer belong to a later release*
+
+*Table 2.6 Business entities*
+
+| Entity | Definition | Key attributes | Glossary term |
+|---|---|---|---|
+| ConcertRound | One concert night at the venue, for which tables are sold in advance | name, date, doors-open time, start time, **booking-open time**, status (Draft, Published; then not yet open, open, sold out, finished, cancelled as seen by the **Customer**) | **concert round** |
+| Artist | The performer of a concert night | name | — |
+| ZoneMap | The plan of the venue used for a round; fixed for that round once booking opens (BRULE-07) | name, image of the venue | **zone map** |
+| Zone | A pricing area of the **zone map**, defined by the **Manager** per map | name | **zone** |
+| Table | A physical, numbered table inside a **zone** | number, capacity, position on the image | table |
+| TableType | The kind of table with its **package**, defined by the **Manager**; the same type may have a different price in each **zone** | name, capacity, package content | **table type**, **package** |
+| PackagePrice | The **package price** of one **table type** in one **zone** for one round (BRULE-08) | price, package content | **package price** |
+| BusinessParameters | The venue's settings that every round opening for booking afterwards uses (FR-38) | **hold period**, **check-in window**, **grace period**, **extra-person fee** | **business parameters** |
+| Customer | A person identified by a LINE account who reserves tables (BRULE-12) | LINE user id, name, phone, consent given at | **Customer**, **customer profile** |
+| Booking | The reservation of one table for one round by one customer; the central record of the system | status (BookingStatus, Figure 2.3), **party size**, created at, **hold** expires at, confirmed at | booking, **hold** |
+| Payment | The payment of the **full table fee** for a booking through the **Payment Gateway** | amount, method, gateway reference, paid at, status | **full table fee** |
+| ETicket | The proof of a Confirmed booking, presented as a QR code at the door | **booking reference** (signed), QR code, issued at, valid for (round, table) | **e-ticket** |
+| CheckIn | The event of admitting the **Customer** at the door | checked-in at, by staff, guests present | check-in |
+| WaitlistEntry | A **Customer**'s request to be offered a table of a full round; later release | position, created at | **waitlist** |
+| BookingTransfer | The official reassignment of a Confirmed booking to another **Customer**; later release | transferred at, to customer | — |
+
+*Table 2.7 Associations and invariants*
+
+| Association | Multiplicity | Meaning |
+|---|---|---|
+| ConcertRound – Artist | many to one | a concert night features one artist; an artist may play several nights |
+| ConcertRound – ZoneMap | many to one | each round uses one **zone map**; a map serves many rounds |
+| ZoneMap – Zone – Table | one to many, one to many | a map has **zones**; a **zone** has tables |
+| Zone – TableType, Table – TableType | one to many, many to one | a **zone** offers table types; a table is of one type, which sets its capacity and **package** |
+| ConcertRound – PackagePrice | one to many | a round prices each **table type** in each **zone** |
+| BusinessParameters – ConcertRound | one to many | a round uses the parameters in force at its **booking-open time** |
+| Booking – ConcertRound, Booking – Table, Booking – Customer | many to one each | a booking is for one round, one table and one customer |
+| Booking – Payment, Booking – ETicket | one to zero or one | a booking has a payment once the customer pays, and one **e-ticket** once it is Confirmed |
+| ETicket – CheckIn | one to zero or one | the **e-ticket** of a checked-in booking is redeemed by one check-in |
+
+The invariants of the model are the business rules of Section 3.3: a table has at most one active booking (Held, Confirmed or Checked-in) per round (BRULE-03, **first lock wins**); a booking is Confirmed only after the **full table fee** is verified (BRULE-01); a Held booking expires after the **hold period** (BRULE-02); check-in is accepted within the **check-in window** and the **grace period**, after which the booking is a **no-show** (BRULE-04, BRULE-05, BRULE-06); the **zone map** of a round does not change once booking is open (BRULE-07); and a customer is identified by exactly one LINE account (BRULE-12).
+
+![Booking state machine](assets/booking-states.png)
+
+*Figure 2.3 Lifecycle of a booking (UML state machine); Transferred belongs to a later release*
+
+*Table 2.8 Booking states*
+
+| State | Entered when | Leaves when |
+|---|---|---|
+| Held | the **Customer** selects a free table (UC-01 step 7) | the payment is verified (UC-01 step 19), or the **Manager** confirms the **transfer slip** in **degraded mode** (Increment 2) → Confirmed; the **hold period** ends with no payment verified → Expired (EF-1); the **Customer** cancels → Cancelled (AF-4, AF-6) |
+| Confirmed | the payment result is verified and the **e-ticket** issued (UC-01 steps 19–20) | the **e-ticket** is scanned within the **check-in window** → Checked-in (UC-02); the **grace period** passes → **No-show** (UC-02 EF-4, Increment 2); the **Manager** cancels as an exception → Cancelled |
+| Checked-in | **Front Staff** confirms the entry (UC-02 step 6) | final |
+| Expired | the **hold** ends with no payment verified; the table is released and the **Customer** notified (UC-01 EF-1) | a successful payment result arrives late while the table is still available → Confirmed (BRULE-17, Increment 2); otherwise final |
+| No-show | the **grace period** ends without a check-in; the table is shown as free, the fee is forfeited (BRULE-06) | final |
+| Cancelled | the **Customer** cancels during the **hold**, or the **Manager** cancels as an exception | final |
+| Transferred | later release: the booking is reassigned and its **e-ticket** invalidated | final |

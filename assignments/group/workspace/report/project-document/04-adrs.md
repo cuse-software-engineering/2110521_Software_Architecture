@@ -85,7 +85,7 @@ Real-Time Floor Plan Communication
 <td class="k">Context</td>
 <td markdown="block">
 
-When multiple customers look at the floor plan simultaneously on busy nights, table statuses must update instantaneously to prevent double-booking conflicts and outdated views.
+When multiple customers look at the **zone map** simultaneously on busy nights, table statuses must update instantaneously to prevent double-booking conflicts and outdated views.
 
 </td>
 </tr>
@@ -134,7 +134,7 @@ Backend Language & Framework
 <td class="k">Context</td>
 <td markdown="block">
 
-The system requires rapid development cycles while supporting RESTful APIs, real-time bi-directional communication for floor plan updates, seamless integration with the LINE Messaging API/**LIFF** SDK, and scheduled background tasks to automatically release expired table reservations past the cutoff window. Options considered include Go, Java, and Node.js (JavaScript). Given that the frontend is built using Next.js/React, adopting a unified language stack across client and server significantly streamlines development.
+The system requires rapid development cycles while supporting RESTful APIs, real-time bi-directional communication for **zone map** updates, seamless integration with the LINE Messaging API/**LIFF** SDK, and scheduled background tasks to automatically release expired table reservations past the cutoff window. Options considered include Go, Java, and Node.js (JavaScript). Given that the frontend is built using Next.js/React, adopting a unified language stack across client and server significantly streamlines development.
 
 </td>
 </tr>
@@ -232,7 +232,7 @@ Interactive Floor Plan Rendering
 <td class="k">Context</td>
 <td markdown="block">
 
-The floor plan needs to support responsive rendering, pinch-to-zoom, **zone** highlighting, and seat view popups without lagging on mid-range smartphones.
+The **zone map** needs to support responsive rendering, pinch-to-zoom, **zone** highlighting, and seat view popups without lagging on mid-range smartphones.
 
 </td>
 </tr>
@@ -258,7 +258,7 @@ Accepted
 
 - Smooth vector scaling and interactive **zone**/table hit-testing.
 - **Managers** can visually manipulate coordinates for tables and stages.
-- Requires custom responsive coordinate mapping to ensure layouts adapt across various mobile screen sizes.
+- Requires custom responsive coordinate mapping to ensure the **zone map** adapts across various mobile screen sizes.
 
 </td>
 </tr>
@@ -281,7 +281,7 @@ Primary Database Engine
 <td class="k">Context</td>
 <td markdown="block">
 
-The system needs to store diverse data structures, including flexible venue floor plan layouts (coordinates, shapes, multi-table **zone** configs, the image of the venue), booking transaction records, **customer profiles**, and time-stamped status transitions. Traditional relational databases (RDBMS) enforce rigid table schemas that make storing deeply nested floor layout geometries and dynamic table attributes cumbersome. A **zone map** is naturally one nested document (**zones** that contain tables with their coordinates, types and capacities) whose shape differs from venue to venue, so the layouts need a flexible schema that stores such a document whole, without complex multi-table joins. Additionally, the backend runtime is Node.js/JavaScript, making native JSON/BSON document handling particularly advantageous for rapid development.
+The system needs to store diverse data structures, including flexible venue **zone maps** (coordinates, shapes, multi-table **zone** configs, the image of the venue), booking transaction records, **customer profiles**, and time-stamped status transitions. Traditional relational databases (RDBMS) enforce rigid table schemas that make storing deeply nested **zone map** geometries and dynamic table attributes cumbersome. A **zone map** is naturally one nested document (**zones** that contain tables with their coordinates, types and capacities) whose shape differs from venue to venue, so the **zone maps** need a flexible schema that stores such a document whole, without complex multi-table joins. Additionally, the backend runtime is Node.js/JavaScript, making native JSON/BSON document handling particularly advantageous for rapid development.
 
 </td>
 </tr>

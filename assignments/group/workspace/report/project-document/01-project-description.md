@@ -2,13 +2,13 @@
 
 ## 1.1 Problem Description
 
-Pubs and bars still rely on manual chat messaging and phone calls to handle table reservations, leading to delayed staff responses, lost bookings, lack of real-time floor plan visibility, and frequent allocation errors where customers do not get their requested tables. Currently, handling table inquiries and confirming seat statuses manually consumes substantial staff time and often leads to miscommunications during peak hours. The system should streamline table reservations through a web app accessed via LINE Messenger, providing a real-time interactive floor plan, payment of the **full table fee** when booking, digital QR tickets for check-in, and one clear arrival rule: check-in opens 2 hours before the show, the table is kept until 30 minutes after the start, and a booking not checked in by then becomes a **no-show**.
+Pubs and bars still rely on manual chat messaging and phone calls to handle table reservations, leading to delayed staff responses, lost bookings, lack of real-time **zone map** visibility, and frequent allocation errors where customers do not get their requested tables. Currently, handling table inquiries and confirming seat statuses manually consumes substantial staff time and often leads to miscommunications during peak hours. The system should streamline table reservations through a web app accessed via LINE Messenger, providing a real-time interactive **zone map**, payment of the **full table fee** when booking, **e-tickets** for check-in, and one clear arrival rule: check-in opens 2 hours before the show, the table is kept until 30 minutes after the start, and a booking not checked in by then becomes a **no-show**.
 
 ## 1.2 Target Customer
 
 - **Manager (venue manager):** Full access to the **back-office**: create the venue **zone map** (**zones**, tables, and **table types**), create and publish **concert rounds** with their prices, follow bookings and table occupancy on the **live view**, and rule on check-in **escalations**. The venue owner uses the same **back-office** with read-only access.
-- **Front Staff (front of house):** Scan QR codes on digital tickets for fast check-in, monitor real-time table statuses, and seat **walk-in** guests at the tables of **no-shows**, paid by hand at the venue.
-- **Customer:** Browse interactive floor plans, reserve and pay for a specific table, receive the **e-ticket** by LINE, and check in via digital QR pass.
+- **Front Staff (front of house):** Scan the QR codes of **e-tickets** for fast check-in, monitor real-time table statuses, and seat **walk-in** guests at the tables of **no-shows**, paid by hand at the venue.
+- **Customer:** Browse interactive **zone maps**, reserve and pay for a specific table, receive the **e-ticket** by LINE, and check in via digital QR pass.
 
 ## 1.3 Scope and Increments
 

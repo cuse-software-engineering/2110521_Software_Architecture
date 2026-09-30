@@ -1,0 +1,102 @@
+' SEATS booking state machine (project document Figure 2.3). Render as domain-model.puml.
+@startuml
+title <b>Booking — state machine</b>
+
+scale 2.3
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 13
+skinparam titleFontSize 18
+skinparam nodesep 40
+skinparam ranksep 80
+skinparam state<<later release>> {
+  BackgroundColor #F1F5F9
+  BorderColor #94A3B8
+}
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #334155
+  BorderThickness 1.2
+  ArrowColor #334155
+  ArrowThickness 1.2
+  FontSize 14
+  FontStyle bold
+  AttributeFontSize 12
+  AttributeFontColor #1E293B
+}
+skinparam note {
+  BackgroundColor #FEF9C3
+  BorderColor #CA8A04
+  FontSize 11
+}
+skinparam legend {
+  BackgroundColor #FFFFFF
+  BorderColor #94A3B8
+  FontSize 11
+}
+skinparam arrowFontSize 11
+skinparam arrowFontColor #1E293B
+
+state Held
+Held : entry / lock table, start 15-min hold timer
+Held : do / show booking details, terms, payment methods
+
+state Confirmed
+Confirmed : entry / issue e-ticket (QR), LINE confirmation
+Confirmed : do / wait for the check-in window
+
+state CheckedIn
+CheckedIn : entry / record checkedInAt and staff
+
+state Expired
+Expired : entry / release table, LINE timeout notice
+
+state Cancelled
+Cancelled : entry / release table
+
+state NoShow
+NoShow : entry / show table as free (resale by hand, no waitlist)
+NoShow : table fee forfeited, no refund
+
+state Transferred <<later release>>
+Transferred : entry / invalidate original e-ticket
+
+[*] -down-> Held : customer selects a table\n[table has no active Booking for this concert round]
+
+Held -down-> Expired : after (15 min)\n[no payment verified,\nno slip awaiting decision]
+Held -down-> Confirmed : payment verified: gateway callback,\nor Manager confirms the transfer slip (UC-01 EF-3)\n[full table fee paid]
+Held -down-> Cancelled : customer cancels\n[during hold]
+Held --> Held : payment failed or declined\n[hold not expired] / retry
+
+Confirmed -down-> CheckedIn : QR scanned by Front Staff\n[start − 2 h ≤ now ≤ start + 30 min]
+Confirmed -down-> NoShow : after (start + 30 min)\n[not checked in]
+Confirmed -down-> Transferred : customer transfers booking\n[later release]
+Confirmed -up-> Cancelled : Manager cancels\n(exception)
+Expired -[norank]-> Confirmed : late payment result (BRULE-17)\n[table still available]
+
+' every terminal state reaches the (shared) final node: the Booking is closed
+Transferred -down-> [*]
+CheckedIn -down-> [*]
+NoShow -down-> [*]
+Expired -down-> [*]
+Cancelled -down-> [*]
+
+note left of Held
+  Business rules: hold = 15 min;
+  first lock wins; full payment
+  before confirmation.
+end note
+
+note bottom of Transferred
+  The receiving customer gets a
+  <b>new Booking</b> that starts in
+  <b>Confirmed</b> with its own e-ticket.
+end note
+
+legend bottom left
+  Terminal states (CheckedIn, Expired, NoShow, Cancelled, Transferred) end at the final node:
+  the Booking is closed and the table is free again (except Transferred, whose table
+  passes to the new Booking of the recipient). Expired returns to Confirmed when a
+  successful payment result arrives late and the table is still available (BRULE-17).
+endlegend
+@enduml

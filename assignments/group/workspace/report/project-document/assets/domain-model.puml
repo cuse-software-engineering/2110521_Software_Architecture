@@ -1,0 +1,149 @@
+' SEATS domain model (project document Figure 2.2). Render from the repository root:
+'   java -jar <plantuml.jar> -Playout=smetana -tpng assignments/group/workspace/report/project-document/assets/domain-model.puml
+@startuml
+title <b>SEATS Domain Model</b>
+
+scale 2.3
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 13
+skinparam titleFontSize 18
+skinparam classAttributeIconSize 0
+skinparam nodesep 40
+skinparam ranksep 70
+skinparam class {
+  BackgroundColor #F8FAFC
+  HeaderBackgroundColor #E2E8F0
+  BorderColor #334155
+  BorderThickness 1.2
+  ArrowColor #334155
+  ArrowThickness 1.2
+  StereotypeFontSize 11
+  StereotypeFontColor #475569
+}
+skinparam arrowFontSize 11
+skinparam arrowFontColor #1E293B
+hide circle
+skinparam class<<later release>> {
+  BackgroundColor #F1F5F9
+  BorderColor #94A3B8
+  FontColor #64748B
+}
+hide empty methods
+
+' ---------- concert side ----------
+class Artist {
+  name : String
+}
+class ConcertRound {
+  name : String
+  date : Date
+  doorsOpenAt : Time
+  startAt : Time
+  bookingOpenAt : DateTime
+  status : RoundStatus
+}
+class ZoneMap {
+  name : String
+}
+class Zone {
+  name : String
+}
+class TableType {
+  name : String
+  capacity : Integer
+  packageContent : String
+}
+class PackagePrice {
+  packagePrice : Money
+  packageContent : String
+}
+class BusinessParameters {
+  holdPeriod : Duration
+  checkInWindow : Duration
+  gracePeriod : Duration
+  extraPersonFee : Money
+}
+class Table {
+  number : String
+  capacity : Integer
+}
+
+' ---------- customer / booking side ----------
+class Customer {
+  lineUserId : String
+  name : String
+  phone : String
+  consentGivenAt : DateTime
+}
+class Booking {
+  status : BookingStatus
+  partySize : Integer
+  createdAt : DateTime
+  holdExpiresAt : DateTime
+  confirmedAt : DateTime [0..1]
+}
+' literals = the states of diagrams/booking-states.puml (values of Booking.status)
+enum BookingStatus <<enumeration>> {
+  Held
+  Confirmed
+  CheckedIn
+  Expired
+  NoShow
+  Cancelled
+  Transferred
+}
+class WaitlistEntry <<later release>> {
+  position : Integer
+  createdAt : DateTime
+}
+class BookingTransfer <<later release>> {
+  transferredAt : DateTime
+}
+class Payment {
+  amount : Money
+  method : PaymentMethod
+  gatewayReference : String
+  paidAt : DateTime
+  status : PaymentStatus
+}
+class ETicket {
+  bookingReference : String
+  qrCode : String
+  issuedAt : DateTime
+}
+class CheckIn {
+  checkedInAt : DateTime
+  byStaff : String
+}
+
+' ---------- associations (layout hints: -down-/-right- fix the rows; ▲ ▶ ▼ ◀ = reading direction) ----------
+' The composite (diamond) end of the two compositions carries no "1": UML implies it, and the label overlapped the diamond (RN-70).
+Artist "1" -down- "0..*" ConcertRound : performs at ▼
+ConcertRound "0..*" -right- "1" ZoneMap : uses ▶
+ZoneMap *-right- "1..*" Zone : contains ▶
+Zone "1" -right- "1..*" TableType : offers ▶
+ConcertRound "1" -down- "0..*" PackagePrice : prices ▼
+BusinessParameters "1" -right- "0..*" ConcertRound : ◀ applies to
+Zone *-down- "1..*" Table : contains ▼
+TableType "1" -down- "0..*" Table : classifies ▼
+
+ConcertRound "1" -down- "0..*" Booking : ▲ booked for
+Customer "1" -right- "0..*" Booking : makes ▶
+Table "1" -down- "0..*" Booking : ▲ reserves
+
+ConcertRound "1" -down- "0..*" WaitlistEntry : ▲ waits for
+Customer "1" -up- "0..*" WaitlistEntry : joins ▲
+
+Booking "1" -down- "0..1" Payment : paid by ▼
+Booking "1" -down- "0..1" ETicket : issues ▼
+ETicket "1" -right- "0..1" CheckIn : redeemed by ▶
+
+Booking "1" -down- "0..1" BookingTransfer : transferred by ▼
+Customer "1" -down- "0..*" BookingTransfer : ▲ transferred to
+
+' layout hint only (no association): the enumeration sits apart from the entity cluster, at the top right
+TableType -right[hidden]- BookingStatus
+BusinessParameters -down[hidden]- Artist
+
+@enduml

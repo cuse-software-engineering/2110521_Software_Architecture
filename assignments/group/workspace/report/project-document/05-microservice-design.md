@@ -7,9 +7,9 @@ This section presents the second version of the microservice architecture for th
 The architecture covers the four use cases end to end, including the alternative and exception flows that the MVP builds:
 
 - **UC-01 Reserve a Specific Table** — the **Customer** browses **concert rounds**, holds a table for 15 minutes, completes the profile, accepts the terms, pays the **full table fee** through the simulated **Payment Gateway** (ADR-11) and receives a QR **e-ticket** by LINE.
-- **UC-02 Check In Using Digital QR Ticket** — **Front Staff** scans the **e-ticket** at the door, the **booking reference** is verified against the **check-in window** and the **grace period**, the entry is confirmed and the table becomes occupied on the **live view**.
-- **UC-03 Create Concert Event** — the **Manager** creates a **concert round** on the venue **zone map**, prices the **table types**, validates and publishes it, which makes the round bookable in UC-01 and defines the **check-in window** used in UC-02.
-- **UC-04 Create Venue Zone Map** — the **Manager** uploads the image of the venue, defines and names venue **zones** on it, places tables with unique table numbers, assigns **table types** and seating capacities, validates and activates the map, which makes it selectable in UC-03 and provides the floor plan used in UC-01 and UC-02 for rounds that use it.
+- **UC-02 Check In with E-Ticket** — **Front Staff** scans the **e-ticket** at the door, the **booking reference** is verified against the **check-in window** and the **grace period**, the entry is confirmed and the table becomes occupied on the **live view**.
+- **UC-03 Create Concert Round** — the **Manager** creates a **concert round** on the venue **zone map**, prices the **table types**, validates and publishes it, which makes the round bookable in UC-01 and defines the **check-in window** used in UC-02.
+- **UC-04 Create Venue Zone Map** — the **Manager** uploads the image of the venue, defines and names venue **zones** on it, places tables with unique table numbers, assigns **table types** and seating capacities, validates and activates the map, which makes it selectable in UC-03 and provides the **zone map** used in UC-01 and UC-02 for rounds that use it.
 
 The Deliverable #2 brief asks for at least three business use cases; the design covers all four. The venue **zone map** is owned by the same service that owns the rounds, because a round cannot be created without it. Which tables of a round are booked is read from the Table Availability Service, which owns the status of every table, so the Concert Round Service does not depend on the Booking Service. The **back-office** accounts of ADR-07 are owned by the Staff Account Service.
 
@@ -32,7 +32,7 @@ SEATS is divided into three parts: the Frontend, the Backend and the External sy
 
 | Part | Component | Responsibility | API it offers | Data it owns |
 |---|---|---|---|---|
-| **Frontend** | Customer Web App | The **LIFF** app inside LINE: **concert rounds**, the table map, the **hold**, the **customer profile**, the **booking terms**, the **hosted checkout** and My Bookings (UC-01) | None; it calls the API Gateway by REST | None |
+| **Frontend** | Customer Web App | The **LIFF** app inside LINE: **concert rounds**, the **zone map**, the **hold**, the **customer profile**, the **booking terms**, the **hosted checkout** and My Bookings (UC-01) | None; it calls the API Gateway by REST | None |
 | | Back-office Web App | **Zone maps**, **concert rounds** and **business parameters** for the **Manager**, the **live view** for the **Manager** and the **Owner**, the QR scan and check-in for the **Front Staff** (UC-02 to UC-04) | None; it calls the API Gateway by REST | None |
 | **Backend** | API Gateway | The only public entry: authenticates the caller (the LINE ID token through the LINE Login Adapter, the staff session token), checks the role of the route (FR-66) and routes the request to the service that owns the operation | REST, for the Frontend and for the payment webhook | None |
 | | Concert Round Service | The venue and events context: **zone maps**, **table types**, **concert rounds**, **package prices** and **business parameters**; stores the image of the venue through the Media Storage Adapter | REST (**back-office** and customer reads), gRPC (reads for the Booking Service) | Round DB |
@@ -81,71 +81,71 @@ Two services also run a job on their own timer, which is not an operation: the h
 
 ## 5.4 Use Case Traceability
 
-Table 5.4 traces the four use cases and the system-wide functions to the operations of Table 5.3: a cell names the steps and flows of the use case that the operation serves, whether the actor invokes it through the API Gateway or another service invokes it as a collaborator. Every operation has at least one cell, and the two jobs on a timer are listed below the operations. Appendix D gives the same trace step by step, with who invokes each operation, the collaborations it needs, the data it stores and the requirements it realises; only the flows that the MVP builds are traced (Section 1.3).
+Table 5.4 traces the eight use cases to the operations of Table 5.3: a cell names the steps and flows of the use case that the operation serves, whether the actor invokes it through the API Gateway or another service invokes it as a collaborator; for UC-05 to UC-08, which have no description, a tick marks the operations they use. Every operation has at least one cell, and the two jobs on a timer are listed below the operations. Appendix D gives the same trace step by step, with who invokes each operation, the collaborations it needs, the data it stores and the requirements it realises; only the flows that the MVP builds are traced (Section 1.3).
 
 <div class="matrix" markdown="1">
 
 *Table 5.4 Operations by use case*
 
-| Service | Operation | UC-01 | UC-02 | UC-03 | UC-04 | System-wide |
-|---|---|---|---|---|---|---|
-| **Concert Round Service** | createZoneMap() |  |  |  | 1–2 |  |
-|  | updateZoneMap() |  |  |  | 4; 5–6; AF-1; AF-3 |  |
-|  | uploadZoneMapImage() |  |  |  | 3, EF-3 |  |
-|  | defineTableType() |  |  |  | 5–6 |  |
-|  | listTableTypes() |  |  |  | 5–6 |  |
-|  | listZoneMaps() |  |  | 6 | AF-1 |  |
-|  | getZoneMap() |  |  | 7 | 7; 10; AF-1 |  |
-|  | validateZoneMap() |  |  |  | 8–9, S-1, EF-1 |  |
-|  | activateZoneMap() |  |  |  | 11–12, EF-2 |  |
-|  | getBusinessParameters() |  |  | 3–5 |  | Business parameters |
-|  | updateBusinessParameters() |  |  |  |  | Business parameters |
-|  | createRound() |  |  | 1–2 |  |  |
-|  | updateRound() |  |  | 3–5; 8; 9–10; AF-1; AF-3 |  |  |
-|  | validateRound() |  |  | 11–12, S-1, EF-1 |  |  |
-|  | publishRound() |  |  | 14–15, EF-2 |  |  |
-|  | getUpcomingRounds() | 3, AF-2 |  |  |  |  |
-|  | getRound() | 4, AF-1; 6–8, AF-3 |  | 13; AF-3 |  |  |
-|  | getRoundTables() | 5, AF-2 |  | 13 |  |  |
-|  | getRoundPricing() | 10–11 |  |  |  |  |
-|  | getCheckInWindow() | 13 | 2–4, S-1, AF-2, AF-3, AF-5, EF-1, EF-2 |  |  |  |
-| **Table Availability Service** | initializeRoundTableStatus() |  |  | 14–15, EF-2 |  |  |
-|  | getRoundTableStatus() | 5, AF-2 | 7 | AF-3 | AF-1 | Live view |
-|  | countAvailableTables() | 3, AF-2 |  |  |  |  |
-|  | holdTable() | 6–8, AF-3 |  |  |  |  |
-|  | releaseHold() | AF-4, AF-6; EF-1 |  |  |  |  |
-|  | markTableBooked() | 19–20 |  |  |  |  |
-|  | markTableOccupied() |  | 6, EF-5 |  |  |  |
-| **Booking Service** | createHeldBooking() | 6–8, AF-3 |  |  |  |  |
-|  | getBooking() | 9; 21, AF-5 |  |  |  |  |
-|  | setPartySize() | 10–11 |  |  |  |  |
-|  | getCustomerProfile() | 12 |  |  |  |  |
-|  | createCustomerProfile() | 12a, AF-7 |  |  |  |  |
-|  | updateCustomerProfile() | 12b |  |  |  |  |
-|  | getBookingTerms() | 13 |  |  |  |  |
-|  | acceptBookingTerms() | 14 |  |  |  |  |
-|  | startPayment() | 15 |  |  |  |  |
-|  | confirmBookingPayment() | 18, AF-5; 19–20 |  |  |  |  |
-|  | getETicket() | 21, AF-5 |  |  |  | My Bookings |
-|  | getCustomerBookings() |  |  |  |  | My Bookings |
-|  | cancelBooking() | AF-4, AF-6 |  |  |  |  |
-|  | verifyBookingReference() |  | 2–4, S-1, AF-2, AF-3, AF-5, EF-1, EF-2 |  |  |  |
-|  | checkInBooking() |  | 6, EF-5 |  |  |  |
-|  | getRoundBookings() |  | 7 |  |  | Live view |
-| **Payment Service** | createPaymentRequest() | 15 |  |  |  |  |
-|  | receivePaymentResult() | 18, AF-5 |  |  |  |  |
-|  | getPaymentStatus() | 21, AF-5 |  |  |  |  |
-| **Notification Service** | sendBookingConfirmation() | 22, S-1 |  |  |  |  |
-|  | sendHoldExpiredNotice() | EF-1; EF-1, S-1 |  |  |  |  |
-|  | sendPaymentFailedNotice() | 18, AF-5; AF-5 |  |  |  |  |
-| **Staff Account Service** | signIn() |  |  |  |  | Sign-in and roles |
-|  | signOut() |  |  |  |  | Log out |
-|  | createStaffAccount() |  |  |  |  | Staff accounts |
-|  | listStaffAccounts() |  |  |  |  | Staff accounts |
-|  | updateStaffAccount() |  |  |  |  | Staff accounts |
-|  | disableStaffAccount() |  |  |  |  | Staff accounts |
-| *Jobs on a timer (not operations)* | hold-expiry job of the Booking Service | EF-1 | | | | |
-| | retry job of the Notification Service | EF-6 | | | | |
+| Service | Operation | UC-01 | UC-02 | UC-03 | UC-04 | UC-05 | UC-06 | UC-07 | UC-08 |
+|---|---|---|---|---|---|---|---|---|---|
+| **Concert Round Service** | createZoneMap() |  |  |  | 1–2 |  |  |  |  |
+|  | updateZoneMap() |  |  |  | 4; 5–6; AF-1; AF-3 |  |  |  |  |
+|  | uploadZoneMapImage() |  |  |  | 3, EF-3 |  |  |  |  |
+|  | defineTableType() |  |  |  | 5–6 |  |  |  |  |
+|  | listTableTypes() |  |  |  | 5–6 |  |  |  |  |
+|  | listZoneMaps() |  |  | 6 | AF-1 |  |  |  |  |
+|  | getZoneMap() |  |  | 7 | 7; 10; AF-1 |  |  |  |  |
+|  | validateZoneMap() |  |  |  | 8–9, S-1, EF-1 |  |  |  |  |
+|  | activateZoneMap() |  |  |  | 11–12, EF-2 |  |  |  |  |
+|  | getBusinessParameters() |  |  | 3–5 |  |  |  | ✓ |  |
+|  | updateBusinessParameters() |  |  |  |  |  |  | ✓ |  |
+|  | createRound() |  |  | 1–2 |  |  |  |  |  |
+|  | updateRound() |  |  | 3–5; 8; 9–10; AF-1; AF-3 |  |  |  |  |  |
+|  | validateRound() |  |  | 11–12, S-1, EF-1 |  |  |  |  |  |
+|  | publishRound() |  |  | 14–15, EF-2 |  |  |  |  |  |
+|  | getUpcomingRounds() | 3, AF-2 |  |  |  |  |  |  |  |
+|  | getRound() | 4, AF-1; 6–8, AF-3 |  | 13; AF-3 |  |  |  |  |  |
+|  | getRoundTables() | 5, AF-2 |  | 13 |  |  |  |  |  |
+|  | getRoundPricing() | 10–11 |  |  |  |  |  |  |  |
+|  | getCheckInWindow() | 13 | 2–4, S-1, AF-2, AF-3, AF-5, EF-1, EF-2 |  |  |  |  |  |  |
+| **Table Availability Service** | initializeRoundTableStatus() |  |  | 14–15, EF-2 |  |  |  |  |  |
+|  | getRoundTableStatus() | 5, AF-2 | 7 | AF-3 | AF-1 | ✓ |  |  |  |
+|  | countAvailableTables() | 3, AF-2 |  |  |  |  |  |  |  |
+|  | holdTable() | 6–8, AF-3 |  |  |  |  |  |  |  |
+|  | releaseHold() | AF-4, AF-6; EF-1 |  |  |  |  |  |  |  |
+|  | markTableBooked() | 19–20 |  |  |  |  |  |  |  |
+|  | markTableOccupied() |  | 6, EF-5 |  |  |  |  |  |  |
+| **Booking Service** | createHeldBooking() | 6–8, AF-3 |  |  |  |  |  |  |  |
+|  | getBooking() | 9; 21, AF-5 |  |  |  |  |  |  |  |
+|  | setPartySize() | 10–11 |  |  |  |  |  |  |  |
+|  | getCustomerProfile() | 12 |  |  |  |  |  |  |  |
+|  | createCustomerProfile() | 12a, AF-7 |  |  |  |  |  |  |  |
+|  | updateCustomerProfile() | 12b |  |  |  |  |  |  |  |
+|  | getBookingTerms() | 13 |  |  |  |  |  |  |  |
+|  | acceptBookingTerms() | 14 |  |  |  |  |  |  |  |
+|  | startPayment() | 15 |  |  |  |  |  |  |  |
+|  | confirmBookingPayment() | 18, AF-5; 19–20 |  |  |  |  |  |  |  |
+|  | getETicket() | 21, AF-5 |  |  |  |  | ✓ |  |  |
+|  | getCustomerBookings() |  |  |  |  |  | ✓ |  |  |
+|  | cancelBooking() | AF-4, AF-6 |  |  |  |  |  |  |  |
+|  | verifyBookingReference() |  | 2–4, S-1, AF-2, AF-3, AF-5, EF-1, EF-2 |  |  |  |  |  |  |
+|  | checkInBooking() |  | 6, EF-5 |  |  |  |  |  |  |
+|  | getRoundBookings() |  | 7 |  |  | ✓ |  |  |  |
+| **Payment Service** | createPaymentRequest() | 15 |  |  |  |  |  |  |  |
+|  | receivePaymentResult() | 18, AF-5 |  |  |  |  |  |  |  |
+|  | getPaymentStatus() | 21, AF-5 |  |  |  |  |  |  |  |
+| **Notification Service** | sendBookingConfirmation() | 22, S-1 |  |  |  |  |  |  |  |
+|  | sendHoldExpiredNotice() | EF-1; EF-1, S-1 |  |  |  |  |  |  |  |
+|  | sendPaymentFailedNotice() | 18, AF-5; AF-5 |  |  |  |  |  |  |  |
+| **Staff Account Service** | signIn() |  |  |  |  |  |  |  | ✓ |
+|  | signOut() |  |  |  |  |  |  |  | ✓ |
+|  | createStaffAccount() |  |  |  |  |  |  |  | ✓ |
+|  | listStaffAccounts() |  |  |  |  |  |  |  | ✓ |
+|  | updateStaffAccount() |  |  |  |  |  |  |  | ✓ |
+|  | disableStaffAccount() |  |  |  |  |  |  |  | ✓ |
+| *Jobs on a timer (not operations)* | hold-expiry job of the Booking Service | EF-1 | | | | | | | |
+| | retry job of the Notification Service | EF-6 | | | | | | | |
 
 </div>
 
