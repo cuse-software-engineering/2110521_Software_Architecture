@@ -268,43 +268,29 @@ Table C.1 lists the business terms of this document: the words of the venue, its
 
 # Appendix D Screens and the Routes They Call
 
-The two web apps of Table 5.1 are, with the payment webhook, the only callers of the API Gateway. Tables D.1 and D.2 name the screens of each web app, the use case steps and flows that each screen serves, its main elements and the routes of Table 6.11 that it calls; the gRPC method behind each route is in Table 6.11. A screen is defined by its elements, and Figures D.1 to D.9 draw each one as a low-fidelity wireframe: grayscale, English placeholder data, the phone screens at the 360 by 640 viewport of the LIFF app and the back-office screens in a desktop window. A route is called when the screen opens or when the named element is used; a polled route is called again every 2 seconds while the screen is open (ADR-09). Section D.3 checks the mapping in the other direction.
+The two web apps of Table 5.1 are, with the payment webhook, the only callers of the API Gateway. Tables D.1 and D.2 name the screens of each web app, the use case steps and flows that each screen serves, its main elements and the routes of Table 6.11 that it calls; the gRPC method behind each route is in Table 6.11. A screen is defined by its elements and drawn as a low-fidelity wireframe, in Table D.1 beside its description for the Customer Web App and in Figures D.1 to D.6 for the Back-office Web App: grayscale, English placeholder data, the phone screens at the 360 by 640 viewport of the LIFF app and the back-office screens in a desktop window. A route is called when the screen opens or when the named element is used; a polled route is called again every 2 seconds while the screen is open (ADR-09). Section D.3 checks the mapping in the other direction.
 
 ## D.1 Customer Web App
 
-The Customer Web App is the LIFF app inside LINE (ADR-01). Its screens follow the basic flow of UC-01 in order; C9 stands alone.
+The Customer Web App is the LIFF app inside LINE (ADR-01). Its screens follow the basic flow of UC-01 in order; C9 stands alone. Table D.1 gives one page per screen.
 
-<div class="screens" markdown="1">
+<div class="screenrows" markdown="1">
 
-*Table D.1 Screens of the Customer Web App*
+*Table D.1 Screens of the Customer Web App, one per page: the wireframe beside its steps, elements and routes*
 
-| Screen | Name | Use case steps | Main elements | Routes called |
-|---|---|---|---|---|
-| C1 | Rich Menu and LINE Login | UC-01 steps 1–2, EF-2 | LINE chat, Rich Menu "Reserve a table", LINE Login dialog | None: LINE Login runs in the LIFF app, and the ID token travels in the header of every later call (Table 5.2) |
-| C2 | Concert rounds | UC-01 steps 3–4, AF-1, AF-2 | Round list with artist, date, start time, **booking-open time** and status; a round not yet open shows its **booking-open time**, a sold-out round is marked | `GET /rounds` |
-| C3 | Table map | UC-01 steps 5–8, AF-3 | Stage, **zones**, a shape per table with number, **table type**, **package price** and status; a tap on an available table holds it | `GET /rounds/{id}`, `GET /rounds/{id}/tables`; `GET /rounds/{id}/table-status` polled; `POST /bookings` on the tap |
-| C4 | Hold and booking summary | UC-01 steps 8–11, AF-4, EF-1 | **Hold** countdown, booking summary, **party size** stepper, fee breakdown with the **full table fee**, Cancel the hold; on expiry the message of EF-1 | `GET /bookings/{id}`, `PUT /bookings/{id}/party-size`, `POST /bookings/{id}/cancel` |
-| C5 | Customer profile and consent | UC-01 step 12, AF-5; UC-09 steps 1–8, AF-1, AF-2 | On the first booking: the purpose of the data collection, consent, name and phone with validation, Decline; later: the stored name and phone to confirm or correct | `GET /customers/me`, `POST /customers/me`, `PUT /customers/me`; `POST /bookings/{id}/cancel` on Decline |
-| C6 | Booking terms | UC-01 steps 13–14 | The **booking terms** with the **check-in window**, Accept, Pay with the amount, Decline and cancel the booking | `GET /bookings/{id}/terms`, `POST /bookings/{id}/terms-acceptance`; `POST /bookings/{id}/cancel` on Decline |
-| C7 | Payment | UC-01 step 15; UC-10 steps 1–7, AF-1, EF-4 | Amount, the hosted checkout of the **Payment Gateway** opened inside the web app, Cancel the booking; the payment status while the result is awaited | `POST /bookings/{id}/payment` (501 in Increment 1), `GET /payments/{id}` polled until the result; `POST /bookings/{id}/cancel` |
-| C8 | Confirmation and e-ticket | UC-01 steps 16–20, EF-3 | Confirmed banner, QR **e-ticket** with the **booking reference**, booking details, **check-in window**, note that the LINE copy was sent | `GET /bookings/{id}`, `GET /bookings/{id}/e-ticket` |
-| C9 | My Bookings | UC-06 | The **Customer**'s bookings with status; a Confirmed booking opens its **e-ticket** | `GET /customers/me/bookings`, `GET /bookings/{id}/e-ticket` |
+| Screen | Description |
+|---|---|
+| ![C1 Rich Menu and LINE Login](assets/screen-c1.png) | **C1 · Rich Menu and LINE Login**<br>UC-01 steps 1–2, EF-2<br><br>**Main elements.** LINE chat, Rich Menu "Reserve a table", LINE Login dialog<br><br>**Routes called.** None: LINE Login runs in the LIFF app, and the ID token travels in the header of every later call (Table 5.2) |
+| ![C2 Concert rounds](assets/screen-c2.png) | **C2 · Concert rounds**<br>UC-01 steps 3–4, AF-1, AF-2<br><br>**Main elements.** Round list with artist, date, start time, **booking-open time** and status; a round not yet open shows its **booking-open time**, a sold-out round is marked<br><br>**Routes called.** `GET /rounds` |
+| ![C3 Table map](assets/screen-c3.png) | **C3 · Table map**<br>UC-01 steps 5–8, AF-3<br><br>**Main elements.** Stage, **zones**, a shape per table with number, **table type**, **package price** and status; a tap on an available table holds it<br><br>**Routes called.** `GET /rounds/{id}`, `GET /rounds/{id}/tables`; `GET /rounds/{id}/table-status` polled; `POST /bookings` on the tap |
+| ![C4 Hold and booking summary](assets/screen-c4.png) | **C4 · Hold and booking summary**<br>UC-01 steps 8–11, AF-4, EF-1<br><br>**Main elements.** **Hold** countdown, booking summary, **party size** stepper, fee breakdown with the **full table fee**, Cancel the hold; on expiry the message of EF-1<br><br>**Routes called.** `GET /bookings/{id}`, `PUT /bookings/{id}/party-size`, `POST /bookings/{id}/cancel` |
+| ![C5 Customer profile and consent](assets/screen-c5.png) | **C5 · Customer profile and consent**<br>UC-01 step 12, AF-5; UC-09 steps 1–8, AF-1, AF-2<br><br>**Main elements.** On the first booking: the purpose of the data collection, consent, name and phone with validation, Decline; later: the stored name and phone to confirm or correct<br><br>**Routes called.** `GET /customers/me`, `POST /customers/me`, `PUT /customers/me`; `POST /bookings/{id}/cancel` on Decline |
+| ![C6 Booking terms](assets/screen-c6.png) | **C6 · Booking terms**<br>UC-01 steps 13–14<br><br>**Main elements.** The **booking terms** with the **check-in window**, Accept, Pay with the amount, Decline and cancel the booking<br><br>**Routes called.** `GET /bookings/{id}/terms`, `POST /bookings/{id}/terms-acceptance`; `POST /bookings/{id}/cancel` on Decline |
+| ![C7 Payment](assets/screen-c7.png) | **C7 · Payment**<br>UC-01 step 15; UC-10 steps 1–7, AF-1, EF-4<br><br>**Main elements.** Amount, the hosted checkout of the **Payment Gateway** opened inside the web app, Cancel the booking; the payment status while the result is awaited<br><br>**Routes called.** `POST /bookings/{id}/payment` (501 in Increment 1), `GET /payments/{id}` polled until the result; `POST /bookings/{id}/cancel` |
+| ![C8 Confirmation and e-ticket](assets/screen-c8.png) | **C8 · Confirmation and e-ticket**<br>UC-01 steps 16–20, EF-3<br><br>**Main elements.** Confirmed banner, QR **e-ticket** with the **booking reference**, booking details, **check-in window**, note that the LINE copy was sent<br><br>**Routes called.** `GET /bookings/{id}`, `GET /bookings/{id}/e-ticket` |
+| ![C9 My Bookings](assets/screen-c9.png) | **C9 · My Bookings**<br>UC-06<br><br>**Main elements.** The **Customer**'s bookings with status; a Confirmed booking opens its **e-ticket**<br><br>**Routes called.** `GET /customers/me/bookings`, `GET /bookings/{id}/e-ticket` |
 
 </div>
-
-Figures D.1 to D.3 draw the nine screens in the order of the flow.
-
-![Screens C1 to C3](assets/screens-c1-c3.png)
-
-*Figure D.1 Customer Web App, screens C1 to C3: Rich Menu and LINE Login, concert rounds, table map*
-
-![Screens C4 to C6](assets/screens-c4-c6.png)
-
-*Figure D.2 Customer Web App, screens C4 to C6: hold and booking summary, customer profile and consent, booking terms*
-
-![Screens C7 to C9](assets/screens-c7-c9.png)
-
-*Figure D.3 Customer Web App, screens C7 to C9: payment, confirmation and e-ticket, My Bookings*
 
 ## D.2 Back-office Web App
 
@@ -326,31 +312,31 @@ The Back-office Web App runs in the browsers and phones of the **Manager**, the 
 
 </div>
 
-Figures D.4 to D.9 draw the seven screens; B6 is drawn in its two states.
+Figures D.1 to D.6 draw the seven screens in the order of Table D.2; B6 is drawn in its two states.
 
 ![Screen B1](assets/screens-b1.png)
 
-*Figure D.4 Back-office Web App, screen B1: sign-in*
+*Figure D.1 Back-office Web App, screen B1: sign-in*
 
 ![Screen B2](assets/screens-b2.png)
 
-*Figure D.5 Back-office Web App, screen B2: zone map editor, with the table types and a validation result*
+*Figure D.2 Back-office Web App, screen B2: zone map editor, with the table types and a validation result*
 
 ![Screen B3](assets/screens-b3.png)
 
-*Figure D.6 Back-office Web App, screen B3: round editor, with the prices per zone and table type and a validation result*
+*Figure D.3 Back-office Web App, screen B3: round editor, with the prices per zone and table type and a validation result*
 
 ![Screen B4](assets/screens-b4.png)
 
-*Figure D.7 Back-office Web App, screen B4: live view of a round*
+*Figure D.4 Back-office Web App, screen B4: live view of a round*
 
 ![Screens B5 and B6](assets/screens-b5-b6.png)
 
-*Figure D.8 Back-office Web App, screens B5 and B6 on the staff phone: check-in scanner, verification result, entry confirmed*
+*Figure D.5 Back-office Web App, screens B5 and B6 on the staff phone: check-in scanner, verification result, entry confirmed*
 
 ![Screen B7](assets/screens-b7.png)
 
-*Figure D.9 Back-office Web App, screen B7: business parameters and staff accounts*
+*Figure D.6 Back-office Web App, screen B7: business parameters and staff accounts*
 
 ## D.3 Coverage
 

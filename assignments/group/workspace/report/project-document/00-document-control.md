@@ -10,7 +10,7 @@
 | Product name | SEATS; Deliverables #1 and #2 called the system Concert Table Reservation System (CTRS) |
 | Course | 2110521 Software Architecture, Semester 1, Academic Year 2026 |
 | Group | SE 101 |
-| Version | 2.0 draft 29, 30 September 2026 |
+| Version | 2.0 draft 30, 30 September 2026 |
 | Status | Draft for review by the group; basis of the updated ADRs and microservice design of Deliverable #3 |
 | Previous version | 1.1: Deliverable #1 (version 1.0) and Deliverable #2 as submitted on 8 September 2026 |
 | Changes | The change log is a separate document of the same version, "SEATS Project Document — Change Log": every change since version 1.1 (CH-nn), how each teacher comment and known issue was resolved, and how to compare the versions |
@@ -52,3 +52,4 @@
 | 2.0 draft 27 | 2026-09-30 | Watayut A. | UC-01 restored: its preconditions, postconditions, Basic Flow heading and steps 1 to 11 had been lost in draft 21; Appendix D Screens and the Routes They Call. Changes CH-57, CH-58. | owner |
 | 2.0 draft 28 | 2026-09-30 | Watayut A. | Chapter 6 grouped by service: after the domain model and the model-to-contract rule, one section per service with its data model, gRPC API and messages (6.3 to 6.6), then the API Gateway with its routes (6.7). Change CH-59. | owner |
 | 2.0 draft 29 | 2026-09-30 | Watayut A. | Appendix D gains the wireframes of the sixteen screens (Figures D.1 to D.9). Change CH-60. | owner |
+| 2.0 draft 30 | 2026-09-30 | Watayut A. | Table D.1 gives one page per customer screen with the wireframe beside its description; the back-office figures are D.1 to D.6. Change CH-61. | owner |

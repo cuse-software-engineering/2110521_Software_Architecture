@@ -640,9 +640,6 @@ def cell(sid, title, steps, inner, desk=False):
 
 
 FIGURES = [  # (file stem, page title, screen functions, desktop?)
-    ("screens-c1-c3", "Customer Web App C1-C3: LINE Login, concert rounds, table map", [c1, c2, c3], False),
-    ("screens-c4-c6", "Customer Web App C4-C6: hold, profile, booking terms", [c4, c5, c6], False),
-    ("screens-c7-c9", "Customer Web App C7-C9: payment, e-ticket, My Bookings", [c7, c8, c9], False),
     ("screens-b1", "Back-office B1: sign-in", [b1], True),
     ("screens-b2", "Back-office B2: zone map editor", [b2], True),
     ("screens-b3", "Back-office B3: round editor", [b3], True),
@@ -658,6 +655,9 @@ def png_size(path):
         return struct.unpack(">II", f.read(8))
 
 
+SINGLES = [c1, c2, c3, c4, c5, c6, c7, c8, c9]   # one phone each, no caption: Table D.1 puts the description beside it
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     pages = []
@@ -665,6 +665,12 @@ def main():
         cells = "".join(cell(*fn(), desk=desk) for fn in fns)
         f = OUT / f"{stem}.html"
         f.write_text(page(title, cells, desk=desk), encoding="utf-8")
+        pages.append(f)
+        print("wrote", f.relative_to(GROUP))
+    for fn in SINGLES:
+        sid, title, _steps, ph = fn()
+        f = OUT / f"screen-{sid.lower()}.html"
+        f.write_text(page(f"{sid} {title}", f'<div class="cell ph">{ph}</div>'), encoding="utf-8")
         pages.append(f)
         print("wrote", f.relative_to(GROUP))
 
