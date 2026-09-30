@@ -218,6 +218,8 @@ if __name__ == "__main__":
                       "\n.keep:has(> table.adr) { break-inside: auto; page-break-inside: auto; }")
     # the use case diagram is taller than wide: cap its height so that it stays on the page of the Section 2 headings
     build_pdf.CSS += "\nimg[src*='use-case-diagram'] { max-height: 190mm; width: auto; }"
+    build_pdf.CSS += "\nh2[id='65-booking-service'] { break-before: page; page-break-before: always; }"   # its heading, text and figure stay on one page
+    build_pdf.CSS += "\nimg[src*='data-model-'] { max-height: 118mm; width: auto; }"   # draft 28: the data-model figure follows its service section on the same page
     build_pdf.CSS += ("\np > em:only-child { display: inline; text-align: inherit; font-size: inherit; margin-top: 0; }"
                       "\np[id^='fig-'] > em:only-child { display: block; text-align: center; font-size: 13pt; margin-top: -2pt; }")
     # 2026-09-30: the base rule sets code at a fixed 11pt, which towers over the 12pt TH Sarabun of a table cell;
