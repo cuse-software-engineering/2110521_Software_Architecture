@@ -1,0 +1,3 @@
+[submodule "assignments/group/code"]
+	path = assignments/group/code
+	url = https://github.com/cuse-software-engineering/SEATS
