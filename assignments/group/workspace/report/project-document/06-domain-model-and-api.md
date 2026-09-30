@@ -68,7 +68,7 @@ Two consequences of the rule shape the design. First, a gRPC message is owned by
 
 Each service owns one database and one slice of the domain model (ADR-06, Table 5.1); a service never reads another service's database, so a `roundId` in the Booking DB is a reference by identifier, not a foreign key, and what a service needs from another it asks by gRPC. A message named after an entity of the service's data model carries the stored fields plus what its row lists.
 
-The venue and events context: **zone maps**, **table types**, **concert rounds**, **package prices** and **business parameters**, in the Round DB. Its gRPC API (port 5001, [concert_round.proto](https://github.com/cuse-software-engineering/SEATS/blob/main/proto/concert_round.proto)) is called by the API Gateway for the **back-office** and customer routes of Table 6.11, and by the Booking Service for GetRound, GetRoundPricing and GetCheckInWindow; it calls the Table Availability Service when a round is published and for the sold-out counts, and the Media Storage Adapter for the image of the venue.
+The venue and events context: **zone maps**, **table types**, **concert rounds**, **package prices** and **business parameters**, in the Round DB. Its gRPC API (port 5001, [concert_round.proto](https://github.com/cuse-software-engineering/SEATS/blob/main/proto/concert_round.proto)) is called by the API Gateway for the **back-office** and customer routes that Table 6.12 maps onto it, and by the Booking Service for GetRound, GetRoundPricing and GetCheckInWindow; it calls the Table Availability Service when a round is published and for the sold-out counts, and the Media Storage Adapter for the image of the venue.
 
 ![Round DB](assets/data-model-round.png)
 
@@ -129,7 +129,7 @@ A **zone map** is one document with its **zones** and tables embedded; a round e
 
 ## 6.4 Table Availability Service
 
-The read model of the table map (ADR-13): the status of every table of every published round, in the Table Status DB. Its gRPC API (port 5003, [table_availability.proto](https://github.com/cuse-software-engineering/SEATS/blob/main/proto/table_availability.proto)) is called by the Concert Round Service (create, count, remove), by the Booking Service after every booking transition (hold, release, booked, occupied) and by the API Gateway for the polled read of Table 6.11; it calls no one. It is the gRPC service with create, read, update and delete that Deliverable #3 demonstrates.
+The read model of the table map (ADR-13): the status of every table of every published round, in the Table Status DB. Its gRPC API (port 5003, [table_availability.proto](https://github.com/cuse-software-engineering/SEATS/blob/main/proto/table_availability.proto)) is called by the Concert Round Service (create, count, remove), by the Booking Service after every booking transition (hold, release, booked, occupied) and by the API Gateway for the polled read of the table map (Table 6.12); it calls no one. It is the gRPC service with create, read, update and delete that Deliverable #3 demonstrates.
 
 ![Table Status DB](assets/data-model-table-status.png)
 
@@ -167,7 +167,7 @@ One document per round with its tables embedded: the read model of the table map
 
 ## 6.5 Booking Service
 
-The booking context: the booking from Held to Checked-in, the **customer profile**, the **booking terms** and the **e-ticket**, in the Booking DB; the booking owns the **hold** (ADR-13). Its gRPC API (port 5002, [booking.proto](https://github.com/cuse-software-engineering/SEATS/blob/main/proto/booking.proto)) is called by the API Gateway for the customer and staff routes of Table 6.11, with the caller in the metadata `x-user-id`, and by the Payment Service for ConfirmBookingPayment; it calls the Concert Round Service (GetRound, GetRoundPricing, GetCheckInWindow), the Table Availability Service (HoldTable, ReleaseHold, MarkTableBooked, MarkTableOccupied) and, from progress 2, the Payment and Notification Services. Its own job expires unpaid **holds** (ADR-08).
+The booking context: the booking from Held to Checked-in, the **customer profile**, the **booking terms** and the **e-ticket**, in the Booking DB; the booking owns the **hold** (ADR-13). Its gRPC API (port 5002, [booking.proto](https://github.com/cuse-software-engineering/SEATS/blob/main/proto/booking.proto)) is called by the API Gateway for the customer and staff routes that Table 6.12 maps onto it, with the caller in the metadata `x-user-id`, and by the Payment Service for ConfirmBookingPayment; it calls the Concert Round Service (GetRound, GetRoundPricing, GetCheckInWindow), the Table Availability Service (HoldTable, ReleaseHold, MarkTableBooked, MarkTableOccupied) and, from progress 2, the Payment and Notification Services. Its own job expires unpaid **holds** (ADR-08).
 
 ![Booking DB](assets/data-model-booking.png)
 
@@ -237,57 +237,112 @@ The three generic services of Table 5.1 are built after the Deliverable #3 demo.
 
 ## 6.7 API Gateway
 
-Every service has one API, gRPC, described by its `.proto` file, and the API Gateway is the only REST API of the system (ADR-12). The two are specified separately because they differ in shape: a gRPC method takes one request message and returns one response message, named as in the `.proto` file with `snake_case` fields, while a route of the gateway is a method and a path whose path parameters, query and JSON body are turned into the request message and whose answer is the response message as JSON, with the same fields in `camelCase` (`round_id` becomes `roundId`) and a list message unwrapped to an array. Not every method has a route: the methods that only another service calls stay private to the Backend. Table 6.11 lists every route with the gRPC method behind it, the web app of Table 5.1 that calls it, the Customer Web App or the Back-office Web App, and the roles that may call it (FR-66); the payment webhook is called by the **Payment Gateway** itself. Appendix D maps the screens of the two web apps to these routes. The same routes are kept as an OpenAPI document, [docs/openapi.yaml](https://github.com/cuse-software-engineering/SEATS/blob/main/docs/openapi.yaml), from which the web apps take their types, and are implemented in [gateway/src/routes.ts](https://github.com/cuse-software-engineering/SEATS/blob/main/gateway/src/routes.ts); the Status column of Table 6.11 comes from the OpenAPI document. Every route with a role may also answer 401 (no identity) and 403 (role), which the column leaves out; every error body is `{error, details?}`.
+Every service has one API, gRPC, described by its `.proto` file, and the API Gateway is the only REST API of the system (ADR-12). The two are specified separately because they differ in shape: a gRPC method takes one request message and returns one response message, named as in the `.proto` file with `snake_case` fields, while a route of the gateway is a method and a path whose path parameters, query and JSON body are turned into the request message and whose answer is the response message as JSON, with the same fields in `camelCase` (`round_id` becomes `roundId`) and a list message unwrapped to an array. Not every method has a route: the methods that only another service calls stay private to the Backend. Table 6.11 is the public REST API: every route with the web app of Table 5.1 that calls it, the Customer Web App or the Back-office Web App, the roles that may call it (FR-66), its body, its answer and its status codes; the payment webhook is called by the **Payment Gateway** itself. Table 6.12 maps each route onto the gRPC method of the owning service, which is what the gateway implements. Appendix D maps the screens of the two web apps to these routes. The same routes are kept as an OpenAPI document, [docs/openapi.yaml](https://github.com/cuse-software-engineering/SEATS/blob/main/docs/openapi.yaml), from which the web apps take their types, and are implemented in [gateway/src/routes.ts](https://github.com/cuse-software-engineering/SEATS/blob/main/gateway/src/routes.ts); the Status column of Table 6.11 comes from the OpenAPI document. Every route with a role may also answer 401 (no identity) and 403 (role), which the column leaves out; every error body is `{error, details?}`.
 
 The gateway authenticates the caller and passes its identity and role to the service as the gRPC metadata `x-user-id` and `x-role`. An error is a gRPC status with a message and, where useful, details, which the gateway maps to an HTTP status and a JSON body `{error, details?}`: INVALID_ARGUMENT to 400 (invalid input), UNAUTHENTICATED to 401 (no identity), PERMISSION_DENIED to 403 (role), NOT_FOUND to 404, FAILED_PRECONDITION to 409 (a rule refuses the change, for example the table was just taken), UNIMPLEMENTED to 501 (not built in this increment) and UNAVAILABLE to 502 (the service or one of its collaborators is down).
 
 <div class="routes" markdown="1">
 
-*Table 6.11 Routes of the API Gateway (REST, port 4000): the public API*
+*Table 6.11 The REST API of the API Gateway (port 4000)*
 
-| Service | Route | gRPC method | Web app | Roles | Request body | Response | Status |
-|---|---|---|---|---|---|---|---|
-| Concert Round | `PUT /table-types/{id}` | DefineTableType | Back-office | manager | `{name, capacity, packageContent}` | TableType | 200, 400 |
-|  | `GET /table-types` | ListTableTypes | Back-office | manager, owner | — | [TableType] | 200 |
-|  | `GET /business-parameters` | GetBusinessParameters | Back-office | manager, owner | — | BusinessParameters | 200 |
-|  | `PUT /business-parameters` | UpdateBusinessParameters | Back-office | manager | `{holdPeriodMinutes?, checkInWindowHours?, gracePeriodMinutes?, extraPersonFee?}` | BusinessParameters | 200, 400 |
-|  | `POST /zone-maps` | CreateZoneMap | Back-office | manager | `{name?}` | ZoneMap | 200 |
-|  | `GET /zone-maps?status=` | ListZoneMaps | Back-office | manager, owner | — | [ZoneMapSummary] | 200 |
-|  | `GET /zone-maps/{id}` | GetZoneMap | Back-office | manager, owner | — | ZoneMap | 200, 404 |
-|  | `PUT /zone-maps/{id}` | UpdateZoneMap | Back-office | manager | `{name?, zones?, tables?}` | ZoneMap | 200, 404, 409 |
-|  | `POST /zone-maps/{id}/image` | UploadZoneMapImage | Back-office | manager | `{fileName}` | ZoneMap | 200, 400, 404 |
-|  | `POST /zone-maps/{id}/validate` | ValidateZoneMap | Back-office | manager | — | ValidationResult | 200, 404 |
-|  | `POST /zone-maps/{id}/activate` | ActivateZoneMap | Back-office | manager | — | ZoneMap | 200, 400, 404 |
-|  | `DELETE /zone-maps/{id}` | DiscardDraftZoneMap | Back-office | manager | — | Removed | 200, 404, 409 |
-|  | `POST /rounds` | CreateRound | Back-office | manager | `{name?}` | Round | 200 |
-|  | `GET /rounds` | GetUpcomingRounds | both | everyone | — | [UpcomingRound] | 200 |
-|  | `GET /rounds/{id}` | GetRound | both | everyone | — | Round | 200, 404 |
-|  | `GET /rounds/{id}/tables` | GetRoundTables | both | everyone | — | [RoundTable] | 200, 404 |
-|  | `PUT /rounds/{id}` | UpdateRound | Back-office | manager | `{name?, artist?, date?, doorsOpenAt?, startAt?, bookingOpenAt?, zoneMapId?, tablesNotForSale?, prices?}` | Round | 200, 400, 404, 409 |
-|  | `POST /rounds/{id}/validate` | ValidateRound | Back-office | manager | — | ValidationResult | 200, 404 |
-|  | `POST /rounds/{id}/publish` | PublishRound | Back-office | manager | — | Round | 200, 400, 404, 502 |
-|  | `DELETE /rounds/{id}` | DiscardDraftRound | Back-office | manager | — | Removed | 200, 404, 409 |
-| Table Availability | `GET /rounds/{id}/table-status` | GetRoundTableStatus | both | everyone | header `If-None-Match: <version>` (ADR-09) | RoundTableStatus with `ETag: <version>`, or 304 | 200, 304, 404 |
-| Booking | `POST /bookings` | CreateHeldBooking | Customer | customer | `{roundId, tableNumber}` | Booking | 200, 400, 404, 409 |
-|  | `GET /bookings/{id}` | GetBooking | Customer | customer | — | Booking | 200, 404 |
-|  | `PUT /bookings/{id}/party-size` | SetPartySize | Customer | customer | `{partySize}` | Booking | 200, 400, 404, 409 |
-|  | `GET /bookings/{id}/terms` | GetBookingTerms | Customer | customer | — | BookingTerms | 200, 404 |
-|  | `POST /bookings/{id}/terms-acceptance` | AcceptBookingTerms | Customer | customer | — | Booking | 200, 404, 409 |
-|  | `POST /bookings/{id}/payment` | StartPayment | Customer | customer | — | PaymentRequest (501 in Increment 1) | 200, 404, 409, 501 |
-|  | `POST /bookings/{id}/cancel` | CancelBooking | Customer | customer | — | Booking | 200, 404, 409 |
-|  | `GET /bookings/{id}/e-ticket` | GetETicket | Customer | customer | — | ETicket | 200, 404, 501 |
-|  | `GET /customers/me` | GetCustomerProfile | Customer | customer | — | CustomerProfile | 200, 404 |
-|  | `POST /customers/me` | CreateCustomerProfile | Customer | customer | `{name, phone, consent}` | CustomerProfile | 200, 400, 409 |
-|  | `PUT /customers/me` | UpdateCustomerProfile | Customer | customer | `{name?, phone?}` | CustomerProfile | 200, 400, 404 |
-|  | `GET /customers/me/bookings` | GetCustomerBookings | Customer | customer | — | [Booking] | 200 |
-|  | `POST /check-ins/verify` | VerifyBookingReference | Back-office | front staff, manager | `{bookingReference}` | VerificationResult | 200, 501 |
-|  | `POST /check-ins` | CheckInBooking | Back-office | front staff, manager | `{bookingReference}` | Booking | 200, 409, 501 |
-|  | `GET /rounds/{id}/bookings` | GetRoundBookings | Back-office | manager, owner | — | [Booking] | 200 |
-| Payment | `POST /payments/webhook` | ReceivePaymentResult | **Payment Gateway** | the **Payment Gateway**, by its signature (NFR-38) | the signed result | 200 | 200, 400, 404, 409 |
-|  | `GET /payments/{id}` | GetPaymentStatus | Customer | customer | — | PaymentStatus | 200, 404 |
-| Staff Account | `POST /sessions` | SignIn | Back-office | anyone | `{username, password}` | Session | 200, 401 |
-|  | `DELETE /sessions/current` | SignOut | Back-office | staff | — | — | 200 |
-|  | `POST /staff-accounts` | CreateStaffAccount | Back-office | manager | `{username, role, password}` | StaffAccount | 200, 400, 409 |
-|  | `GET /staff-accounts` | ListStaffAccounts | Back-office | manager, owner | — | [StaffAccount] | 200 |
-|  | `PUT /staff-accounts/{id}` | UpdateStaffAccount | Back-office | manager | `{role?, password?}` | StaffAccount | 200, 400, 404 |
-|  | `DELETE /staff-accounts/{id}` | DisableStaffAccount | Back-office | manager | — | StaffAccount | 200, 404 |</div>
+| Route | Web app | Roles | Request body | Response | Status |
+|---|---|---|---|---|---|
+| `PUT /table-types/{id}` | Back-office | manager | `{name, capacity, packageContent}` | TableType | 200, 400 |
+| `GET /table-types` | Back-office | manager, owner | — | [TableType] | 200 |
+| `GET /business-parameters` | Back-office | manager, owner | — | BusinessParameters | 200 |
+| `PUT /business-parameters` | Back-office | manager | `{holdPeriodMinutes?, checkInWindowHours?, gracePeriodMinutes?, extraPersonFee?}` | BusinessParameters | 200, 400 |
+| `POST /zone-maps` | Back-office | manager | `{name?}` | ZoneMap | 200 |
+| `GET /zone-maps?status=` | Back-office | manager, owner | — | [ZoneMapSummary] | 200 |
+| `GET /zone-maps/{id}` | Back-office | manager, owner | — | ZoneMap | 200, 404 |
+| `PUT /zone-maps/{id}` | Back-office | manager | `{name?, zones?, tables?}` | ZoneMap | 200, 404, 409 |
+| `POST /zone-maps/{id}/image` | Back-office | manager | `{fileName}` | ZoneMap | 200, 400, 404 |
+| `POST /zone-maps/{id}/validate` | Back-office | manager | — | ValidationResult | 200, 404 |
+| `POST /zone-maps/{id}/activate` | Back-office | manager | — | ZoneMap | 200, 400, 404 |
+| `DELETE /zone-maps/{id}` | Back-office | manager | — | Removed | 200, 404, 409 |
+| `POST /rounds` | Back-office | manager | `{name?}` | Round | 200 |
+| `GET /rounds` | both | everyone | — | [UpcomingRound] | 200 |
+| `GET /rounds/{id}` | both | everyone | — | Round | 200, 404 |
+| `GET /rounds/{id}/tables` | both | everyone | — | [RoundTable] | 200, 404 |
+| `PUT /rounds/{id}` | Back-office | manager | `{name?, artist?, date?, doorsOpenAt?, startAt?, bookingOpenAt?, zoneMapId?, tablesNotForSale?, prices?}` | Round | 200, 400, 404, 409 |
+| `POST /rounds/{id}/validate` | Back-office | manager | — | ValidationResult | 200, 404 |
+| `POST /rounds/{id}/publish` | Back-office | manager | — | Round | 200, 400, 404, 502 |
+| `DELETE /rounds/{id}` | Back-office | manager | — | Removed | 200, 404, 409 |
+| `GET /rounds/{id}/table-status` | both | everyone | header `If-None-Match: <version>` (ADR-09) | RoundTableStatus with `ETag: <version>`, or 304 | 200, 304, 404 |
+| `POST /bookings` | Customer | customer | `{roundId, tableNumber}` | Booking | 200, 400, 404, 409 |
+| `GET /bookings/{id}` | Customer | customer | — | Booking | 200, 404 |
+| `PUT /bookings/{id}/party-size` | Customer | customer | `{partySize}` | Booking | 200, 400, 404, 409 |
+| `GET /bookings/{id}/terms` | Customer | customer | — | BookingTerms | 200, 404 |
+| `POST /bookings/{id}/terms-acceptance` | Customer | customer | — | Booking | 200, 404, 409 |
+| `POST /bookings/{id}/payment` | Customer | customer | — | PaymentRequest (501 in Increment 1) | 200, 404, 409, 501 |
+| `POST /bookings/{id}/cancel` | Customer | customer | — | Booking | 200, 404, 409 |
+| `GET /bookings/{id}/e-ticket` | Customer | customer | — | ETicket | 200, 404, 501 |
+| `GET /customers/me` | Customer | customer | — | CustomerProfile | 200, 404 |
+| `POST /customers/me` | Customer | customer | `{name, phone, consent}` | CustomerProfile | 200, 400, 409 |
+| `PUT /customers/me` | Customer | customer | `{name?, phone?}` | CustomerProfile | 200, 400, 404 |
+| `GET /customers/me/bookings` | Customer | customer | — | [Booking] | 200 |
+| `POST /check-ins/verify` | Back-office | front staff, manager | `{bookingReference}` | VerificationResult | 200, 501 |
+| `POST /check-ins` | Back-office | front staff, manager | `{bookingReference}` | Booking | 200, 409, 501 |
+| `GET /rounds/{id}/bookings` | Back-office | manager, owner | — | [Booking] | 200 |
+| `POST /payments/webhook` | **Payment Gateway** | the **Payment Gateway**, by its signature (NFR-38) | the signed result | 200 | 200, 400, 404, 409 |
+| `GET /payments/{id}` | Customer | customer | — | PaymentStatus | 200, 404 |
+| `POST /sessions` | Back-office | anyone | `{username, password}` | Session | 200, 401 |
+| `DELETE /sessions/current` | Back-office | staff | — | — | 200 |
+| `POST /staff-accounts` | Back-office | manager | `{username, role, password}` | StaffAccount | 200, 400, 409 |
+| `GET /staff-accounts` | Back-office | manager, owner | — | [StaffAccount] | 200 |
+| `PUT /staff-accounts/{id}` | Back-office | manager | `{role?, password?}` | StaffAccount | 200, 400, 404 |
+| `DELETE /staff-accounts/{id}` | Back-office | manager | — | StaffAccount | 200, 404 |
+
+</div>
+
+<div class="map" markdown="1">
+
+*Table 6.12 Routes of the API Gateway and the gRPC methods behind them*
+
+| Service | Route | gRPC method |
+|---|---|---|
+| Concert Round | `PUT /table-types/{id}` | DefineTableType |
+|  | `GET /table-types` | ListTableTypes |
+|  | `GET /business-parameters` | GetBusinessParameters |
+|  | `PUT /business-parameters` | UpdateBusinessParameters |
+|  | `POST /zone-maps` | CreateZoneMap |
+|  | `GET /zone-maps?status=` | ListZoneMaps |
+|  | `GET /zone-maps/{id}` | GetZoneMap |
+|  | `PUT /zone-maps/{id}` | UpdateZoneMap |
+|  | `POST /zone-maps/{id}/image` | UploadZoneMapImage |
+|  | `POST /zone-maps/{id}/validate` | ValidateZoneMap |
+|  | `POST /zone-maps/{id}/activate` | ActivateZoneMap |
+|  | `DELETE /zone-maps/{id}` | DiscardDraftZoneMap |
+|  | `POST /rounds` | CreateRound |
+|  | `GET /rounds` | GetUpcomingRounds |
+|  | `GET /rounds/{id}` | GetRound |
+|  | `GET /rounds/{id}/tables` | GetRoundTables |
+|  | `PUT /rounds/{id}` | UpdateRound |
+|  | `POST /rounds/{id}/validate` | ValidateRound |
+|  | `POST /rounds/{id}/publish` | PublishRound |
+|  | `DELETE /rounds/{id}` | DiscardDraftRound |
+| Table Availability | `GET /rounds/{id}/table-status` | GetRoundTableStatus |
+| Booking | `POST /bookings` | CreateHeldBooking |
+|  | `GET /bookings/{id}` | GetBooking |
+|  | `PUT /bookings/{id}/party-size` | SetPartySize |
+|  | `GET /bookings/{id}/terms` | GetBookingTerms |
+|  | `POST /bookings/{id}/terms-acceptance` | AcceptBookingTerms |
+|  | `POST /bookings/{id}/payment` | StartPayment |
+|  | `POST /bookings/{id}/cancel` | CancelBooking |
+|  | `GET /bookings/{id}/e-ticket` | GetETicket |
+|  | `GET /customers/me` | GetCustomerProfile |
+|  | `POST /customers/me` | CreateCustomerProfile |
+|  | `PUT /customers/me` | UpdateCustomerProfile |
+|  | `GET /customers/me/bookings` | GetCustomerBookings |
+|  | `POST /check-ins/verify` | VerifyBookingReference |
+|  | `POST /check-ins` | CheckInBooking |
+|  | `GET /rounds/{id}/bookings` | GetRoundBookings |
+| Payment | `POST /payments/webhook` | ReceivePaymentResult |
+|  | `GET /payments/{id}` | GetPaymentStatus |
+| Staff Account | `POST /sessions` | SignIn |
+|  | `DELETE /sessions/current` | SignOut |
+|  | `POST /staff-accounts` | CreateStaffAccount |
+|  | `GET /staff-accounts` | ListStaffAccounts |
+|  | `PUT /staff-accounts/{id}` | UpdateStaffAccount |
+|  | `DELETE /staff-accounts/{id}` | DisableStaffAccount |
+
+</div>
