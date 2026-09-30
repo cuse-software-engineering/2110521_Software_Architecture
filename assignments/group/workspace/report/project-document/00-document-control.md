@@ -10,7 +10,7 @@
 | Product name | SEATS; Deliverables #1 and #2 called the system Concert Table Reservation System (CTRS) |
 | Course | 2110521 Software Architecture, Semester 1, Academic Year 2026 |
 | Group | SE 101 |
-| Version | 2.0 draft 24, 30 September 2026 |
+| Version | 2.0 draft 25, 30 September 2026 |
 | Status | Draft for review by the group; basis of the updated ADRs and microservice design of Deliverable #3 |
 | Previous version | 1.1: Deliverable #1 (version 1.0) and Deliverable #2 as submitted on 8 September 2026 |
 | Changes | The change log is a separate document of the same version, "SEATS Project Document — Change Log": every change since version 1.1 (CH-nn), how each teacher comment and known issue was resolved, and how to compare the versions |
@@ -47,3 +47,4 @@
 | 2.0 draft 22 | 2026-09-30 | Watayut A. | Chapter 6 Domain Model and API Specification (the domain model moved from 2.3, the data model per service, the model-to-contract rule, the REST and gRPC contracts of every service); the glossary is Appendix C; ADR-13 makes the booking the owner of the hold and the table map a read model, and initializeRoundTableStatus() is createRoundTableStatus(). Changes CH-51, CH-52. | owner |
 | 2.0 draft 23 | 2026-09-30 | Watayut A. | The associations table of the domain model is dropped; the two rules it carried are in the entity definitions. Change CH-53. | owner |
 | 2.0 draft 24 | 2026-09-30 | Watayut A. | ADR-12 changed in place: the API Gateway is the only REST API and turns each route into one gRPC call, and every service has one gRPC API (Figure 5.1, Tables 5.1, 5.2 and 6.3 to 6.7, glossary). Change CH-54. | owner |
+| 2.0 draft 25 | 2026-09-30 | Watayut A. | Section 6.4 reorganized: the gRPC API of each service with request and response messages in separate columns (Tables 6.4 to 6.7), the fields of the messages (Table 6.8) and the public routes of the API Gateway with their roles (Table 6.9). Change CH-55. | owner |

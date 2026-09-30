@@ -8,7 +8,7 @@ figures). That repository is found as $REQ_REPO, else the tree this repository i
 running header are replaced here: they carry this course, group SE 101 and the version.
 
 Usage (from the repository root):
-    python3 assignments/group/tools/build_report.py                          # 2.0 draft 24
+    python3 assignments/group/tools/build_report.py                          # 2.0 draft 25
     python3 assignments/group/tools/build_report.py --changelog              # the separate change-log document
     python3 assignments/group/tools/build_report.py --version "2.0" --status final
 Output: assignments/group/workspace/report/build/seats_project_document_v<version>.pdf (git-ignored)
@@ -155,7 +155,7 @@ class _Markdown(build_pdf.markdown.Markdown):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--version", default="2.0 draft 24", help="version label on the cover (default: %(default)s)")
+    ap.add_argument("--version", default="2.0 draft 25", help="version label on the cover (default: %(default)s)")
     ap.add_argument("--date", default="29 September 2026")
     ap.add_argument("--status", default="draft for review by the group")
     ap.add_argument("--changelog", action="store_true", help="build the separate change-log document (project-document/change-log/) instead")
@@ -187,6 +187,7 @@ if __name__ == "__main__":
                       "\ndiv.matrix table td:nth-child(2) { white-space: nowrap; } div.matrix table th:nth-child(n+3):nth-child(-n+11) { width: 7%; }")
     # use cases (2.2.1 .. 2.2.4) each start on a new page, as the ADRs do
     build_pdf.CSS += "\nh3[id*='-uc-0'] { break-before: page; page-break-before: always; }"
+    build_pdf.CSS += "\nh3[id*='-uc-01'] { break-before: auto; page-break-before: auto; }"   # UC-01 follows the 2.2 introduction; the others start a page
     build_pdf.CSS += ("\nh2[id*='adr-'] { break-before: page; page-break-before: always; }"
                       "\ntable.adr { border: 1pt solid #4b5563; font-size: 12pt; line-height: 1.35; margin: 4pt 0 12pt; }"
                       "\ntable.adr td { border: 0.6pt solid #6b7280; padding: 5pt 8pt 6pt; vertical-align: top; }"
@@ -202,10 +203,15 @@ if __name__ == "__main__":
     # 2026-09-30: the base rule sets code at a fixed 11pt, which towers over the 12pt TH Sarabun of a table cell;
     # size it relative to the text around it instead (about 9pt in a table, 11pt in body text)
     build_pdf.CSS += "\ncode { font-size: 0.75em; }"
-    # draft 24: the API tables of 6.4 (operation | gRPC method | route | request and response; Table 6.7 has a service column first)
-    build_pdf.CSS += ("\ndiv.api table, div.api5 table { font-size: 11pt; line-height: 1.3; } div.api table th, div.api table td, div.api5 table th, div.api5 table td { padding: 3pt 4pt; }"
-                      "\ndiv.api table th:nth-child(1) { width: 21%; } div.api table th:nth-child(2) { width: 19%; } div.api table th:nth-child(3) { width: 25%; }"
-                      "\ndiv.api5 table th:nth-child(1) { width: 12%; } div.api5 table th:nth-child(2) { width: 20%; } div.api5 table th:nth-child(3) { width: 19%; } div.api5 table th:nth-child(4) { width: 21%; }")
+    # draft 25: the tables of 6.4: div.api = operation | gRPC method | request | response; div.api5 = the same with a service column;
+    # div.msg = service | message | fields; div.routes = service | route | gRPC method | roles | request body | response
+    build_pdf.CSS += ("\ndiv.api table, div.api5 table, div.msg table, div.routes table { font-size: 11pt; line-height: 1.3; }"
+                      "\ndiv.api th, div.api td, div.api5 th, div.api5 td, div.msg th, div.msg td, div.routes th, div.routes td { padding: 3pt 4pt; }"
+                      "\ndiv.api table th:nth-child(1) { width: 19%; } div.api table th:nth-child(2) { width: 18%; } div.api table th:nth-child(3) { width: 34%; }"
+                      "\ndiv.api5 table th:nth-child(1) { width: 12%; } div.api5 table th:nth-child(2) { width: 19%; } div.api5 table th:nth-child(3) { width: 19%; } div.api5 table th:nth-child(4) { width: 26%; }"
+                      "\ndiv.msg table th:nth-child(1) { width: 13%; } div.msg table th:nth-child(2) { width: 20%; }"
+                      "\ndiv.routes table { font-size: 10.5pt; } div.routes table th:nth-child(1) { width: 11%; } div.routes table th:nth-child(2) { width: 23%; } div.routes table th:nth-child(3) { width: 17%; }"
+                      "\ndiv.routes table th:nth-child(4) { width: 11%; } div.routes table th:nth-child(5) { width: 21%; }")
     build_pdf.markdown.Markdown = _Markdown
     stem = "seats_project_document_change_log" if a.changelog else "seats_project_document"
     out = OUT / f"{stem}_v{re.sub(r'[^0-9A-Za-z.]+', '-', a.version).strip('-')}.pdf"

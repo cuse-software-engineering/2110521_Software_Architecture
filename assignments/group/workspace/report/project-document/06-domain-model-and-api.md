@@ -88,75 +88,168 @@ Two consequences of the rule shape the design. First, a gRPC message is owned by
 
 ## 6.4 API Specification per Service
 
-The API Gateway is the only REST API of the system (ADR-12). Each route of Tables 6.4 to 6.7 is one gRPC method of the owning service: the gateway checks the caller's role (the roles of Table 5.2, FR-66), turns the path parameters, the query and the JSON body into the request message, passes the caller's identity and role as the gRPC metadata `x-user-id` and `x-role`, and answers with the response message as JSON. A service's API is the service of its `.proto` file, and a service is never called by REST. An error is a gRPC status with a message and, where useful, details, which the gateway maps to an HTTP status and a JSON body `{error, details?}`: INVALID_ARGUMENT to 400 (invalid input), UNAUTHENTICATED to 401 (no identity), PERMISSION_DENIED to 403 (role), NOT_FOUND to 404, FAILED_PRECONDITION to 409 (a rule refuses the change, for example the table was just taken), UNIMPLEMENTED to 501 (not built in this increment) and UNAVAILABLE to 502 (the service or one of its collaborators is down). A dash in the route column marks a method that only another service calls.
+Every service has one API, gRPC, described by its `.proto` file, and the API Gateway is the only REST API of the system (ADR-12). The two are specified separately because they differ in shape: a gRPC method takes one request message and returns one response message, named as in the `.proto` file with `snake_case` fields, while a route of the gateway is a method and a path whose path parameters, query and JSON body are turned into the request message and whose answer is the response message as JSON, with the same fields in `camelCase` (`round_id` becomes `roundId`) and a list message unwrapped to an array. Not every method has a route: the methods that only another service calls stay private to the Backend. Tables 6.4 to 6.7 give the gRPC API of each service, Table 6.8 the fields of the messages, and Table 6.9 the routes of the gateway with the roles that may call them (FR-66). A field marked `?` is optional and, in an update, unchanged when left out.
+
+The gateway authenticates the caller and passes its identity and role to the service as the gRPC metadata `x-user-id` and `x-role`. An error is a gRPC status with a message and, where useful, details, which the gateway maps to an HTTP status and a JSON body `{error, details?}`: INVALID_ARGUMENT to 400 (invalid input), UNAUTHENTICATED to 401 (no identity), PERMISSION_DENIED to 403 (role), NOT_FOUND to 404, FAILED_PRECONDITION to 409 (a rule refuses the change, for example the table was just taken), UNIMPLEMENTED to 501 (not built in this increment) and UNAVAILABLE to 502 (the service or one of its collaborators is down).
 
 <div class="api" markdown="1">
 
-*Table 6.4 Concert Round Service, gRPC (port 5001) and its routes at the API Gateway*
+*Table 6.4 Concert Round Service, gRPC API (port 5001)*
 
-| Operation | gRPC method | Route at the API Gateway | Request and response |
+| Operation | gRPC method | Request message | Response message |
 |---|---|---|---|
-| createZoneMap() | CreateZoneMap | `POST /zone-maps` | `{name}` → ZoneMap (Draft) |
-| listZoneMaps() | ListZoneMaps | `GET /zone-maps?status=` | → [ZoneMap summary] |
-| getZoneMap() | GetZoneMap | `GET /zone-maps/{id}` | → ZoneMap with the tables and capacity per **zone** |
-| updateZoneMap() | UpdateZoneMap | `PUT /zone-maps/{id}` | `{name?, zones?, tables?}` → ZoneMap; a field left out is unchanged; on an Active map only the changes of UC-04 AF-1 |
-| uploadZoneMapImage() | UploadZoneMapImage | `POST /zone-maps/{id}/image` | `{fileName}` → ZoneMap with `imageUrl` |
-| validateZoneMap() | ValidateZoneMap | `POST /zone-maps/{id}/validate` | → `{valid, problems[]}` |
-| activateZoneMap() | ActivateZoneMap | `POST /zone-maps/{id}/activate` | → ZoneMap (Active); 400 with the problems when not valid |
-| discardDraftZoneMap() | DiscardDraftZoneMap | `DELETE /zone-maps/{id}` | → `{removed}`; 409 unless Draft |
-| defineTableType(), listTableTypes() | DefineTableType, ListTableTypes | `PUT /table-types/{id}`, `GET /table-types` | `{name, capacity, packageContent}` → TableType; → [TableType] |
-| getBusinessParameters(), updateBusinessParameters() | GetBusinessParameters, UpdateBusinessParameters | `GET`, `PUT /business-parameters` | BusinessParameters; every field of the update is optional |
-| createRound() | CreateRound | `POST /rounds` | `{name?}` → Round (Draft) |
-| getUpcomingRounds() | GetUpcomingRounds | `GET /rounds` | → [Round summary with status not yet open, open or sold out] |
-| getRound(), getRoundTables() | GetRound, GetRoundTables | `GET /rounds/{id}`, `GET /rounds/{id}/tables` | → Round with its tables and `holdPeriodMinutes`; → [RoundTable with **zone**, **table type**, capacity, **package price**] |
-| updateRound() | UpdateRound | `PUT /rounds/{id}` | Round fields → Round; a field left out is unchanged; a Published round accepts only the changes of UC-03 AF-3 |
-| validateRound() | ValidateRound | `POST /rounds/{id}/validate` | → `{valid, problems[]}` |
-| publishRound() | PublishRound | `POST /rounds/{id}/publish` | → Round (Published); calls CreateRoundTableStatus; idempotent |
-| discardDraftRound() | DiscardDraftRound | `DELETE /rounds/{id}` | → `{removed}`; 409 unless Draft |
-| getRoundPricing() | GetRoundPricing | — (the Booking Service) | `{round_id}` → `{prices[], extra_person_fee}` |
-| getCheckInWindow() | GetCheckInWindow | — (the Booking Service) | `{round_id}` → `{opens_at, start_at, grace_ends_at}` |
+| defineTableType() | DefineTableType | `DefineTableTypeRequest {id, name, capacity, package_content}` | `TableType` |
+| listTableTypes() | ListTableTypes | `Empty` | `TableTypeList {table_types[]}` |
+| getBusinessParameters() | GetBusinessParameters | `Empty` | `BusinessParameters` |
+| updateBusinessParameters() | UpdateBusinessParameters | `UpdateBusinessParametersRequest {hold_period_minutes?, check_in_window_hours?, grace_period_minutes?, extra_person_fee?}` | `BusinessParameters` |
+| createZoneMap() | CreateZoneMap | `CreateZoneMapRequest {name?}` | `ZoneMap` (Draft) |
+| listZoneMaps() | ListZoneMaps | `ListZoneMapsRequest {status?}` | `ZoneMapList {zone_maps[]}` of `ZoneMapSummary` |
+| getZoneMap() | GetZoneMap | `ZoneMapRef {zone_map_id}` | `ZoneMap` with `summary[]` per **zone** |
+| updateZoneMap() | UpdateZoneMap | `UpdateZoneMapRequest {zone_map_id, name?, zones?[], tables?[]}` | `ZoneMap`; on an Active map only the changes of UC-04 AF-1 |
+| uploadZoneMapImage() | UploadZoneMapImage | `UploadZoneMapImageRequest {zone_map_id, file_name}` | `ZoneMap` with `image_url` |
+| validateZoneMap() | ValidateZoneMap | `ZoneMapRef` | `ValidationResult` |
+| activateZoneMap() | ActivateZoneMap | `ZoneMapRef` | `ZoneMap` (Active); INVALID_ARGUMENT with the problems when not valid |
+| discardDraftZoneMap() | DiscardDraftZoneMap | `ZoneMapRef` | `Removed`; FAILED_PRECONDITION unless Draft |
+| createRound() | CreateRound | `CreateRoundRequest {name?}` | `Round` (Draft) |
+| getUpcomingRounds() | GetUpcomingRounds | `Empty` | `UpcomingRoundList {rounds[]}` of `UpcomingRound` |
+| getRound() | GetRound | `RoundRef {round_id}` | `Round` with its `tables[]` and `hold_period_minutes` |
+| getRoundTables() | GetRoundTables | `RoundRef` | `RoundTableList {tables[]}` of `RoundTable` |
+| updateRound() | UpdateRound | `UpdateRoundRequest {round_id, name?, artist?, date?, doors_open_at?, start_at?, booking_open_at?, zone_map_id?, tables_not_for_sale?[], prices?[]}` | `Round`; a Published round accepts only the changes of UC-03 AF-3 (BRULE-07) |
+| validateRound() | ValidateRound | `RoundRef` | `ValidationResult` |
+| publishRound() | PublishRound | `RoundRef` | `Round` (Published); calls CreateRoundTableStatus; idempotent |
+| discardDraftRound() | DiscardDraftRound | `RoundRef` | `Removed`; FAILED_PRECONDITION unless Draft |
+| getRoundPricing() | GetRoundPricing | `RoundRef` | `RoundPricing {round_id, prices[], extra_person_fee}` |
+| getCheckInWindow() | GetCheckInWindow | `RoundRef` | `CheckInWindow` |
 
-*Table 6.5 Table Availability Service, gRPC (port 5003) and its route at the API Gateway*
+*Table 6.5 Table Availability Service, gRPC API (port 5003)*
 
-| Operation | gRPC method | Route at the API Gateway | Request and response |
+| Operation | gRPC method | Request message | Response message |
 |---|---|---|---|
-| createRoundTableStatus() | CreateRoundTableStatus | — (the Concert Round Service) | `{round_id, tables[{table_number, for_sale}]}` → RoundTableStatus; idempotent on retry |
-| getRoundTableStatus() | GetRoundTableStatus | `GET /rounds/{id}/table-status` | `{round_id}` → RoundTableStatus `{round_id, version, tables[{table_number, status, booking_id, hold_ends_at}]}`; the gateway answers 304 to `If-None-Match: <version>` (ADR-09) |
-| countAvailableTables() | CountAvailableTables | — (the Concert Round Service) | `{round_ids[]}` → `{counts[{round_id, available, for_sale}]}` |
-| holdTable() | HoldTable | — (the Booking Service) | `{round_id, table_number, booking_id, hold_ends_at}` → TableStatus; AVAILABLE → HELD |
-| releaseHold() | ReleaseHold | — (the Booking Service) | `{round_id, table_number, booking_id}` → TableStatus; HELD → AVAILABLE, a no-op when already AVAILABLE |
-| markTableBooked(), markTableOccupied() | MarkTableBooked, MarkTableOccupied | — (the Booking Service) | `{round_id, table_number, booking_id}` → TableStatus; HELD → BOOKED, BOOKED → OCCUPIED |
-| removeRoundTableStatus() | RemoveRoundTableStatus | — (the Concert Round Service) | `{round_id}` → `{removed}`; refused while a table is held or booked |
+| createRoundTableStatus() | CreateRoundTableStatus | `CreateRoundTableStatusRequest {round_id, tables[{table_number, for_sale}]}` | `RoundTableStatus`; idempotent on retry |
+| getRoundTableStatus() | GetRoundTableStatus | `RoundRef {round_id}` | `RoundTableStatus` |
+| countAvailableTables() | CountAvailableTables | `CountAvailableTablesRequest {round_ids[]}` | `CountAvailableTablesResponse {counts[{round_id, available, for_sale}]}` |
+| holdTable() | HoldTable | `HoldTableRequest {round_id, table_number, booking_id, hold_ends_at}` | `TableStatus`; AVAILABLE → HELD, otherwise FAILED_PRECONDITION |
+| releaseHold() | ReleaseHold | `TableRef {round_id, table_number, booking_id}` | `TableStatus`; HELD → AVAILABLE, a no-op when already AVAILABLE |
+| markTableBooked() | MarkTableBooked | `TableRef` | `TableStatus`; HELD → BOOKED |
+| markTableOccupied() | MarkTableOccupied | `TableRef` | `TableStatus`; BOOKED → OCCUPIED |
+| removeRoundTableStatus() | RemoveRoundTableStatus | `RoundRef` | `RemoveRoundTableStatusResponse {removed}`; refused while a table is held or booked |
 
-*Table 6.6 Booking Service, gRPC (port 5002) and its routes at the API Gateway*
+*Table 6.6 Booking Service, gRPC API (port 5002); the caller is the metadata x-user-id*
 
-| Operation | gRPC method | Route at the API Gateway | Request and response |
+| Operation | gRPC method | Request message | Response message |
 |---|---|---|---|
-| createHeldBooking() | CreateHeldBooking | `POST /bookings` | `{roundId, tableNumber}` → Booking (Held) with `remainingHoldSeconds`; 409 when the table was just taken |
-| getBooking() | GetBooking | `GET /bookings/{id}` | → Booking; own bookings only |
-| setPartySize() | SetPartySize | `PUT /bookings/{id}/party-size` | `{partySize}` → Booking with `fee {packagePrice, extraPersons, extraPersonFee, fullTableFee}` |
-| getCustomerProfile(), createCustomerProfile(), updateCustomerProfile() | GetCustomerProfile, CreateCustomerProfile, UpdateCustomerProfile | `GET`, `POST`, `PUT /customers/me` | `{name, phone, consent}` → CustomerProfile; 404 before the first booking |
-| getBookingTerms(), acceptBookingTerms() | GetBookingTerms, AcceptBookingTerms | `GET /bookings/{id}/terms`, `POST /bookings/{id}/terms-acceptance` | → `{terms[], checkInWindow}`; → Booking with `termsAccepted` |
-| startPayment() | StartPayment | `POST /bookings/{id}/payment` | → payment request of the Payment Service (Increment 1 answers 501) |
-| cancelBooking() | CancelBooking | `POST /bookings/{id}/cancel` | → Booking (Cancelled) |
-| getCustomerBookings(), getETicket() | GetCustomerBookings, GetETicket | `GET /customers/me/bookings`, `GET /bookings/{id}/e-ticket` | → [Booking]; → ETicket |
-| verifyBookingReference(), checkInBooking() | VerifyBookingReference, CheckInBooking | `POST /check-ins/verify`, `POST /check-ins` | `{bookingReference}` → verification result; → Booking (Checked-in) |
-| getRoundBookings() | GetRoundBookings | `GET /rounds/{id}/bookings` | → [Booking] for the **live view** |
-| confirmBookingPayment() | ConfirmBookingPayment | — (the Payment Service) | `{booking_id, payment_id, amount}` → Booking (Confirmed) with its **e-ticket**; idempotent |
+| createHeldBooking() | CreateHeldBooking | `CreateHeldBookingRequest {round_id, table_number}` | `Booking` (Held) with `remaining_hold_seconds`; FAILED_PRECONDITION when the table was just taken |
+| getBooking() | GetBooking | `BookingRef {booking_id}` | `Booking`; own bookings only |
+| setPartySize() | SetPartySize | `SetPartySizeRequest {booking_id, party_size}` | `Booking` with `fee` |
+| getCustomerProfile() | GetCustomerProfile | `Empty` | `CustomerProfile`; NOT_FOUND before the first booking |
+| createCustomerProfile() | CreateCustomerProfile | `CustomerProfileRequest {name, phone, consent}` | `CustomerProfile` |
+| updateCustomerProfile() | UpdateCustomerProfile | `CustomerProfileRequest {name?, phone?}` | `CustomerProfile` |
+| getBookingTerms() | GetBookingTerms | `BookingRef` | `BookingTerms` |
+| acceptBookingTerms() | AcceptBookingTerms | `BookingRef` | `Booking` with `terms_accepted` |
+| startPayment() | StartPayment | `BookingRef` | `PaymentRequest`; UNIMPLEMENTED in Increment 1 |
+| cancelBooking() | CancelBooking | `BookingRef` | `Booking` (Cancelled) |
+| getCustomerBookings() | GetCustomerBookings | `Empty` | `BookingList {bookings[]}` |
+| getETicket() | GetETicket | `BookingRef` | `ETicket` |
+| verifyBookingReference() | VerifyBookingReference | `BookingReference {booking_reference}` | `VerificationResult` |
+| checkInBooking() | CheckInBooking | `BookingReference` | `Booking` (Checked-in) |
+| getRoundBookings() | GetRoundBookings | `RoundRef {round_id}` | `BookingList` for the **live view** |
+| confirmBookingPayment() | ConfirmBookingPayment | `ConfirmBookingPaymentRequest {booking_id, payment_id, amount}` | `Booking` (Confirmed) with its **e-ticket**; idempotent |
 
 </div>
 
 <div class="api5" markdown="1">
 
-*Table 6.7 Payment, Notification and Staff Account Services (MVP contracts)*
+*Table 6.7 Payment, Notification and Staff Account Services, gRPC APIs (MVP contracts)*
 
-| Service | Operation | gRPC method | Route at the API Gateway | Request and response |
+| Service | Operation | gRPC method | Request message | Response message |
 |---|---|---|---|---|
-| Payment (gRPC 5004) | createPaymentRequest() | CreatePaymentRequest | — (the Booking Service) | `{booking_id, amount, customer_id}` → `{payment_id, checkout_url}` |
-| | receivePaymentResult() | ReceivePaymentResult | `POST /payments/webhook` | the signed result of the **Payment Gateway** → 200 once verified; a duplicate is ignored |
-| | getPaymentStatus() | GetPaymentStatus | `GET /payments/{id}` | → `{paymentId, bookingId, status, amount}` |
-| Notification (gRPC 5005) | sendBookingConfirmation(), sendHoldExpiredNotice(), sendPaymentFailedNotice() | SendBookingConfirmation, SendHoldExpiredNotice, SendPaymentFailedNotice | — (the Booking and Payment Services) | `{customer_id, booking_id, …}` → `{message_id, delivered}` |
-| Staff Account (gRPC 5006) | signIn(), signOut() | SignIn, SignOut | `POST /sessions`, `DELETE /sessions/current` | `{username, password}` → `{token, role}` |
-| | createStaffAccount(), listStaffAccounts(), updateStaffAccount(), disableStaffAccount() | CreateStaffAccount, ListStaffAccounts, UpdateStaffAccount, DisableStaffAccount | `POST`, `GET /staff-accounts`; `PUT`, `DELETE /staff-accounts/{id}` | `{username, role}` → StaffAccount |
+| Payment (port 5004) | createPaymentRequest() | CreatePaymentRequest | `{booking_id, amount, customer_id}` | `PaymentRequest {payment_id, checkout_url}` |
+| | receivePaymentResult() | ReceivePaymentResult | `{payment_id, status, amount, signature}`, the signed result of the **Payment Gateway** | `{accepted}`; a duplicate is ignored |
+| | getPaymentStatus() | GetPaymentStatus | `{payment_id}` | `PaymentStatus {payment_id, booking_id, status, amount}` |
+| Notification (port 5005) | sendBookingConfirmation(), sendHoldExpiredNotice(), sendPaymentFailedNotice() | SendBookingConfirmation, SendHoldExpiredNotice, SendPaymentFailedNotice | `{customer_id, booking_id, …}` | `{message_id, delivered}` |
+| Staff Account (port 5006) | signIn(), signOut() | SignIn, SignOut | `{username, password}`; `{token}` | `Session {token, role}`; `Empty` |
+| | createStaffAccount(), updateStaffAccount() | CreateStaffAccount, UpdateStaffAccount | `{username, role, password}`; `{staff_account_id, role?, password?}` | `StaffAccount {staff_account_id, username, role, status}` |
+| | listStaffAccounts(), disableStaffAccount() | ListStaffAccounts, DisableStaffAccount | `Empty`; `{staff_account_id}` | `StaffAccountList {accounts[]}`; `StaffAccount` (disabled) |
+
+</div>
+
+<div class="msg" markdown="1">
+
+*Table 6.8 Messages of the three MVP services*
+
+| Service | Message | Fields |
+|---|---|---|
+| Concert Round | `Round` | The round of Figure 6.3: `id, name, artist, status, date, doors_open_at, start_at, booking_open_at, zone_map_id, tables_not_for_sale[], prices[]` of `PackagePrice`, `check_in_window, parameters, created_at`; plus `hold_period_minutes` in force for the round and `tables[]` of `RoundTable` |
+| | `RoundTable` | `table_number, zone_id, zone_name, table_type_id, table_type_name, capacity, x, y, for_sale, package_price?, package_content`: a table of the map joined with its **table type** and **package price** |
+| | `UpcomingRound` | `id, name, artist, date, start_at, booking_open_at, status` (not yet open, open, sold out), `available_tables, tables_for_sale` |
+| | `ZoneMap` | `id, name, status, image_url, zones[]` of `Zone {id, name}`, `tables[]` of `ZoneMapTable {table_number, zone_id, table_type_id, capacity, x, y}`, `created_at, summary[]` of `ZoneSummary {zone_id, name, tables, capacity}` |
+| | `ZoneMapSummary` | `id, name, status, tables` |
+| | `TableType` | `id, name, capacity, package_content` |
+| | `BusinessParameters` | `hold_period_minutes, check_in_window_hours, grace_period_minutes, extra_person_fee` |
+| | `PackagePrice` | `zone_id, table_type_id, package_price, package_content` |
+| | `RoundPricing` | `round_id, prices[]` of `PackagePrice`, `extra_person_fee` |
+| | `CheckInWindow` | `round_id, opens_at, start_at, grace_ends_at` |
+| | `ValidationResult`, `Removed` | `valid, problems[]`; `removed` |
+| Table Availability | `RoundTableStatus` | The document of Figure 6.4: `round_id, version, tables[]` of `TableStatus` |
+| | `TableStatus` | `table_number, status` (AVAILABLE, HELD, BOOKED, OCCUPIED, NOT_FOR_SALE), `booking_id, hold_ends_at` |
+| Booking | `Booking` | The booking of Figure 6.5: `id, customer_id, round_id, table_number, zone_id, zone_name, table_type_id, capacity, status, hold_ends_at, party_size?, fee, terms_accepted, created_at, history[]` of `StatusChange {status, at, by}`; plus `remaining_hold_seconds` |
+| | `Fee` | `package_price, extra_persons, extra_person_fee, full_table_fee` |
+| | `CustomerProfile` | `customer_id, name, phone, consent_at` |
+| | `BookingTerms` | `booking_id, terms[], check_in_window` |
+| | `ETicket` | `booking_id, booking_reference, qr_payload` |
+| | `VerificationResult`, `PaymentRequest` | `valid, booking, reason`; `payment_id, checkout_url` |
+
+</div>
+
+<div class="routes" markdown="1">
+
+*Table 6.9 Routes of the API Gateway (REST, port 4000): the public API*
+
+| Service | Route | gRPC method | Roles | Request body | Response |
+|---|---|---|---|---|---|
+| Concert Round | `PUT /table-types/{id}` | DefineTableType | manager | `{name, capacity, packageContent}` | TableType |
+| | `GET /table-types` | ListTableTypes | manager, owner | — | [TableType] |
+| | `GET /business-parameters` | GetBusinessParameters | manager, owner | — | BusinessParameters |
+| | `PUT /business-parameters` | UpdateBusinessParameters | manager | `{holdPeriodMinutes?, checkInWindowHours?, gracePeriodMinutes?, extraPersonFee?}` | BusinessParameters |
+| | `POST /zone-maps` | CreateZoneMap | manager | `{name?}` | ZoneMap |
+| | `GET /zone-maps?status=` | ListZoneMaps | manager, owner | — | [ZoneMapSummary] |
+| | `GET /zone-maps/{id}` | GetZoneMap | manager, owner | — | ZoneMap |
+| | `PUT /zone-maps/{id}` | UpdateZoneMap | manager | `{name?, zones?, tables?}` | ZoneMap |
+| | `POST /zone-maps/{id}/image` | UploadZoneMapImage | manager | `{fileName}` | ZoneMap |
+| | `POST /zone-maps/{id}/validate` | ValidateZoneMap | manager | — | ValidationResult |
+| | `POST /zone-maps/{id}/activate` | ActivateZoneMap | manager | — | ZoneMap |
+| | `DELETE /zone-maps/{id}` | DiscardDraftZoneMap | manager | — | Removed |
+| | `POST /rounds` | CreateRound | manager | `{name?}` | Round |
+| | `GET /rounds` | GetUpcomingRounds | everyone | — | [UpcomingRound] |
+| | `GET /rounds/{id}` | GetRound | everyone | — | Round |
+| | `GET /rounds/{id}/tables` | GetRoundTables | everyone | — | [RoundTable] |
+| | `PUT /rounds/{id}` | UpdateRound | manager | `{name?, artist?, date?, doorsOpenAt?, startAt?, bookingOpenAt?, zoneMapId?, tablesNotForSale?, prices?}` | Round |
+| | `POST /rounds/{id}/validate` | ValidateRound | manager | — | ValidationResult |
+| | `POST /rounds/{id}/publish` | PublishRound | manager | — | Round |
+| | `DELETE /rounds/{id}` | DiscardDraftRound | manager | — | Removed |
+| Table Availability | `GET /rounds/{id}/table-status` | GetRoundTableStatus | everyone | header `If-None-Match: <version>` (ADR-09) | RoundTableStatus with `ETag: <version>`, or 304 |
+| Booking | `POST /bookings` | CreateHeldBooking | customer | `{roundId, tableNumber}` | Booking |
+| | `GET /bookings/{id}` | GetBooking | customer | — | Booking |
+| | `PUT /bookings/{id}/party-size` | SetPartySize | customer | `{partySize}` | Booking |
+| | `GET /bookings/{id}/terms` | GetBookingTerms | customer | — | BookingTerms |
+| | `POST /bookings/{id}/terms-acceptance` | AcceptBookingTerms | customer | — | Booking |
+| | `POST /bookings/{id}/payment` | StartPayment | customer | — | PaymentRequest (501 in Increment 1) |
+| | `POST /bookings/{id}/cancel` | CancelBooking | customer | — | Booking |
+| | `GET /bookings/{id}/e-ticket` | GetETicket | customer | — | ETicket |
+| | `GET /customers/me` | GetCustomerProfile | customer | — | CustomerProfile |
+| | `POST /customers/me` | CreateCustomerProfile | customer | `{name, phone, consent}` | CustomerProfile |
+| | `PUT /customers/me` | UpdateCustomerProfile | customer | `{name?, phone?}` | CustomerProfile |
+| | `GET /customers/me/bookings` | GetCustomerBookings | customer | — | [Booking] |
+| | `POST /check-ins/verify` | VerifyBookingReference | front staff, manager | `{bookingReference}` | VerificationResult |
+| | `POST /check-ins` | CheckInBooking | front staff, manager | `{bookingReference}` | Booking |
+| | `GET /rounds/{id}/bookings` | GetRoundBookings | manager, owner | — | [Booking] |
+| Payment | `POST /payments/webhook` | ReceivePaymentResult | the **Payment Gateway**, by its signature (NFR-38) | the signed result | 200 |
+| | `GET /payments/{id}` | GetPaymentStatus | customer | — | PaymentStatus |
+| Staff Account | `POST /sessions` | SignIn | anyone | `{username, password}` | Session |
+| | `DELETE /sessions/current` | SignOut | staff | — | — |
+| | `POST /staff-accounts` | CreateStaffAccount | manager | `{username, role, password}` | StaffAccount |
+| | `GET /staff-accounts` | ListStaffAccounts | manager, owner | — | [StaffAccount] |
+| | `PUT /staff-accounts/{id}` | UpdateStaffAccount | manager | `{role?, password?}` | StaffAccount |
+| | `DELETE /staff-accounts/{id}` | DisableStaffAccount | manager | — | StaffAccount |
 
 </div>
