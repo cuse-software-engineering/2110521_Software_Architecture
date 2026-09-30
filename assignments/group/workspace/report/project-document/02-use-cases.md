@@ -109,6 +109,73 @@ Business / Transactional
 
 - Association: **Customer** (primary actor); **LINE Platform** and Time (secondary actors).
 - Include: UC-09 Maintain Customer Profile at {Complete the Customer Profile}
+- Include: UC-10 Pay the Full Table Fee at {Pay the Full Table Fee}
+- Extend: none.
+- Generalization: none.
+- Related use cases: Relies on LINE Login for customer authentication, the LINE Messaging API for confirmation messages, the **Payment Gateway** for payment (UC-10), and the **concert round** created in UC-03 on a **zone map** from UC-04; the **e-ticket** is presented in UC-02 and the bookings are listed under My Bookings (UC-06).
+- Business rules: BRULE-01, 02, 03, 07, 08, 09, 11, 12, 16, 17.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Preconditions
+
+- **Customer** has the LINE application and is a friend of the shop's **LINE Official Account**.
+- **Manager** has created the **concert round** with its **zone map**, **table types**, **package prices** and **booking-open time** (UC-03).
+- The **Payment Gateway** is available (UC-10): in the MVP the simulated gateway.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Postconditions
+
+**Success (basic flow; UC-10 EF-2 slip approved, Increment 2):**
+
+- Booking state = Confirmed; the payment is recorded; the table is booked for the round; the **e-ticket** is issued; the confirmation has been sent by LINE or is retrievable under My Bookings.
+
+**Cancelled (AF-4 cancel; AF-5 profile not completed; EF-2 login failed):**
+
+- Booking state = Cancelled (or no booking was created); the **hold** is released and the table is available again; no payment exists.
+
+**Expired (EF-1 hold expired; UC-10 EF-4 hold ended during payment; UC-10 EF-2 slip rejected or missing and UC-10 EF-3 no result, Increment 2):**
+
+- Booking state = Expired; the table is available again and the **zone map** is refreshed; no money is held from the **Customer**; the **Customer** has been informed on screen and by LINE.
+
+**Refunded (UC-10 EF-1 payment result after the hold expired, table no longer available; Increment 2):**
+
+- Booking state = Expired; the payment and the refund are both recorded; the table remains with the other customer; the **Customer** has been informed by LINE that the payment is being returned.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Basic Flow
+
+{Open the Customer Frontend}
+1. The use case begins when the **Customer** opens the Rich Menu of the **LINE Official Account** and chooses "Reserve a table".
+2. System signs the **Customer** in through LINE Login and uses the LINE user id as the customer identity. **{LINE Login Result}**
+
+{Browse Rounds}
+3. System displays the upcoming **concert rounds** with artist, date, start time, **booking-open time** and status: not yet open, open, sold out.
+4. **Customer** selects a round that is open for booking.
+
+{View the Zone Map}
+5. System displays the **zone map** of the round: every table with its number, **zone**, **table type**, **package price** and status (available, held, booked), refreshed within 2 seconds of any change (FR-06).
+6. **Customer** selects an available table.
+
+{Hold the Table}
+7. System verifies that the table is still available and places a **hold** on it for the **hold period** of 15 minutes.
+8. System marks the table as held for every other customer (**first lock wins**) and displays the remaining hold time.
+9. System shows the booking summary (round, table, **package** content and **package price**) and asks for the **party size**.
+10. **Customer** enters the **party size**.
+11. System computes and displays the **full table fee**: the **package price** of the selected **table type** in its **zone** plus the **extra-person fee** for every person above the capacity of the **table type**.
+
+{Complete the Customer Profile}
 12. System includes UC-09 Maintain Customer Profile: on the first booking the **customer profile** is created with the **Customer**'s consent, otherwise it is shown and confirmed. **{Profile Complete}**
 
 {Accept the Booking Terms}

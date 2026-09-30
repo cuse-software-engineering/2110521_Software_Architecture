@@ -23,6 +23,8 @@ separately in [../received/teacher/](../received/teacher/).
 | KI-13 | Department name on both covers | D1 p1; D2 p1 | Resolved (CH-21) |
 | KI-14 | The ADRs do not yet meet the syllabus minimum technology requirements | D1 p26–32; D2 p7; syllabus item 17 | Partly resolved: REST and gRPC in ADR-12 (doc 2.0 draft 11, CH-34); broker, service discovery, second database open for Deliverable #3 |
 | KI-15 | The Service–Operations–Collaborators table misses operations that the use cases need | D2 p5, p7 | Resolved in doc 2.0 draft 11 and 12 (CH-35 to CH-39) |
+| KI-16 | UC-01 lost its preconditions, postconditions and basic-flow steps 1 to 11 in draft 21 | doc 2.0 drafts 21 to 26 | Resolved in doc 2.0 draft 27 (CH-57); the build now checks every use case |
+| KI-17 | The back-office has no route that lists Draft rounds | doc 2.0 draft 27, Appendix D | Open: decide listRounds() or a status query on GET /rounds before the back-office is built (progress 2) |
 
 ## KI-01 Use case names in the diagram differ from the descriptions
 
@@ -211,4 +213,21 @@ operation, service, collaborator, where the data is stored. Missing in D2:
 
 Resolved in the project document 2.0 draft 11: Table 5.3 completed (CH-35) and checked by the traceability tables of
 Appendix A (CH-36), where every operation appears in at least one row and every MVP requirement is realised.
+
+## KI-16 UC-01 lost its preconditions, postconditions and basic-flow steps 1 to 11 in draft 21
+
+Found 2026-09-30 while mapping screens to use case steps (Appendix D): the Basic Flow of UC-01 started at step 12. The
+edit of CH-50 (draft 21, UC-09 and UC-10 included by UC-01, steps renumbered from 12) replaced the text from the third
+Relationships bullet to step 11 with nothing, and the HTML table still rendered, so the PDF checks did not catch it; the
+redline of draft 21 showed the deletion but was not read that closely. Resolved in draft 27 (CH-57) with the text of
+draft 20 and the flow names of draft 21; build_report.py now refuses to build when a described use case has no Basic
+Flow, no Preconditions or Postconditions, or steps that do not run 1..n.
+
+## KI-17 The back-office has no route that lists Draft rounds
+
+Found 2026-09-30 by the coverage check of Appendix D (Section D.3): the round editor (B3) needs the Draft and Published
+rounds of the venue, while GET /rounds is getUpcomingRounds(), the Customer's published upcoming rounds with their
+sold-out status. Options: a listRounds() operation of the Concert Round Service for the Manager (Table 5.3, Table 6.4,
+Table 6.9, the code), or a status query on GET /rounds that the gateway allows for staff roles only. To decide before
+the back-office is built (progress 2); until then a Draft round is reopened by its id.
 

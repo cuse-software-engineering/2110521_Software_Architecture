@@ -265,3 +265,54 @@ Table C.1 lists the business terms of this document: the words of the venue, its
 | Session token | The token that the Staff Account Service issues at sign-in and that the API Gateway checks on every back-office request (ADR-07). |
 | Webhook | A call that an external system makes to the API Gateway when something happens; the Payment Gateway reports every payment result by a signed webhook (NFR-38). |
 | WebSocket | A persistent connection over which the server pushes table status changes to the open maps; Increment 2 (ADR-09). |
+
+# Appendix D Screens and the Routes They Call
+
+The two web apps of Table 5.1 are, with the payment webhook, the only callers of the API Gateway. Tables D.1 and D.2 name the screens of each web app, the use case steps and flows that each screen serves, its main elements and the routes of Table 6.9 that it calls; the gRPC method behind each route is in Table 6.9. A screen is defined here by its elements, and its drawing is not part of this document. A route is called when the screen opens or when the named element is used; a polled route is called again every 2 seconds while the screen is open (ADR-09). Section D.3 checks the mapping in the other direction.
+
+## D.1 Customer Web App
+
+The Customer Web App is the LIFF app inside LINE (ADR-01). Its screens follow the basic flow of UC-01 in order; C9 stands alone.
+
+<div class="screens" markdown="1">
+
+*Table D.1 Screens of the Customer Web App*
+
+| Screen | Name | Use case steps | Main elements | Routes called |
+|---|---|---|---|---|
+| C1 | Rich Menu and LINE Login | UC-01 steps 1–2, EF-2 | LINE chat, Rich Menu "Reserve a table", LINE Login dialog | None: LINE Login runs in the LIFF app, and the ID token travels in the header of every later call (Table 5.2) |
+| C2 | Concert rounds | UC-01 steps 3–4, AF-1, AF-2 | Round list with artist, date, start time, **booking-open time** and status; a round not yet open shows its **booking-open time**, a sold-out round is marked | `GET /rounds` |
+| C3 | Table map | UC-01 steps 5–8, AF-3 | Stage, **zones**, a shape per table with number, **table type**, **package price** and status; a tap on an available table holds it | `GET /rounds/{id}`, `GET /rounds/{id}/tables`; `GET /rounds/{id}/table-status` polled; `POST /bookings` on the tap |
+| C4 | Hold and booking summary | UC-01 steps 8–11, AF-4, EF-1 | **Hold** countdown, booking summary, **party size** stepper, fee breakdown with the **full table fee**, Cancel the hold; on expiry the message of EF-1 | `GET /bookings/{id}`, `PUT /bookings/{id}/party-size`, `POST /bookings/{id}/cancel` |
+| C5 | Customer profile and consent | UC-01 step 12, AF-5; UC-09 steps 1–8, AF-1, AF-2 | On the first booking: the purpose of the data collection, consent, name and phone with validation, Decline; later: the stored name and phone to confirm or correct | `GET /customers/me`, `POST /customers/me`, `PUT /customers/me`; `POST /bookings/{id}/cancel` on Decline |
+| C6 | Booking terms | UC-01 steps 13–14 | The **booking terms** with the **check-in window**, Accept, Pay with the amount, Decline and cancel the booking | `GET /bookings/{id}/terms`, `POST /bookings/{id}/terms-acceptance`; `POST /bookings/{id}/cancel` on Decline |
+| C7 | Payment | UC-01 step 15; UC-10 steps 1–7, AF-1, EF-4 | Amount, the hosted checkout of the **Payment Gateway** opened inside the web app, Cancel the booking; the payment status while the result is awaited | `POST /bookings/{id}/payment` (501 in Increment 1), `GET /payments/{id}` polled until the result; `POST /bookings/{id}/cancel` |
+| C8 | Confirmation and e-ticket | UC-01 steps 16–20, EF-3 | Confirmed banner, QR **e-ticket** with the **booking reference**, booking details, **check-in window**, note that the LINE copy was sent | `GET /bookings/{id}`, `GET /bookings/{id}/e-ticket` |
+| C9 | My Bookings | UC-06 | The **Customer**'s bookings with status; a Confirmed booking opens its **e-ticket** | `GET /customers/me/bookings`, `GET /bookings/{id}/e-ticket` |
+
+</div>
+
+## D.2 Back-office Web App
+
+The Back-office Web App runs in the browsers and phones of the **Manager**, the **Front Staff** and the **Owner**; every screen but B1 needs a signed-in staff account, and the role decides which screens open (FR-66).
+
+<div class="screens" markdown="1">
+
+*Table D.2 Screens of the Back-office Web App*
+
+| Screen | Name | Use case steps | Main elements | Routes called |
+|---|---|---|---|---|
+| B1 | Sign-in | UC-08 (sign in and log out) | Username, password; Sign out on every other screen | `POST /sessions`, `DELETE /sessions/current` |
+| B2 | Zone map editor | UC-04 steps 1–13, S-1, AF-1, AF-3, EF-1 to EF-3; **table types** (FR-37) | Map list with status, new map, image upload, **zones** drawn on the image, tables placed with number, **table type** and capacity, tables and capacity per **zone**, validation result, preview, Activate; the **table types** with capacity and **package** content | `GET /zone-maps`, `POST /zone-maps`, `GET /zone-maps/{id}`, `PUT /zone-maps/{id}`, `POST /zone-maps/{id}/image`, `POST /zone-maps/{id}/validate`, `POST /zone-maps/{id}/activate`, `DELETE /zone-maps/{id}`; `GET /table-types`, `PUT /table-types/{id}` |
+| B3 | Round editor | UC-03 steps 1–16, S-1, AF-1, AF-3, EF-1, EF-2 | Round list with status, new round, concert details and times, **zone map** choice, tables not for sale, **package price** and content per **zone** and **table type**, tables for sale and capacity per **zone**, validation result, preview as the **Customer** sees it (the elements of C3), Publish | `GET /rounds`, `POST /rounds`, `GET /rounds/{id}`, `PUT /rounds/{id}`, `GET /zone-maps?status=Active`, `GET /zone-maps/{id}`, `POST /rounds/{id}/validate`, `GET /rounds/{id}/tables` for the preview, `POST /rounds/{id}/publish`, `DELETE /rounds/{id}` |
+| B4 | Live view | UC-05; UC-02 step 7 | Round choice, the table map with the status of every table, the bookings of the round with **party size** and check-in time, counts of available, held, booked and occupied tables | `GET /rounds`, `GET /rounds/{id}/tables`, `GET /rounds/{id}/table-status` polled, `GET /rounds/{id}/bookings` |
+| B5 | Check-in scanner | UC-02 steps 1–2, AF-2 | Round and count, camera viewfinder, type the **booking reference** | `POST /check-ins/verify` |
+| B6 | Verification result and entry confirmed | UC-02 steps 3–8, S-1, AF-3 to AF-5, EF-1, EF-2, EF-5 | Result panel with the reason of a failure, booking details with the **party size** paid for, Confirm entry; then the Checked-in banner with time and staff, Next scan | `POST /check-ins` |
+| B7 | Business parameters and staff accounts | UC-07; UC-08 | **Hold period**, **check-in window**, **grace period**, **extra-person fee**; the staff accounts with role, create, change the role, disable | `GET /business-parameters`, `PUT /business-parameters`; `GET /staff-accounts`, `POST /staff-accounts`, `PUT /staff-accounts/{id}`, `DELETE /staff-accounts/{id}` |
+
+</div>
+
+## D.3 Coverage
+
+Read the other way, every route of Table 6.9 is called by at least one screen, except the payment webhook, which the **Payment Gateway** calls. The screens also show one route that the back-office needs and Table 6.9 does not give: the round list of B3 must show the Draft rounds of the venue as well as the Published ones, while `GET /rounds` answers the **Customer**'s upcoming rounds only (getUpcomingRounds()). A listRounds() operation of the Concert Round Service, or a status query on the route, is to be decided before the back-office is built; until then B3 reopens a Draft round by its id.
+

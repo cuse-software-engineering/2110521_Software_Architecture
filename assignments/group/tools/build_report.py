@@ -8,7 +8,7 @@ figures). That repository is found as $REQ_REPO, else the tree this repository i
 running header are replaced here: they carry this course, group SE 101 and the version.
 
 Usage (from the repository root):
-    python3 assignments/group/tools/build_report.py                          # 2.0 draft 26
+    python3 assignments/group/tools/build_report.py                          # 2.0 draft 27
     python3 assignments/group/tools/build_report.py --changelog              # the separate change-log document
     python3 assignments/group/tools/build_report.py --version "2.0" --status final
 Output: assignments/group/workspace/report/build/seats_project_document_v<version>.pdf (git-ignored)
@@ -153,9 +153,28 @@ class _Markdown(build_pdf.markdown.Markdown):
         super().__init__(*args, **kwargs)
 
 
+def check_use_cases(path: Path) -> None:
+    """Every described use case keeps its Basic Flow with the steps numbered 1..n without a gap. Draft 21 lost the
+    Preconditions, the Postconditions and steps 1 to 11 of UC-01 unnoticed for five drafts (CH-57): refuse to build."""
+    text = path.read_text(encoding="utf-8")
+    for m in re.finditer(r"^### 2\.2\.\d+ (UC-\d+ [^\n]+)", text, re.M):
+        nxt = text.find("\n### ", m.end())
+        sec = text[m.end(): nxt if nxt > 0 else len(text)]
+        bf = sec.find("#### Basic Flow")
+        if bf < 0:
+            raise SystemExit(f"{m.group(1)}: no Basic Flow")
+        end = min(x for x in (sec.find("#### Subflows", bf), sec.find("#### Alternative Flows", bf), len(sec)) if x > 0)
+        nums = [int(n) for n in re.findall(r"^(\d+)\. ", sec[bf:end], re.M)]
+        if not nums or nums != list(range(1, len(nums) + 1)):
+            raise SystemExit(f"{m.group(1)}: the basic flow steps are {nums}, not 1..n")
+        for k in ("#### Preconditions", "#### Postconditions", "#### Relationships"):
+            if k not in sec:
+                raise SystemExit(f"{m.group(1)}: no {k[5:]}")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--version", default="2.0 draft 26", help="version label on the cover (default: %(default)s)")
+    ap.add_argument("--version", default="2.0 draft 27", help="version label on the cover (default: %(default)s)")
     ap.add_argument("--date", default="29 September 2026")
     ap.add_argument("--status", default="draft for review by the group")
     ap.add_argument("--changelog", action="store_true", help="build the separate change-log document (project-document/change-log/) instead")
@@ -165,6 +184,7 @@ if __name__ == "__main__":
         parts = sorted(p for p in (DOC / "change-log").glob("[0-9][0-9]-*.md"))
     else:
         parts = sorted(p for p in DOC.glob("[0-9][0-9]-*.md"))
+        check_use_cases(DOC / "02-use-cases.md")
     build_pdf.COURSE, build_pdf.DRAFT = COURSE, False
     build_pdf.cover = make_cover(a.version, a.date, a.status)
     build_pdf.running_header = running_header
@@ -212,6 +232,9 @@ if __name__ == "__main__":
                       "\ndiv.msg table th:nth-child(1) { width: 13%; } div.msg table th:nth-child(2) { width: 20%; }"
                       "\ndiv.routes table { font-size: 10.5pt; } div.routes table th:nth-child(1) { width: 10%; } div.routes table th:nth-child(2) { width: 22%; } div.routes table th:nth-child(3) { width: 16%; }"
                       "\ndiv.routes table th:nth-child(4) { width: 10%; } div.routes table th:nth-child(5) { width: 10%; } div.routes table th:nth-child(6) { width: 18%; }")
+    # draft 27: Appendix D screen tables: screen | name | use case steps | main elements | routes called
+    build_pdf.CSS += ("\ndiv.screens table { font-size: 10.5pt; line-height: 1.3; } div.screens th, div.screens td { padding: 3pt 4pt; }"
+                      "\ndiv.screens table th:nth-child(1) { width: 8%; } div.screens table th:nth-child(2) { width: 15%; } div.screens table th:nth-child(3) { width: 16%; } div.screens table th:nth-child(4) { width: 30%; }")
     build_pdf.markdown.Markdown = _Markdown
     stem = "seats_project_document_change_log" if a.changelog else "seats_project_document"
     out = OUT / f"{stem}_v{re.sub(r'[^0-9A-Za-z.]+', '-', a.version).strip('-')}.pdf"
