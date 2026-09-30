@@ -2,7 +2,7 @@
 @startuml
 title <b>Booking — state machine</b>
 
-scale 2.3
+scale 2
 skinparam shadowing false
 skinparam defaultFontName "DejaVu Sans"
 skinparam defaultFontSize 13
@@ -64,7 +64,7 @@ Transferred : entry / invalidate original e-ticket
 [*] -down-> Held : customer selects a table\n[table has no active Booking for this concert round]
 
 Held -down-> Expired : after (15 min)\n[no payment verified,\nno slip awaiting decision]
-Held -down-> Confirmed : payment verified: gateway callback,\nor Manager confirms the transfer slip (UC-01 EF-3)\n[full table fee paid]
+Held -down-> Confirmed : payment verified: gateway callback,\nor Manager confirms the transfer slip (UC-10 EF-2)\n[full table fee paid]
 Held -down-> Cancelled : customer cancels\n[during hold]
 Held --> Held : payment failed or declined\n[hold not expired] / retry
 

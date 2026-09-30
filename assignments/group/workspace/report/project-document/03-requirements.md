@@ -1,6 +1,6 @@
 # 3 Requirements
 
-The functional and non-functional requirements below are those that the four use cases of Section 2 need. The Increment column refers to Section 1.3, and the business rules that the requirements and the use cases refer to (BRULE-nn) are listed in Appendix B.
+The functional and non-functional requirements below are those that the use cases of Section 2 need. The Increment column refers to Section 1.3, and the business rules that the requirements and the use cases refer to (BRULE-nn) are listed in Appendix B.
 
 ## 3.1 Functional Requirements
 
@@ -45,7 +45,7 @@ The functional and non-functional requirements below are those that the four use
 | FR-07 | The system shall hold an available table for the **hold period** (15 minutes, BRULE-02) and show the remaining time. | UC-01 | MVP |
 | FR-08 | The system shall allow at most one hold or booking per table per round; a later selection is refused and the map refreshed (**first lock wins**). | UC-01 | MVP |
 | FR-09 | The system shall ask for the **party size** and compute the **full table fee**: the **package price** plus the **extra-person fee** for each person above the capacity of the **table type**. | UC-01 | MVP |
-| FR-10 | On the first booking, the system shall show the purpose of data collection and obtain consent before collecting name and phone into a **customer profile**, which is pre-filled for later bookings; without consent the booking is cancelled. | UC-01 | MVP |
+| FR-10 | On the first booking, the system shall show the purpose of data collection and obtain consent before collecting name and phone into a **customer profile**, which is pre-filled for later bookings; without consent the booking is cancelled. | UC-09 | MVP |
 | FR-11 | The system shall let the customer cancel a **hold**; the table becomes available at once and nothing is charged. | UC-01 | MVP |
 | FR-12 | The system shall display the **booking terms** (full payment confirms the booking, **check-in window**, **grace period**, no refund for a **no-show**) and require their acceptance before payment. | UC-01 | MVP |
 | FR-23 | The system shall release the table when the **hold** ends (±5 seconds), set the booking to Expired and notify the customer, except while a **transfer slip** awaits the **Manager**'s decision. | UC-01 | MVP |
@@ -56,15 +56,15 @@ The functional and non-functional requirements below are those that the four use
 
 | ID | Requirement | Use case | Increment |
 |---|---|---|---|
-| FR-13 | The system shall create a payment request for the **full table fee** and present the gateway's payment methods in its hosted checkout inside the web app. | UC-01 | MVP (simulated gateway, ADR-11) |
-| FR-14 | After a declined or failed payment, the system shall allow a retry while the **hold** remains. | UC-01 | MVP |
-| FR-16 | The system shall verify the signature and the amount of every payment result, process it exactly once, record the payment and confirm the booking. | UC-01 | MVP |
-| FR-17 | A successful payment result that arrives after the **hold** expired shall confirm the booking if the table is still free; otherwise the system refunds it through the gateway and informs the customer. | UC-01 | Increment 2 |
-| FR-18 | If no payment result arrives within 60 seconds of checkout completion, the system shall poll the payment status every 10 seconds until a result is known or until 10 minutes after the **hold** ends. | UC-01 | Increment 2 |
-| FR-69 | If the gateway does not answer within 30 seconds, the system shall switch new payments to **degraded mode** (bank transfer, slip, **Manager** confirmation) and return to gateway mode within 1 minute after it answers again. | UC-01 | Increment 2 |
-| FR-15 | In **degraded mode** the system shall keep the **hold**, show the shop's bank account, accept a **transfer slip**, extend the **hold** until the **Manager** decides and notify the **Manager**. | UC-01 | Increment 2 |
-| FR-44 | The system shall queue the slip bookings for the **Manager** to confirm or reject; a confirmed slip continues the booking as a gateway payment would. | UC-01 | Increment 2 |
-| FR-71 | The system shall accept cards only through the gateway's hosted checkout; no card data is entered in or stored by the system. | UC-01 | Increment 2 |
+| FR-13 | The system shall create a payment request for the **full table fee** and present the gateway's payment methods in its hosted checkout inside the web app. | UC-10 | MVP (simulated gateway, ADR-11) |
+| FR-14 | After a declined or failed payment, the system shall allow a retry while the **hold** remains. | UC-10 | MVP |
+| FR-16 | The system shall verify the signature and the amount of every payment result, process it exactly once, record the payment and confirm the booking. | UC-10 | MVP |
+| FR-17 | A successful payment result that arrives after the **hold** expired shall confirm the booking if the table is still free; otherwise the system refunds it through the gateway and informs the customer. | UC-10 | Increment 2 |
+| FR-18 | If no payment result arrives within 60 seconds of checkout completion, the system shall poll the payment status every 10 seconds until a result is known or until 10 minutes after the **hold** ends. | UC-10 | Increment 2 |
+| FR-69 | If the gateway does not answer within 30 seconds, the system shall switch new payments to **degraded mode** (bank transfer, slip, **Manager** confirmation) and return to gateway mode within 1 minute after it answers again. | UC-10 | Increment 2 |
+| FR-15 | In **degraded mode** the system shall keep the **hold**, show the shop's bank account, accept a **transfer slip**, extend the **hold** until the **Manager** decides and notify the **Manager**. | UC-10 | Increment 2 |
+| FR-44 | The system shall queue the slip bookings for the **Manager** to confirm or reject; a confirmed slip continues the booking as a gateway payment would. | UC-10 | Increment 2 |
+| FR-71 | The system shall accept cards only through the gateway's hosted checkout; no card data is entered in or stored by the system. | UC-10 | Increment 2 |
 
 ### 3.1.5 E-Ticket & Check-In System
 
@@ -92,7 +92,7 @@ The functional and non-functional requirements below are those that the four use
 | ID | Requirement | Use case | Increment |
 |---|---|---|---|
 | FR-20 | The system shall send the booking confirmation with the **e-ticket** and the **booking terms** through the LINE Messaging API within 1 minute. | UC-01 | MVP |
-| FR-21 | The system shall send a LINE message when a **hold** expires, when a payment fails and, from Increment 2, when a late payment is refunded. | UC-01 | MVP |
+| FR-21 | The system shall send a LINE message when a **hold** expires, when a payment fails and, from Increment 2, when a late payment is refunded. | UC-01, UC-10 | MVP |
 | FR-22 | If a message cannot be delivered, the system shall retry 3 times within 5 minutes, record the outcome and keep the **e-ticket** available in the web app. | UC-01 | MVP |
 
 ### 3.1.7 Out of Scope

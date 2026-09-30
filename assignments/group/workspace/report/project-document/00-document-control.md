@@ -10,7 +10,7 @@
 | Product name | SEATS; Deliverables #1 and #2 called the system Concert Table Reservation System (CTRS) |
 | Course | 2110521 Software Architecture, Semester 1, Academic Year 2026 |
 | Group | SE 101 |
-| Version | 2.0 draft 20, 30 September 2026 |
+| Version | 2.0 draft 21, 30 September 2026 |
 | Status | Draft for review by the group; basis of the updated ADRs and microservice design of Deliverable #3 |
 | Previous version | 1.1: Deliverable #1 (version 1.0) and Deliverable #2 as submitted on 8 September 2026 |
 | Changes | The change log is a separate document of the same version, "SEATS Project Document — Change Log": every change since version 1.1 (CH-nn), how each teacher comment and known issue was resolved, and how to compare the versions |
@@ -43,3 +43,4 @@
 | 2.0 draft 18 | 2026-09-30 | Watayut A. | One term for each thing (concert round, zone map, e-ticket; UC-02 and UC-03 renamed); the domain model as Section 2.3 (class diagram, entities, booking state machine); UC-05 to UC-08 added by name to the diagram, Table 2.1 and the matrix. Changes CH-45 to CH-47. | owner |
 | 2.0 draft 19 | 2026-09-30 | Watayut A. | The change log, the resolution table and the comparison note are a separate document; the operations-by-use-case matrix is Appendix A with the step-by-step tables; the business rules are Appendix B. Change CH-48. | owner |
 | 2.0 draft 20 | 2026-09-30 | Watayut A. | Glossary split into business terms (Table 6.1, bold in the text) and technology and project terms (Table 6.2, 21 terms, plain in the text). Change CH-49. | owner |
+| 2.0 draft 21 | 2026-09-30 | Watayut A. | UC-09 Maintain Customer Profile and UC-10 Pay the Full Table Fee, included by UC-01, with full descriptions; UC-01 renumbered from step 12; matrix and trace tables follow. Change CH-50. | owner |

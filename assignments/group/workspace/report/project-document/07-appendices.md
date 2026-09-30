@@ -2,77 +2,77 @@
 
 ## A.1 Operations by Use Case
 
-Table A.1 traces the eight use cases to the operations of Table 5.3: a cell names the steps and flows of the use case that the operation serves, whether the actor invokes it through the API Gateway or another service invokes it as a collaborator; for UC-05 to UC-08, which have no description, a tick marks the operations they use. Every operation has at least one cell, and the two jobs on a timer are listed below the operations. Section A.2 gives the same trace step by step, with who invokes each operation, the collaborations it needs, the data it stores and the requirements it realises; only the flows that the MVP builds are traced (Section 1.3).
+Table A.1 traces the ten use cases to the operations of Table 5.3: a cell names the steps and flows of the use case that the operation serves, whether the actor invokes it through the API Gateway or another service invokes it as a collaborator; for UC-05 to UC-08, which have no description, a tick marks the operations they use. Every operation has at least one cell, and the two jobs on a timer are listed below the operations. Section A.2 gives the same trace step by step, with who invokes each operation, the collaborations it needs, the data it stores and the requirements it realises; only the flows that the MVP builds are traced (Section 1.3).
 
 <div class="matrix" markdown="1">
 
 *Table A.1 Operations by use case*
 
-| Service | Operation | UC-01 | UC-02 | UC-03 | UC-04 | UC-05 | UC-06 | UC-07 | UC-08 |
-|---|---|---|---|---|---|---|---|---|---|
-| **Concert Round Service** | createZoneMap() |  |  |  | 1–2 |  |  |  |  |
-|  | updateZoneMap() |  |  |  | 4; 5–6; AF-1; AF-3 |  |  |  |  |
-|  | uploadZoneMapImage() |  |  |  | 3, EF-3 |  |  |  |  |
-|  | defineTableType() |  |  |  | 5–6 |  |  |  |  |
-|  | listTableTypes() |  |  |  | 5–6 |  |  |  |  |
-|  | listZoneMaps() |  |  | 6 | AF-1 |  |  |  |  |
-|  | getZoneMap() |  |  | 7 | 7; 10; AF-1 |  |  |  |  |
-|  | validateZoneMap() |  |  |  | 8–9, S-1, EF-1 |  |  |  |  |
-|  | activateZoneMap() |  |  |  | 11–12, EF-2 |  |  |  |  |
-|  | getBusinessParameters() |  |  | 3–5 |  |  |  | ✓ |  |
-|  | updateBusinessParameters() |  |  |  |  |  |  | ✓ |  |
-|  | createRound() |  |  | 1–2 |  |  |  |  |  |
-|  | updateRound() |  |  | 3–5; 8; 9–10; AF-1; AF-3 |  |  |  |  |  |
-|  | validateRound() |  |  | 11–12, S-1, EF-1 |  |  |  |  |  |
-|  | publishRound() |  |  | 14–15, EF-2 |  |  |  |  |  |
-|  | getUpcomingRounds() | 3, AF-2 |  |  |  |  |  |  |  |
-|  | getRound() | 4, AF-1; 6–8, AF-3 |  | 13; AF-3 |  |  |  |  |  |
-|  | getRoundTables() | 5, AF-2 |  | 13 |  |  |  |  |  |
-|  | getRoundPricing() | 10–11 |  |  |  |  |  |  |  |
-|  | getCheckInWindow() | 13 | 2–4, S-1, AF-2, AF-3, AF-5, EF-1, EF-2 |  |  |  |  |  |  |
-| **Table Availability Service** | initializeRoundTableStatus() |  |  | 14–15, EF-2 |  |  |  |  |  |
-|  | getRoundTableStatus() | 5, AF-2 | 7 | AF-3 | AF-1 | ✓ |  |  |  |
-|  | countAvailableTables() | 3, AF-2 |  |  |  |  |  |  |  |
-|  | holdTable() | 6–8, AF-3 |  |  |  |  |  |  |  |
-|  | releaseHold() | AF-4, AF-6; EF-1 |  |  |  |  |  |  |  |
-|  | markTableBooked() | 19–20 |  |  |  |  |  |  |  |
-|  | markTableOccupied() |  | 6, EF-5 |  |  |  |  |  |  |
-| **Booking Service** | createHeldBooking() | 6–8, AF-3 |  |  |  |  |  |  |  |
-|  | getBooking() | 9; 21, AF-5 |  |  |  |  |  |  |  |
-|  | setPartySize() | 10–11 |  |  |  |  |  |  |  |
-|  | getCustomerProfile() | 12 |  |  |  |  |  |  |  |
-|  | createCustomerProfile() | 12a, AF-7 |  |  |  |  |  |  |  |
-|  | updateCustomerProfile() | 12b |  |  |  |  |  |  |  |
-|  | getBookingTerms() | 13 |  |  |  |  |  |  |  |
-|  | acceptBookingTerms() | 14 |  |  |  |  |  |  |  |
-|  | startPayment() | 15 |  |  |  |  |  |  |  |
-|  | confirmBookingPayment() | 18, AF-5; 19–20 |  |  |  |  |  |  |  |
-|  | getETicket() | 21, AF-5 |  |  |  |  | ✓ |  |  |
-|  | getCustomerBookings() |  |  |  |  |  | ✓ |  |  |
-|  | cancelBooking() | AF-4, AF-6 |  |  |  |  |  |  |  |
-|  | verifyBookingReference() |  | 2–4, S-1, AF-2, AF-3, AF-5, EF-1, EF-2 |  |  |  |  |  |  |
-|  | checkInBooking() |  | 6, EF-5 |  |  |  |  |  |  |
-|  | getRoundBookings() |  | 7 |  |  | ✓ |  |  |  |
-| **Payment Service** | createPaymentRequest() | 15 |  |  |  |  |  |  |  |
-|  | receivePaymentResult() | 18, AF-5 |  |  |  |  |  |  |  |
-|  | getPaymentStatus() | 21, AF-5 |  |  |  |  |  |  |  |
-| **Notification Service** | sendBookingConfirmation() | 22, S-1 |  |  |  |  |  |  |  |
-|  | sendHoldExpiredNotice() | EF-1; EF-1, S-1 |  |  |  |  |  |  |  |
-|  | sendPaymentFailedNotice() | 18, AF-5; AF-5 |  |  |  |  |  |  |  |
-| **Staff Account Service** | signIn() |  |  |  |  |  |  |  | ✓ |
-|  | signOut() |  |  |  |  |  |  |  | ✓ |
-|  | createStaffAccount() |  |  |  |  |  |  |  | ✓ |
-|  | listStaffAccounts() |  |  |  |  |  |  |  | ✓ |
-|  | updateStaffAccount() |  |  |  |  |  |  |  | ✓ |
-|  | disableStaffAccount() |  |  |  |  |  |  |  | ✓ |
-| *Jobs on a timer (not operations)* | hold-expiry job of the Booking Service | EF-1 | | | | | | | |
-| | retry job of the Notification Service | EF-6 | | | | | | | |
+| Service | Operation | UC-01 | UC-02 | UC-03 | UC-04 | UC-05 | UC-06 | UC-07 | UC-08 | UC-09 | UC-10 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| **Concert Round Service** | createZoneMap() |  |  |  | 1–2 |  |  |  |  |  |  |
+|  | updateZoneMap() |  |  |  | 4; 5–6; AF-1; AF-3 |  |  |  |  |  |  |
+|  | uploadZoneMapImage() |  |  |  | 3, EF-3 |  |  |  |  |  |  |
+|  | defineTableType() |  |  |  | 5–6 |  |  |  |  |  |  |
+|  | listTableTypes() |  |  |  | 5–6 |  |  |  |  |  |  |
+|  | listZoneMaps() |  |  | 6 | AF-1 |  |  |  |  |  |  |
+|  | getZoneMap() |  |  | 7 | 7; 10; AF-1 |  |  |  |  |  |  |
+|  | validateZoneMap() |  |  |  | 8–9, S-1, EF-1 |  |  |  |  |  |  |
+|  | activateZoneMap() |  |  |  | 11–12, EF-2 |  |  |  |  |  |  |
+|  | getBusinessParameters() |  |  | 3–5 |  |  |  | ✓ |  |  |  |
+|  | updateBusinessParameters() |  |  |  |  |  |  | ✓ |  |  |  |
+|  | createRound() |  |  | 1–2 |  |  |  |  |  |  |  |
+|  | updateRound() |  |  | 3–5; 8; 9–10; AF-1; AF-3 |  |  |  |  |  |  |  |
+|  | validateRound() |  |  | 11–12, S-1, EF-1 |  |  |  |  |  |  |  |
+|  | publishRound() |  |  | 14–15, EF-2 |  |  |  |  |  |  |  |
+|  | getUpcomingRounds() | 3, AF-2 |  |  |  |  |  |  |  |  |  |
+|  | getRound() | 4, AF-1; 6–8, AF-3 |  | 13; AF-3 |  |  |  |  |  |  |  |
+|  | getRoundTables() | 5, AF-2 |  | 13 |  |  |  |  |  |  |  |
+|  | getRoundPricing() | 10–11 |  |  |  |  |  |  |  |  |  |
+|  | getCheckInWindow() | 13 | 2–4, S-1, AF-2, AF-3, AF-5, EF-1, EF-2 |  |  |  |  |  |  |  |  |
+| **Table Availability Service** | initializeRoundTableStatus() |  |  | 14–15, EF-2 |  |  |  |  |  |  |  |
+|  | getRoundTableStatus() | 5, AF-2 | 7 | AF-3 | AF-1 | ✓ |  |  |  |  |  |
+|  | countAvailableTables() | 3, AF-2 |  |  |  |  |  |  |  |  |  |
+|  | holdTable() | 6–8, AF-3 |  |  |  |  |  |  |  |  |  |
+|  | releaseHold() | AF-4, AF-5; EF-1 |  |  |  |  |  |  |  |  |  |
+|  | markTableBooked() | 16–17 |  |  |  |  |  |  |  |  |  |
+|  | markTableOccupied() |  | 6, EF-5 |  |  |  |  |  |  |  |  |
+| **Booking Service** | createHeldBooking() | 6–8, AF-3 |  |  |  |  |  |  |  |  |  |
+|  | getBooking() | 9; 18 |  |  |  |  |  |  |  |  |  |
+|  | setPartySize() | 10–11 |  |  |  |  |  |  |  |  |  |
+|  | getCustomerProfile() |  |  |  |  |  |  |  |  | 1–2; 6–7, AF-2, EF-1 |  |
+|  | createCustomerProfile() |  |  |  |  |  |  |  |  | 3–5, AF-1, AF-2, EF-1 |  |
+|  | updateCustomerProfile() |  |  |  |  |  |  |  |  | 6–7, AF-2, EF-1 |  |
+|  | getBookingTerms() | 13 |  |  |  |  |  |  |  |  |  |
+|  | acceptBookingTerms() | 14 |  |  |  |  |  |  |  |  |  |
+|  | startPayment() |  |  |  |  |  |  |  |  |  | 1–2 |
+|  | confirmBookingPayment() | 16–17 |  |  |  |  |  |  |  |  | 5–6, AF-1 |
+|  | getETicket() | 18 |  |  |  |  | ✓ |  |  |  |  |
+|  | getCustomerBookings() |  |  |  |  |  | ✓ |  |  |  |  |
+|  | cancelBooking() | AF-4, AF-5 |  |  |  |  |  |  |  |  |  |
+|  | verifyBookingReference() |  | 2–4, S-1, AF-2, AF-3, AF-5, EF-1, EF-2 |  |  |  |  |  |  |  |  |
+|  | checkInBooking() |  | 6, EF-5 |  |  |  |  |  |  |  |  |
+|  | getRoundBookings() |  | 7 |  |  | ✓ |  |  |  |  |  |
+| **Payment Service** | createPaymentRequest() |  |  |  |  |  |  |  |  |  | 1–2; 2 |
+|  | receivePaymentResult() |  |  |  |  |  |  |  |  |  | 5–6, AF-1 |
+|  | getPaymentStatus() |  |  |  |  |  |  |  |  |  | AF-1 |
+| **Notification Service** | sendBookingConfirmation() | 19, S-1 |  |  |  |  |  |  |  |  |  |
+|  | sendHoldExpiredNotice() | EF-1; EF-1, S-1 |  |  |  |  |  |  |  |  |  |
+|  | sendPaymentFailedNotice() |  |  |  |  |  |  |  |  |  | 5–6, AF-1; AF-1 |
+| **Staff Account Service** | signIn() |  |  |  |  |  |  |  | ✓ |  |  |
+|  | signOut() |  |  |  |  |  |  |  | ✓ |  |  |
+|  | createStaffAccount() |  |  |  |  |  |  |  | ✓ |  |  |
+|  | listStaffAccounts() |  |  |  |  |  |  |  | ✓ |  |  |
+|  | updateStaffAccount() |  |  |  |  |  |  |  | ✓ |  |  |
+|  | disableStaffAccount() |  |  |  |  |  |  |  | ✓ |  |  |
+| *Jobs on a timer (not operations)* | hold-expiry job of the Booking Service | EF-1 | | | | | | | | | EF-4 |
+| | retry job of the Notification Service | EF-3 | | | | | | | | | |
 
 </div>
 
 ## A.2 Step by Step
 
-Tables A.2 to A.6 are the evidence behind Table A.1: each row follows one step, or the consecutive steps served by one operation, of a use case: who invokes the operation (an actor, through the API Gateway, or a service), the service and operation that carry the step out, the collaborations the operation needs, the data it stores, and the requirements it realises. Steps in which the actor acts without the system, such as UC-02 step 5, are left out unless a rule applies to them. Only the flows that the MVP builds are listed (Section 1.3), and Table A.6 covers UC-05 to UC-08, which have no description. Every operation of Table 5.3 appears in at least one row, the two jobs appear as jobs, and every MVP requirement of Section 3.1 is realised by at least one row.
+Tables A.2 to A.8 are the evidence behind Table A.1: each row follows one step, or the consecutive steps served by one operation, of a use case: who invokes the operation (an actor, through the API Gateway, or a service), the service and operation that carry the step out, the collaborations the operation needs, the data it stores, and the requirements it realises. Steps in which the actor acts without the system, such as UC-02 step 5, are left out unless a rule applies to them. Only the flows that the MVP builds are listed (Section 1.3), and Table A.8 covers UC-05 to UC-08, which have no description. Every operation of Table 5.3 appears in at least one row, the two jobs appear as jobs, and every MVP requirement of Section 3.1 is realised by at least one row.
 
 <div class="trace" markdown="1">
 
@@ -80,30 +80,24 @@ Tables A.2 to A.6 are the evidence behind Table A.1: each row follows one step, 
 
 | Steps | Invoked by | Operation | Collaborations | Data stored | Requirements |
 |---|---|---|---|---|---|
-| 1–2, EF-5 | **Customer** | API Gateway: check the LINE ID token that LINE Login gave the LIFF app | LINE Login Adapter, which asks the **LINE Platform** | — | FR-01, FR-02 |
+| 1–2, EF-2 | **Customer** | API Gateway: check the LINE ID token that LINE Login gave the LIFF app | LINE Login Adapter, which asks the **LINE Platform** | — | FR-01, FR-02 |
 | 3, AF-2 | **Customer** | Concert Round Service: getUpcomingRounds(), with the status of each round | Table Availability Service: countAvailableTables(), for the sold-out status | — | FR-03 |
 | 4, AF-1 | **Customer** | Concert Round Service: getRound() | — | — | FR-03, FR-04 |
 | 5, AF-2 | **Customer** | Concert Round Service: getRoundTables()<br>Table Availability Service: getRoundTableStatus(), polled every 2 seconds | — | — | FR-05, FR-06 |
 | 6–8, AF-3 | **Customer** | Booking Service: createHeldBooking() | Concert Round Service: getRound(), to check that booking is open<br>Table Availability Service: holdTable() | Booking DB: booking Held until the end of the **hold**<br>Table Status DB: table held | FR-04, FR-07, FR-08 |
 | 9 | **Customer** | Booking Service: getBooking(), the booking summary and the remaining **hold** time | — | — | FR-07 |
 | 10–11 | **Customer** | Booking Service: setPartySize(), which computes the **full table fee** | Concert Round Service: getRoundPricing() | Booking DB: **party size** and **full table fee** | FR-09 |
-| 12 | **Customer** | Booking Service: getCustomerProfile(), which tells whether a profile exists | — | — | FR-10 |
-| 12a, AF-7 | **Customer** | Booking Service: createCustomerProfile(), with the consent, the name and the phone; AF-7 is its validation | — | Booking DB: **customer profile** and consent | FR-10 |
-| 12b | **Customer** | Booking Service: updateCustomerProfile(), when the **Customer** corrects the pre-filled profile | — | Booking DB: **customer profile** | FR-10 |
+| 12 | **Customer** | Included use case UC-09 Maintain Customer Profile (Table A.6) | — | — | FR-10 |
 | 13 | **Customer** | Booking Service: getBookingTerms() | Concert Round Service: getCheckInWindow() | — | FR-12 |
 | 14 | **Customer** | Booking Service: acceptBookingTerms() | — | Booking DB: **booking terms** accepted | FR-12 |
-| 15 | **Customer** | Booking Service: startPayment() | Payment Service: createPaymentRequest() | Booking DB: payment started | FR-13 |
-| 15 | Booking Service | Payment Service: createPaymentRequest() | Payment Gateway Adapter: createCheckoutSession() | Payment DB: payment request | FR-13 |
-| 16–17 | **Customer** | No operation of SEATS: the **Customer** pays in the hosted checkout of the **Payment Gateway**, simulated in the MVP (ADR-11) | — | — | FR-13 |
-| 18, AF-5 | **Payment Gateway** | Payment Service: receivePaymentResult(), the signed webhook routed by the API Gateway; a duplicate result is ignored | Payment Gateway Adapter: verifyWebhookSignature()<br>Booking Service: confirmBookingPayment(), when paid<br>Notification Service: sendPaymentFailedNotice(), when declined | Payment DB: payment result, processed once | FR-14, FR-16, FR-21 |
-| 19–20 | Payment Service | Booking Service: confirmBookingPayment(), which also issues the **e-ticket** | Table Availability Service: markTableBooked() | Booking DB: payment recorded, booking Confirmed, **e-ticket** with the signed **booking reference**<br>Table Status DB: table booked | FR-16, FR-19 |
-| 21, AF-5 | **Customer** | Payment Service: getPaymentStatus()<br>Booking Service: getBooking(), getETicket() | — | — | FR-14, FR-19 |
-| 22, S-1 | Booking Service | Notification Service: sendBookingConfirmation() | LINE Messaging Adapter: pushLineMessage() | Notification DB: message and delivery result | FR-20 |
-| AF-4, AF-6 | **Customer** | Booking Service: cancelBooking() | Table Availability Service: releaseHold() | Booking DB: booking Cancelled<br>Table Status DB: table available | FR-10, FR-11 |
-| AF-5 | Payment Service | Notification Service: sendPaymentFailedNotice() | LINE Messaging Adapter: pushLineMessage() | Notification DB: message and delivery result | FR-21 |
+| 15 | **Customer** | Included use case UC-10 Pay the Full Table Fee (Table A.7) | — | — | FR-13 |
+| 16–17 | Payment Service, at UC-10 step 6 | Booking Service: confirmBookingPayment(), which also issues the **e-ticket** | Table Availability Service: markTableBooked() | Booking DB: payment recorded, booking Confirmed, **e-ticket** with the signed **booking reference**<br>Table Status DB: table booked | FR-16, FR-19 |
+| 18 | **Customer** | Booking Service: getBooking(), getETicket() | — | — | FR-19 |
+| 19, S-1 | Booking Service | Notification Service: sendBookingConfirmation() | LINE Messaging Adapter: pushLineMessage() | Notification DB: message and delivery result | FR-20 |
+| AF-4, AF-5 | **Customer** | Booking Service: cancelBooking() | Table Availability Service: releaseHold() | Booking DB: booking Cancelled<br>Table Status DB: table available | FR-10, FR-11 |
 | EF-1 | Time | Booking Service: the hold-expiry job, every 5 seconds (ADR-08); not an operation | Table Availability Service: releaseHold()<br>Notification Service: sendHoldExpiredNotice() | Booking DB: booking Expired<br>Table Status DB: table available | FR-21, FR-23 |
 | EF-1, S-1 | Booking Service | Notification Service: sendHoldExpiredNotice() | LINE Messaging Adapter: pushLineMessage() | Notification DB: message and delivery result | FR-21 |
-| EF-6 | Time | Notification Service: the retry job, 3 times within 5 minutes; not an operation | LINE Messaging Adapter: pushLineMessage() | Notification DB: delivery result | FR-22 |
+| EF-3 | Time | Notification Service: the retry job, 3 times within 5 minutes; not an operation | LINE Messaging Adapter: pushLineMessage() | Notification DB: delivery result | FR-22 |
 
 *Table A.3 Traceability of Check In with E-Ticket*
 
@@ -145,7 +139,27 @@ Tables A.2 to A.6 are the evidence behind Table A.1: each row follows one step, 
 | AF-1 | **Manager** | Concert Round Service: listZoneMaps(), getZoneMap(), then updateZoneMap(), which allows only the changes of AF-1 | Table Availability Service: getRoundTableStatus(), for the Published rounds that use the map | Round DB: the changed **zones** and tables | FR-37 |
 | AF-3 | **Manager** | Concert Round Service: updateZoneMap(); the map stays Draft | — | Round DB: the map as entered | FR-37 |
 
-*Table A.6 Traceability of UC-05 to UC-08, the use cases without a description*
+*Table A.6 Traceability of Maintain Customer Profile*
+
+| Steps | Invoked by | Operation | Collaborations | Data stored | Requirements |
+|---|---|---|---|---|---|
+| 1–2 | **Customer** | Booking Service: getCustomerProfile(), which tells whether a profile exists | — | — | FR-10 |
+| 3–5, AF-1, AF-2, EF-1 | **Customer** | Booking Service: createCustomerProfile(), with the consent, the name and the phone; AF-2 is its validation; AF-1 stores nothing | — | Booking DB: **customer profile** and consent | FR-10 |
+| 6–7, AF-2, EF-1 | **Customer** | Booking Service: getCustomerProfile(), then updateCustomerProfile() when the **Customer** corrects the profile | — | Booking DB: **customer profile** | FR-10 |
+
+*Table A.7 Traceability of Pay the Full Table Fee*
+
+| Steps | Invoked by | Operation | Collaborations | Data stored | Requirements |
+|---|---|---|---|---|---|
+| 1–2 | **Customer** | Booking Service: startPayment() | Payment Service: createPaymentRequest() | Booking DB: payment started | FR-13 |
+| 2 | Booking Service | Payment Service: createPaymentRequest() | Payment Gateway Adapter: createCheckoutSession() | Payment DB: payment request | FR-13 |
+| 3–4 | **Customer** | No operation of SEATS: the **Customer** pays in the hosted checkout of the **Payment Gateway**, simulated in the MVP (ADR-11) | — | — | FR-13 |
+| 5–6, AF-1 | **Payment Gateway** | Payment Service: receivePaymentResult(), the signed webhook routed by the API Gateway; a duplicate result is ignored | Payment Gateway Adapter: verifyWebhookSignature()<br>Booking Service: confirmBookingPayment(), when paid (UC-01 step 16)<br>Notification Service: sendPaymentFailedNotice(), when declined | Payment DB: payment result, processed once | FR-14, FR-16, FR-21 |
+| AF-1 | **Customer** | Payment Service: getPaymentStatus(), the decline and the remaining **hold** time | — | — | FR-14 |
+| AF-1 | Payment Service | Notification Service: sendPaymentFailedNotice() | LINE Messaging Adapter: pushLineMessage() | Notification DB: message and delivery result | FR-21 |
+| EF-4 | Time, through UC-01 EF-1 | The hold-expiry job of the Booking Service; not an operation | — | — | FR-23 |
+
+*Table A.8 Traceability of UC-05 to UC-08, the use cases without a description*
 
 | Use case | Invoked by | Operation | Collaborations | Data stored | Requirements |
 |---|---|---|---|---|---|

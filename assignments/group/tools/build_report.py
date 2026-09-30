@@ -8,7 +8,7 @@ figures). That repository is found as $REQ_REPO, else the tree this repository i
 running header are replaced here: they carry this course, group SE 101 and the version.
 
 Usage (from the repository root):
-    python3 assignments/group/tools/build_report.py                          # 2.0 draft 20
+    python3 assignments/group/tools/build_report.py                          # 2.0 draft 21
     python3 assignments/group/tools/build_report.py --changelog              # the separate change-log document
     python3 assignments/group/tools/build_report.py --version "2.0" --status final
 Output: assignments/group/workspace/report/build/seats_project_document_v<version>.pdf (git-ignored)
@@ -155,7 +155,7 @@ class _Markdown(build_pdf.markdown.Markdown):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--version", default="2.0 draft 20", help="version label on the cover (default: %(default)s)")
+    ap.add_argument("--version", default="2.0 draft 21", help="version label on the cover (default: %(default)s)")
     ap.add_argument("--date", default="29 September 2026")
     ap.add_argument("--status", default="draft for review by the group")
     ap.add_argument("--changelog", action="store_true", help="build the separate change-log document (project-document/change-log/) instead")
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     # operations-by-use-case matrix (Appendix A.1): narrow use case columns, operation names never wrap
     build_pdf.CSS += ("\ndiv.matrix table { font-size: 8.5pt; line-height: 1.2; } div.matrix table th, div.matrix table td { padding: 1.5pt 3pt; }"
                       "\ndiv.matrix table th:nth-child(1) { width: 10%; } div.matrix table th:nth-child(2) { width: 22%; }"
-                      "\ndiv.matrix table td:nth-child(2) { white-space: nowrap; } div.matrix table th:nth-child(n+3):nth-child(-n+9) { width: 8.5%; }")
+                      "\ndiv.matrix table td:nth-child(2) { white-space: nowrap; } div.matrix table th:nth-child(n+3):nth-child(-n+11) { width: 7%; }")
     # use cases (2.2.1 .. 2.2.4) each start on a new page, as the ADRs do
     build_pdf.CSS += "\nh3[id*='-uc-0'] { break-before: page; page-break-before: always; }"
     build_pdf.CSS += ("\nh2[id*='adr-'] { break-before: page; page-break-before: always; }"
@@ -195,6 +195,8 @@ if __name__ == "__main__":
                       "\ntable.adr p { margin: 0 0 4pt; text-align: left; }"
                       "\ntable.adr ul, table.adr ol { margin: 0 0 4pt; padding-left: 18pt; }"
                       "\n.keep:has(> table.adr) { break-inside: auto; page-break-inside: auto; }")
+    # the use case diagram is taller than wide: cap its height so that it stays on the page of the Section 2 headings
+    build_pdf.CSS += "\nimg[src*='use-case-diagram'] { max-height: 190mm; width: auto; }"
     build_pdf.CSS += ("\np > em:only-child { display: inline; text-align: inherit; font-size: inherit; margin-top: 0; }"
                       "\np[id^='fig-'] > em:only-child { display: block; text-align: center; font-size: 13pt; margin-top: -2pt; }")
     build_pdf.markdown.Markdown = _Markdown

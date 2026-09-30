@@ -16,19 +16,19 @@ DIAGRAMS = Path(__file__).resolve().parent.parent / "workspace" / "report" / "pr
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else DIAGRAMS / "use-case-diagram.html"
 OVR = json.loads(os.environ.get("UCD_OVR", "{}"))
 
-W, H = 1200, 1130
+W, H = 1010, 1345
 RX, RY = 118, 38
 BOX_W, BOX_H = 176, 66
 FS_NAME, FS_ID, FS_ACT, FS_REL = 19, 15, 18, 15
 LINE_H = 21
 
 # Use cases in one column, grouped by their primary actor from the top: the Manager's set-up use cases (UC-04, UC-03,
-# UC-07, UC-08), the live view (UC-05, Manager and Owner), the Customer's (UC-01, UC-06) and the door (UC-02). People
-# on the left, the Owner (read-only, UC-05 only), the external systems and Time on the right. UC-05 to UC-08 have no
-# description (Table 2.1). The
-# Manager's associations with UC-01 (transfer-slip review) and UC-02 (escalation) are secondary, Increment 2 flows; the
-# crossings they cause are accepted rather than leaving them out, so that the diagram shows every actor of Table 2.1.
-BOUND = dict(x=250, y=15, w=700, h=1095)
+# UC-07, UC-08), the live view (UC-05, Manager and Owner), the Customer's (UC-01 with its included UC-09 beside it and
+# UC-10 below it, then UC-06) and the door (UC-02). People on the left, the Owner (read-only, UC-05 only), the external
+# systems and Time on the right. UC-05 to UC-08 have no description (Table 2.1). The Increment 2 parts of the Manager
+# (UC-10 transfer-slip review, UC-02 escalation) and of Time (UC-02 no-show marking) are listed in Table 2.1 and not
+# drawn: their lines would cut through UC-09 or the Payment Gateway and cross the Customer's lines.
+BOUND = dict(x=250, y=15, w=550, h=1315)
 UC = {
     "UC-04": dict(x=600, y=110, name=["Create Venue", "Zone Map"]),
     "UC-03": dict(x=600, y=230, name=["Create", "Concert Round"]),
@@ -36,28 +36,32 @@ UC = {
     "UC-08": dict(x=600, y=470, name=["Manage Staff", "Accounts"]),
     "UC-05": dict(x=600, y=600, name=["View Live", "Booking Status"]),
     "UC-01": dict(x=600, y=740, name=["Reserve a", "Specific Table"]),
-    "UC-06": dict(x=770, y=880, name=["View My", "Bookings"]),
-    "UC-02": dict(x=600, y=1020, name=["Check In", "with E-Ticket"]),
+    "UC-09": dict(x=440, y=870, name=["Maintain", "Customer Profile"]),
+    "UC-10": dict(x=600, y=1000, name=["Pay the Full", "Table Fee"]),
+    "UC-06": dict(x=600, y=1130, name=["View My", "Bookings"]),
+    "UC-02": dict(x=600, y=1260, name=["Check In", "with E-Ticket"]),
 }
 ACT = {
     "Manager":    dict(x=100, y=420, name=["Manager"]),
-    "Customer":   dict(x=100, y=800, name=["Customer"]),
-    "FrontStaff": dict(x=100, y=1040, name=["Front Staff"]),
-    "Owner":      dict(x=1080, y=520, name=["Owner"]),
-    "PG":         dict(x=1080, y=680, box=True, name=["Payment Gateway"]),
-    "LINE":       dict(x=1080, y=800, box=True, name=["LINE Platform"]),
-    "Time":       dict(x=1080, y=930, name=["Time"], stereo="«timer»"),
+    "Customer":   dict(x=100, y=860, name=["Customer"]),
+    "FrontStaff": dict(x=100, y=1290, name=["Front Staff"]),
+    "Owner":      dict(x=910, y=600, name=["Owner"]),
+    "LINE":       dict(x=910, y=740, box=True, name=["LINE Platform"]),
+    "Time":       dict(x=910, y=860, name=["Time"], stereo="«timer»"),
+    "PG":         dict(x=910, y=1000, box=True, name=["Payment Gateway"]),
 }
 ASSOC = [
     ("Manager", "UC-04"), ("Manager", "UC-03"), ("Manager", "UC-07"), ("Manager", "UC-08"), ("Manager", "UC-05"),
-    ("Manager", "UC-01"), ("Manager", "UC-02"),
     ("Owner", "UC-05"),
-    ("Customer", "UC-01"), ("Customer", "UC-06"), ("Customer", "UC-02"),
+    ("Customer", "UC-01"), ("Customer", "UC-09"), ("Customer", "UC-10"), ("Customer", "UC-06"), ("Customer", "UC-02"),
     ("FrontStaff", "UC-02"),
-    ("PG", "UC-01"), ("LINE", "UC-01"), ("Time", "UC-01"), ("Time", "UC-02"),
+    ("PG", "UC-10"), ("LINE", "UC-01"), ("Time", "UC-01"),
 ]
 EXTEND = []
-INCLUDE = []
+INCLUDE = [
+    ("UC-01", "UC-09", ["«include»"], 505, 815, "end"),
+    ("UC-01", "UC-10", ["«include»"], 612, 890, "start"),
+]
 GEN = []
 TITLE = "Seating & Event Availability Tracking System (SEATS)"
 for k, v in OVR.get("UC", {}).items(): UC[k].update(v)

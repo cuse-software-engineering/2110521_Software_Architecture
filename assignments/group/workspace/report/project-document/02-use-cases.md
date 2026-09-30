@@ -6,13 +6,13 @@
 
 *Figure 2.1 Use case diagram of the Seating & Event Availability Tracking System (SEATS)*
 
-The diagram names each use case as its description does and shows every actor that takes part in it: the **Customer**, the **Front Staff**, the **Manager** and the **Owner**, and the secondary actors **LINE Platform** (LINE Login and the Messaging API), **Payment Gateway** and Time. UC-01 to UC-04 are the business use cases and are described in Section 2.2; UC-05 to UC-08 are the reads and the back-office settings that the same actors need, each one operation or a few reads of Section 5, and they are listed by name only. There is no «include» or «extend» relationship: UC-04, UC-03, UC-01 and UC-02 follow one another because each produces what the next one needs (**zone map**, **concert round**, confirmed booking), which is an order of use, not a relationship between use cases.
+The diagram names each use case as its description does and shows every actor that takes part in it: the **Customer**, the **Front Staff**, the **Manager** and the **Owner**, and the secondary actors **LINE Platform** (LINE Login and the Messaging API), **Payment Gateway** and Time. UC-01 to UC-04, UC-09 and UC-10 are the business use cases and are described in Section 2.2; UC-05 to UC-08 are the reads and the back-office settings that the same actors need, each one operation or a few reads of Section 5, and they are listed by name only. UC-01 «includes» UC-09 Maintain Customer Profile and UC-10 Pay the Full Table Fee: both always run inside a reservation, and UC-09 also stands alone from My Bookings. The Increment 2 parts of the **Manager** in UC-10 (transfer-slip review) and UC-02 (**escalation**) and of Time in UC-02 (**no-show** marking) are listed in Table 2.1 and not drawn, to keep the diagram readable. There is no «extend» relationship, and UC-04, UC-03, UC-01 and UC-02 follow one another only because each produces what the next one needs (**zone map**, **concert round**, confirmed booking), which is an order of use, not a relationship between use cases.
 
 *Table 2.1 Use cases, actors and increments*
 
 | Use case | Primary actor | Secondary actors | Increment |
 |---|---|---|---|
-| UC-01 Reserve a Specific Table | **Customer** | **LINE Platform**, **Payment Gateway**, Time (hold expiry), **Manager** (transfer-slip review, Increment 2) | MVP |
+| UC-01 Reserve a Specific Table | **Customer** | **LINE Platform**, Time (hold expiry); includes UC-09 and UC-10 | MVP |
 | UC-02 Check In with E-Ticket | **Front Staff** | **Customer**, **Manager** (**escalation**, Increment 2), Time (**no-show** marking, Increment 2) | MVP |
 | UC-03 Create Concert Round | **Manager** | — | MVP |
 | UC-04 Create Venue Zone Map | **Manager** | — | MVP |
@@ -20,10 +20,12 @@ The diagram names each use case as its description does and shows every actor th
 | UC-06 View My Bookings | **Customer** | — | MVP |
 | UC-07 Set Business Parameters | **Manager** | — | MVP |
 | UC-08 Manage Staff Accounts | **Manager** | **Front Staff**, **Owner** (sign in and log out with the accounts) | MVP |
+| UC-09 Maintain Customer Profile | **Customer** | — (included by UC-01; also from My Bookings) | MVP |
+| UC-10 Pay the Full Table Fee | **Customer** | **Payment Gateway**, **Manager** (transfer-slip review, Increment 2); included by UC-01 | MVP |
 
 ## 2.2 Use Case Descriptions
 
-The four business use cases are described in a table after Dennis, Wixom and Tegarden: name, identifier and importance, actors and type, stakeholders, brief description, trigger, relationships, pre- and postconditions, then the basic flow with its phases in braces and its extension points in bold, the subflows, the alternative flows and the exception flows. Flows that the MVP does not build are marked *(Increment 2)*.
+The six business use cases are described in a table after Dennis, Wixom and Tegarden: name, identifier and importance, actors and type, stakeholders, brief description, trigger, relationships, pre- and postconditions, then the basic flow with its phases in braces and its extension points in bold, the subflows, the alternative flows and the exception flows. Flows that the MVP does not build are marked *(Increment 2)*.
 
 ### 2.2.1 UC-01 Reserve a Specific Table
 
@@ -49,7 +51,7 @@ UC-01
 
 #### Importance Level
 
-High — MVP; EF-2, EF-3 and EF-4 in Increment 2.
+High — MVP.
 
 </td>
 </tr>
@@ -60,7 +62,7 @@ High — MVP; EF-2, EF-3 and EF-4 in Increment 2.
 
 **Customer**
 
-Secondary actors: **LINE Platform** (LINE Login and the Messaging API), **Payment Gateway** (simulated in the MVP), Time (hold expiry) and, from Increment 2, the **Manager** (transfer-slip review).
+Secondary actors: **LINE Platform** (LINE Login and the Messaging API) and Time (hold expiry). The **Payment Gateway** and, from Increment 2, the **Manager** take part through the included use case UC-10.
 
 </td>
 <td markdown="block">
@@ -79,7 +81,6 @@ Business / Transactional
 - **Customer**: Wants to select a suitable table and receive reliable booking confirmation.
 - **Front Staff**: Wants accurate reservations with fewer manual inquiries and table allocation errors.
 - **Manager**: Wants efficient table utilization and visibility into bookings.
-- **Payment Gateway**: Wants correct payment requests and reliable delivery of payment results.
 
 </td>
 </tr>
@@ -88,7 +89,7 @@ Business / Transactional
 
 #### Brief Description
 
-**Customer** accesses the web app through LINE Messenger, browses the upcoming **concert rounds**, views the real-time **zone map** and holds a specific table for 15 minutes. After completing the profile, accepting the **booking terms** and paying the **full table fee** through the **Payment Gateway**, the system confirms the booking, issues an **e-ticket** with a QR code and sends it to the **Customer** by LINE. In the MVP the **Payment Gateway** is simulated (ADR-11).
+**Customer** accesses the web app through LINE Messenger, browses the upcoming **concert rounds**, views the real-time **zone map** and holds a specific table for 15 minutes. After completing the **customer profile** (UC-09), accepting the **booking terms** and paying the **full table fee** through the **Payment Gateway** (UC-10), the system confirms the booking, issues an **e-ticket** with a QR code and sends it to the **Customer** by LINE.
 
 </td>
 </tr>
@@ -106,98 +107,25 @@ Business / Transactional
 
 #### Relationships
 
-- Association: **Customer** (primary actor); **LINE Platform**, **Payment Gateway**, Time and, from Increment 2, the **Manager** (secondary actors).
-- Include: none.
-- Extend: none.
-- Generalization: none.
-- Related use cases: Relies on LINE Login for customer authentication, the LINE Messaging API for confirmation messages, the **Payment Gateway** for payment, and the **concert round** created in UC-03 on a **zone map** from UC-04. Produces the Confirmed booking and **e-ticket** used in UC-02; the **check-in window** and **grace period** applied in UC-02 come from the round created in UC-03.
-- Business rules: BRULE-01, 02, 03, 07, 08, 09, 11, 12, 16, 17.
-
-</td>
-</tr>
-<tr markdown="1">
-<td colspan="3" markdown="block">
-
-#### Preconditions
-
-- **Customer** has the LINE application and is a friend of the shop's **LINE Official Account**.
-- **Manager** has created the **concert round** with its **zone map**, **table types**, **package prices** and **booking-open time** (UC-03).
-- The **Payment Gateway** is available: in the MVP the simulated gateway; from Increment 2 the merchant account is active and the shop's bank account for **degraded mode** is configured.
-
-</td>
-</tr>
-<tr markdown="1">
-<td colspan="3" markdown="block">
-
-#### Postconditions
-
-**Success (basic flow; EF-3 slip approved, Increment 2; EF-6):**
-
-- Booking state = Confirmed; the payment is recorded; the table is booked for the round; the **e-ticket** is issued; the confirmation has been sent by LINE or is retrievable under My Bookings.
-
-**Cancelled (AF-4 cancel; AF-6 consent refused; EF-5 login failed):**
-
-- Booking state = Cancelled (or no booking was created); the **hold** is released and the table is available again; no payment exists.
-
-**Expired (EF-1 hold expired; EF-3 slip rejected or not attached and EF-4 hold ended before a result, Increment 2):**
-
-- Booking state = Expired; the table is available again and the **zone map** is refreshed; no money is held from the **Customer**; the **Customer** has been informed on screen and by LINE.
-
-**Refunded (EF-2 payment result after hold expired, table no longer available; Increment 2):**
-
-- Booking state = Expired; the payment and the refund are both recorded; the table remains with the other customer; the **Customer** has been informed by LINE that the payment is being returned.
-
-</td>
-</tr>
-<tr markdown="1">
-<td colspan="3" markdown="block">
-
-#### Basic Flow
-
-{Open the Customer Frontend}
-1. The use case begins when the **Customer** opens the Rich Menu of the **LINE Official Account** and chooses "Reserve a table".
-2. System signs the **Customer** in through LINE Login and uses the LINE user id as the customer identity. **{LINE Login Result}**
-
-{Browse Rounds}
-3. System displays the upcoming **concert rounds** with artist, date, start time, **booking-open time** and status: not yet open, open, sold out.
-4. **Customer** selects a round that is open for booking.
-
-{View the Zone Map}
-5. System displays the **zone map** of the round: every table with its number, **zone**, **table type**, **package price** and status (available, held, booked), refreshed within 2 seconds of any change (FR-06).
-6. **Customer** selects an available table.
-
-{Hold the Table}
-7. System verifies that the table is still available and places a **hold** on it for the **hold period** of 15 minutes.
-8. System marks the table as held for every other customer (**first lock wins**) and displays the remaining hold time.
-9. System shows the booking summary (round, table, **package** content and **package price**) and asks for the **party size**.
-10. **Customer** enters the **party size**.
-11. System computes and displays the **full table fee**: the **package price** of the selected **table type** in its **zone** plus the **extra-person fee** for every person above the capacity of the **table type**.
-
-{Complete the Customer Profile}
-12. System checks whether a **customer profile** already exists for the LINE user id.
-    - a. If this is the **Customer**'s first booking, System shows the purpose of data collection and asks for consent, name and phone; **Customer** provides them and System stores the **customer profile**.
-    - b. Otherwise System pre-fills the profile and **Customer** confirms it.
+- Association: **Customer** (primary actor); **LINE Platform** and Time (secondary actors).
+- Include: UC-09 Maintain Customer Profile at {Complete the Customer Profile}
+12. System includes UC-09 Maintain Customer Profile: on the first booking the **customer profile** is created with the **Customer**'s consent, otherwise it is shown and confirmed. **{Profile Complete}**
 
 {Accept the Booking Terms}
 13. System displays the **booking terms**: full payment confirms the booking, the **check-in window** opens 2 hours before the show, the **grace period** is 30 minutes after the start, and a **no-show** is not refunded.
 14. **Customer** accepts the terms.
 
 {Pay the Full Table Fee}
-15. System creates a payment request for the **full table fee** with the **Payment Gateway** and opens the gateway's hosted checkout inside the web app.
-16. **Customer** chooses a payment method (PromptPay QR, card, mobile banking, e-wallet); in the MVP the simulated gateway offers a successful and a declined payment.
-17. **Customer** submits the payment through the chosen method before the **hold** expires.
-
-{Payment Completed}
-18. **Payment Gateway** verifies the payment and sends the payment result to System by signed webhook. **{Payment Result Received}**
+15. System includes UC-10 Pay the Full Table Fee: the **Customer** pays the **full table fee** through the **Payment Gateway** before the **hold** expires, and the payment result is verified and recorded. **{Payment Verified}**
 
 {Confirm the Booking}
-19. System verifies the authenticity of the payment result and the amount, records the payment, sets the booking to Confirmed and marks the table as booked; if the same payment result arrives again, System ignores the duplicate. **{Booking Confirmed}**
+16. System sets the booking to Confirmed and marks the table as booked. **{Booking Confirmed}**
 
 {Issue the E-Ticket}
-20. System issues the **e-ticket**: it generates a signed **booking reference** valid only for that **concert round** and table, encodes it in a QR code, stores it with the booking, and makes it available under My Bookings.
-21. System displays the confirmation and the **e-ticket** on screen.
-22. System sends the confirmation message with the **e-ticket** and the **booking terms** to the **Customer** through the LINE Messaging API (subflow S-1). **{Confirmation Delivery Result}**
-23. The use case ends.
+17. System issues the **e-ticket**: it generates a signed **booking reference** valid only for that **concert round** and table, encodes it in a QR code, stores it with the booking, and makes it available under My Bookings (UC-06).
+18. System displays the confirmation and the **e-ticket** on screen.
+19. System sends the confirmation message with the **e-ticket** and the **booking terms** to the **Customer** through the LINE Messaging API (subflow S-1). **{Confirmation Delivery Result}**
+20. The use case ends.
 
 </td>
 </tr>
@@ -241,33 +169,19 @@ At {Hold the Table}, if the verification finds that the selected table has alrea
 
 ##### AF-4 Customer Cancels During the Hold
 
-At any point between {Hold the Table} and {Payment Completed}, if the **Customer** cancels the booking,
+At any point between {Hold the Table} and {Payment Verified}, if the **Customer** cancels the booking,
 
 1. System releases the **hold** immediately, sets the booking to Cancelled and returns the table to available.
 2. The use case ends.
 
 Leaving the web app without cancelling does not release the **hold**; it runs until it expires (EF-1).
 
-##### AF-5 Payment Declined
+##### AF-5 Profile Not Completed
 
-At {Payment Result Received}, if the **Payment Gateway** reports that the payment was declined,
+At {Profile Complete}, if UC-09 ends without a **customer profile** because the **Customer** declined the consent to the data collection,
 
-1. System shows the decline and the remaining hold time.
-2. Resume the basic flow at {Pay the Full Table Fee}.
-
-##### AF-6 Consent Refused
-
-At {Complete the Customer Profile}, if the **Customer** declines the data-collection consent,
-
-1. System explains that the booking cannot continue without it, releases the **hold** and sets the booking to Cancelled.
+1. System explains that the booking cannot continue, releases the **hold** and sets the booking to Cancelled.
 2. The use case ends.
-
-##### AF-7 Invalid Profile Data
-
-At {Complete the Customer Profile}, if the name is empty or the phone number is not a valid Thai mobile number,
-
-1. System marks the field and asks for a correction; the **hold** timer keeps running.
-2. Resume the basic flow at {Complete the Customer Profile}.
 
 </td>
 </tr>
@@ -278,47 +192,20 @@ At {Complete the Customer Profile}, if the name is empty or the phone number is 
 
 ##### EF-1 Hold Expires Before Payment
 
-At any point between {Hold the Table} and {Payment Result Received}, if the **hold period** of 15 minutes ends without a payment result (Time actor),
+At any point between {Hold the Table} and {Payment Verified}, if the **hold period** of 15 minutes ends without a verified payment (Time actor),
 
 1. System releases the table, sets the booking to Expired and refreshes the **zone map** for every customer.
 2. System informs the **Customer** by a LINE message that the **hold** has expired and that the table may be selected again if still available (subflow S-1).
-3. The use case ends.
+3. The use case ends; a payment result that arrives afterwards is handled by UC-10 EF-1 (Increment 2).
 
-##### EF-2 Payment Result Arrives After the Hold Expired *(Increment 2)*
-
-At {Payment Result Received}, if a successful payment result arrives after the **hold** has expired,
-
-1. System checks whether the table is still available.
-   - a. If the table is still available, System places a new **hold** and resumes the basic flow at {Confirm the Booking}.
-   - b. If the table has been taken, System requests a refund of the payment through the gateway's refund API, records the refund, and informs the **Customer** by LINE message that the table was taken in the meantime and the payment is being returned (subflow S-1). The use case ends.
-
-##### EF-3 Payment Gateway Unreachable (Degraded Mode) *(Increment 2)*
-
-At {Pay the Full Table Fee}, if the **Payment Gateway** cannot be reached,
-
-1. System keeps the **hold**, shows the shop's bank account and the **full table fee**, and asks the **Customer** to transfer the fee and attach the **transfer slip**.
-2. **Customer** transfers the fee in a banking application and attaches the slip in the frontend.
-3. System stores the slip with the booking, marks the booking "awaiting slip verification", extends the **hold** until the **Manager**'s decision (**degraded mode**) and notifies the **Manager**.
-4. **Manager** reviews the slip in the **back-office**.
-   - a. If the **Manager** confirms the payment, System records the payment, sets the booking to Confirmed, marks the table as booked and resumes the basic flow at {Issue the E-Ticket}.
-   - b. If the **Manager** rejects the slip, or no slip is attached before the **hold** ends, System releases the table, sets the booking to Expired and informs the **Customer** by LINE message (subflow S-1). The use case ends.
-
-##### EF-4 Payment Result Not Received *(Increment 2)*
-
-At {Payment Completed}, if no payment result has arrived within 60 seconds after the gateway's checkout reported completion,
-
-1. System queries the gateway's payment status API every 10 seconds until a result is known or until 10 minutes after the **hold** ends (NFR-23).
-   - a. If the payment is confirmed, resume the basic flow at {Confirm the Booking}.
-   - b. If the **hold** ends first, EF-1 applies; any payment result that arrives later follows EF-2.
-
-##### EF-5 LINE Login Fails or Is Cancelled
+##### EF-2 LINE Login Fails or Is Cancelled
 
 At {LINE Login Result}, if LINE Login fails or the **Customer** cancels it,
 
 1. System explains that reservation requires a LINE account and returns to the Rich Menu.
 2. The use case ends.
 
-##### EF-6 Confirmation Message Cannot Be Sent
+##### EF-3 Confirmation Message Cannot Be Sent
 
 At {Confirmation Delivery Result}, if the LINE Messaging API rejects the message or the account's push quota is exhausted,
 
@@ -1041,6 +928,394 @@ At {Define the Zones}, if the image of the venue cannot be uploaded,
 </tr>
 </table>
 
+### 2.2.5 UC-09 Maintain Customer Profile
+
+*Table 2.6 Use-case description of Maintain Customer Profile*
+
+<table class="uc" markdown="1">
+<tr markdown="1">
+<td class="c1" markdown="block">
+
+#### Use Case Name
+
+Maintain Customer Profile
+
+</td>
+<td class="c2" markdown="block">
+
+#### ID
+
+UC-09
+
+</td>
+<td class="c3" markdown="block">
+
+#### Importance Level
+
+Medium — MVP.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="2" markdown="block">
+
+#### Primary Actor
+
+**Customer**
+
+Secondary actors: none.
+
+</td>
+<td markdown="block">
+
+#### Use-Case Type
+
+Business / Maintenance
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Stakeholders and Interests
+
+- **Customer**: Wants to give name and phone once, with a clear purpose, and to keep them correct.
+- **Manager**: Wants a correct name and phone for every booking and the consent that the personal data rules require.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Brief Description
+
+The **customer profile** (name and phone, tied to the LINE user id) is created once, with the **Customer**'s consent to the data collection, when UC-01 reaches the profile step of the first booking; afterwards the **Customer** confirms or corrects it during a booking, or views and corrects it from My Bookings (BRULE-11).
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Trigger
+
+UC-01 reaches {Complete the Customer Profile}, or the **Customer** opens the profile from My Bookings. Trigger type: external.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Relationships
+
+- Association: **Customer** (primary actor); no secondary actor.
+- Include: none. Included by UC-01 at {Complete the Customer Profile}.
+- Extend: none.
+- Generalization: none.
+- Related use cases: Runs inside UC-01 on every reservation and stands alone from My Bookings (UC-06). Relies on LINE Login for the identity of the **Customer** (BRULE-12).
+- Business rules: BRULE-11, 12.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Preconditions
+
+- **Customer** is signed in through LINE Login (UC-01 step 2).
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Postconditions
+
+**Complete (basic flow; AF-2 corrected):**
+
+- A **customer profile** with name, phone and the time of consent is stored for the LINE user id; the including use case continues.
+
+**No profile (AF-1):**
+
+- Nothing is stored; the including use case is told that the profile is missing (UC-01 AF-5).
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Basic Flow
+
+{Look Up the Profile}
+1. The use case begins when UC-01 reaches {Complete the Customer Profile}, or when the **Customer** opens the profile from My Bookings.
+2. System looks the **customer profile** up by the LINE user id. **{Profile Found}**
+
+{Create the Profile}
+3. If no profile exists, System shows the purpose of the data collection (BRULE-11) and asks for consent, name and phone.
+4. **Customer** gives consent and enters name and phone.
+5. System validates the data and stores the profile with the time of consent. Resume the basic flow at {Use Case Ends}.
+
+{Confirm the Profile}
+6. Otherwise System shows the stored name and phone.
+7. **Customer** confirms them, or corrects them; System validates and stores the correction.
+
+{Use Case Ends}
+8. The use case ends and returns to the step that included it.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Subflows
+
+None.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Alternative Flows
+
+##### AF-1 Consent Refused
+
+At {Create the Profile}, if the **Customer** declines the consent to the data collection,
+
+1. System explains that a booking cannot be made without it and stores nothing.
+2. The use case ends without a profile.
+
+##### AF-2 Invalid Profile Data
+
+At {Create the Profile} or {Confirm the Profile}, if the name is empty or the phone number is not a valid Thai mobile number,
+
+1. System marks the field and asks for a correction; a running **hold** timer keeps running.
+2. Resume the basic flow at the same phase.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Exception Flows
+
+##### EF-1 Profile Cannot Be Saved
+
+At {Create the Profile} or {Confirm the Profile}, if System cannot save the profile,
+
+1. System informs the **Customer** that the profile has not been saved and keeps the entered data.
+2. **Customer** retries.
+3. Resume the basic flow at the same phase.
+
+</td>
+</tr>
+</table>
+
+### 2.2.6 UC-10 Pay the Full Table Fee
+
+*Table 2.7 Use-case description of Pay the Full Table Fee*
+
+<table class="uc" markdown="1">
+<tr markdown="1">
+<td class="c1" markdown="block">
+
+#### Use Case Name
+
+Pay the Full Table Fee
+
+</td>
+<td class="c2" markdown="block">
+
+#### ID
+
+UC-10
+
+</td>
+<td class="c3" markdown="block">
+
+#### Importance Level
+
+High — MVP; EF-1, EF-2 and EF-3 in Increment 2.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="2" markdown="block">
+
+#### Primary Actor
+
+**Customer**
+
+Secondary actors: **Payment Gateway** (simulated in the MVP, ADR-11) and, from Increment 2, the **Manager** (transfer-slip review). The **hold** timer stays with UC-01.
+
+</td>
+<td markdown="block">
+
+#### Use-Case Type
+
+Business / Transactional
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Stakeholders and Interests
+
+- **Customer**: Wants to pay once, safely, and to know at once whether the payment went through.
+- **Manager**: Wants the **full table fee** received and verified before any booking is confirmed (BRULE-01).
+- **Payment Gateway**: Wants correct payment requests and reliable delivery of payment results.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Brief Description
+
+The **Customer** pays the **full table fee** of a held booking in the hosted checkout of the **Payment Gateway**. The gateway reports the result by signed webhook; System verifies the result and the amount, records the payment once and returns to UC-01, which confirms the booking. In the MVP the gateway is simulated (ADR-11); the real gateway, the automatic refund of a late payment and the **degraded mode** come in Increment 2.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Trigger
+
+UC-01 reaches {Pay the Full Table Fee} with the **booking terms** accepted. Trigger type: external.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Relationships
+
+- Association: **Customer** (primary actor); **Payment Gateway** and, from Increment 2, the **Manager** (secondary actors).
+- Include: none. Included by UC-01 at {Pay the Full Table Fee}.
+- Extend: none.
+- Generalization: none.
+- Related use cases: Pays the booking held in UC-01; the **hold** and its expiry (UC-01 EF-1) bound the payment. The payment status is shown under My Bookings (UC-06).
+- Business rules: BRULE-01, 17.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Preconditions
+
+- The booking is Held with its **party size**, its **full table fee** and the accepted **booking terms** (UC-01 steps 7 to 14).
+- The **Payment Gateway** is available: in the MVP the simulated gateway; from Increment 2 the merchant account is active and the shop's bank account for **degraded mode** is configured.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Postconditions
+
+**Paid (basic flow; EF-2 slip approved, Increment 2):**
+
+- The payment is recorded once, with its gateway reference; UC-01 continues at {Confirm the Booking}.
+
+**Not paid (AF-1; EF-4; EF-2 slip rejected or missing, Increment 2):**
+
+- No payment is recorded; the **hold** is unchanged after a decline (AF-1) or has ended (EF-4, EF-2), in which case UC-01 EF-1 has set the booking to Expired.
+
+**Refunded (EF-1, table no longer available; Increment 2):**
+
+- The payment and its refund are both recorded; the table stays with the other customer; the **Customer** has been informed by LINE.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Basic Flow
+
+{Create the Payment Request}
+1. The use case begins when UC-01 reaches {Pay the Full Table Fee}.
+2. System creates a payment request for the **full table fee** with the **Payment Gateway** and opens the gateway's hosted checkout inside the web app.
+
+{Pay}
+3. **Customer** chooses a payment method (PromptPay QR, card, mobile banking, e-wallet); in the MVP the simulated gateway offers a successful and a declined payment.
+4. **Customer** submits the payment through the chosen method before the **hold** expires.
+
+{Payment Result}
+5. **Payment Gateway** verifies the payment and sends the payment result to System by signed webhook. **{Payment Result Received}**
+6. System verifies the authenticity of the payment result and the amount and records the payment; if the same payment result arrives again, System ignores the duplicate. **{Payment Verified}**
+
+{Use Case Ends}
+7. The use case ends and returns to UC-01 at {Confirm the Booking}.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Subflows
+
+None.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Alternative Flows
+
+##### AF-1 Payment Declined
+
+At {Payment Result Received}, if the **Payment Gateway** reports that the payment was declined,
+
+1. System shows the decline and the remaining hold time and informs the **Customer** by LINE message (FR-21).
+2. Resume the basic flow at {Pay}.
+
+</td>
+</tr>
+<tr markdown="1">
+<td colspan="3" markdown="block">
+
+#### Exception Flows
+
+##### EF-1 Payment Result Arrives After the Hold Expired *(Increment 2)*
+
+At {Payment Result Received}, if a successful payment result arrives after the **hold** has expired (UC-01 EF-1),
+
+1. System checks whether the table is still available.
+   - a. If the table is still available, System places a new **hold** and records the payment; the use case ends and UC-01 resumes at {Confirm the Booking}.
+   - b. If the table has been taken, System requests a refund of the payment through the gateway's refund API, records the refund, and informs the **Customer** by LINE message that the table was taken in the meantime and the payment is being returned (UC-01 subflow S-1). The use case ends.
+
+##### EF-2 Payment Gateway Unreachable (Degraded Mode) *(Increment 2)*
+
+At {Create the Payment Request}, if the **Payment Gateway** cannot be reached,
+
+1. System keeps the **hold**, shows the shop's bank account and the **full table fee**, and asks the **Customer** to transfer the fee and attach the **transfer slip**.
+2. **Customer** transfers the fee in a banking application and attaches the slip in the frontend.
+3. System stores the slip with the booking, marks the booking "awaiting slip verification", extends the **hold** until the **Manager**'s decision (**degraded mode**) and notifies the **Manager**.
+4. **Manager** reviews the slip in the **back-office**.
+   - a. If the **Manager** confirms the payment, System records the payment; the use case ends and UC-01 resumes at {Confirm the Booking}.
+   - b. If the **Manager** rejects the slip, or no slip is attached before the **hold** ends, System releases the table, sets the booking to Expired and informs the **Customer** by LINE message (UC-01 subflow S-1). The use case ends.
+
+##### EF-3 Payment Result Not Received *(Increment 2)*
+
+At {Payment Result}, if no payment result has arrived within 60 seconds after the gateway's checkout reported completion,
+
+1. System queries the gateway's payment status API every 10 seconds until a result is known or until 10 minutes after the **hold** ends (NFR-23).
+   - a. If the payment is confirmed, System records it; resume the basic flow at {Payment Verified}.
+   - b. If the **hold** ends first, EF-4 applies; any payment result that arrives later follows EF-1.
+
+##### EF-4 Hold Expires During Payment
+
+At any point before {Payment Verified}, if the **hold period** ends (UC-01 EF-1),
+
+1. UC-01 EF-1 applies: the table is released, the booking is Expired and the **Customer** is informed.
+2. The use case ends without a payment.
+
+</td>
+</tr>
+</table>
+
 ## 2.3 Domain Model
 
 The domain model is the conceptual model of the concert-table business: the things that exist in the domain, their attributes, how they relate, and the rules that constrain them. It is the shared vocabulary behind the use cases, the requirements, the glossary and the services of Section 5: every entity is a glossary term, every invariant is a business rule of Appendix B, and the booking lifecycle supplies the alternative and exception flows of UC-01 and UC-02. Actors (**Customer**, **Manager**, **Front Staff**, **Owner**) are not entities; the **Customer** entity is the **customer profile** that a LINE account owns. The model is drawn without instance data: the current **zones**, **table types**, **package prices** and the **extra-person fee** are maintained by the **Manager** and stated as BRULE-08 and BRULE-09, not as values on the diagram.
@@ -1049,7 +1324,7 @@ The domain model is the conceptual model of the concert-table business: the thin
 
 *Figure 2.2 Domain model of SEATS (UML class diagram); WaitlistEntry and BookingTransfer belong to a later release*
 
-*Table 2.6 Business entities*
+*Table 2.8 Business entities*
 
 | Entity | Definition | Key attributes | Glossary term |
 |---|---|---|---|
@@ -1069,7 +1344,9 @@ The domain model is the conceptual model of the concert-table business: the thin
 | WaitlistEntry | A **Customer**'s request to be offered a table of a full round; later release | position, created at | **waitlist** |
 | BookingTransfer | The official reassignment of a Confirmed booking to another **Customer**; later release | transferred at, to customer | — |
 
-*Table 2.7 Associations and invariants*
+The invariants of the model are the business rules of Appendix B: a table has at most one active booking (Held, Confirmed or Checked-in) per round (BRULE-03, **first lock wins**); a booking is Confirmed only after the **full table fee** is verified (BRULE-01); a Held booking expires after the **hold period** (BRULE-02); check-in is accepted within the **check-in window** and the **grace period**, after which the booking is a **no-show** (BRULE-04, BRULE-05, BRULE-06); the **zone map** of a round does not change once booking is open (BRULE-07); and a customer is identified by exactly one LINE account (BRULE-12).
+
+*Table 2.9 Associations and invariants*
 
 | Association | Multiplicity | Meaning |
 |---|---|---|
@@ -1083,20 +1360,18 @@ The domain model is the conceptual model of the concert-table business: the thin
 | Booking – Payment, Booking – ETicket | one to zero or one | a booking has a payment once the customer pays, and one **e-ticket** once it is Confirmed |
 | ETicket – CheckIn | one to zero or one | the **e-ticket** of a checked-in booking is redeemed by one check-in |
 
-The invariants of the model are the business rules of Appendix B: a table has at most one active booking (Held, Confirmed or Checked-in) per round (BRULE-03, **first lock wins**); a booking is Confirmed only after the **full table fee** is verified (BRULE-01); a Held booking expires after the **hold period** (BRULE-02); check-in is accepted within the **check-in window** and the **grace period**, after which the booking is a **no-show** (BRULE-04, BRULE-05, BRULE-06); the **zone map** of a round does not change once booking is open (BRULE-07); and a customer is identified by exactly one LINE account (BRULE-12).
-
 ![Booking state machine](assets/booking-states.png)
 
 *Figure 2.3 Lifecycle of a booking (UML state machine); Transferred belongs to a later release*
 
-*Table 2.8 Booking states*
+*Table 2.10 Booking states*
 
 | State | Entered when | Leaves when |
 |---|---|---|
-| Held | the **Customer** selects a free table (UC-01 step 7) | the payment is verified (UC-01 step 19), or the **Manager** confirms the **transfer slip** in **degraded mode** (Increment 2) → Confirmed; the **hold period** ends with no payment verified → Expired (EF-1); the **Customer** cancels → Cancelled (AF-4, AF-6) |
-| Confirmed | the payment result is verified and the **e-ticket** issued (UC-01 steps 19–20) | the **e-ticket** is scanned within the **check-in window** → Checked-in (UC-02); the **grace period** passes → **No-show** (UC-02 EF-4, Increment 2); the **Manager** cancels as an exception → Cancelled |
+| Held | the **Customer** selects a free table (UC-01 step 7) | the payment is verified (UC-10 step 6), or the **Manager** confirms the **transfer slip** in **degraded mode** (UC-10 EF-2, Increment 2) → Confirmed; the **hold period** ends with no payment verified → Expired (EF-1); the **Customer** cancels or the profile is not completed → Cancelled (AF-4, AF-5) |
+| Confirmed | the payment result is verified and the **e-ticket** issued (UC-01 steps 16–17) | the **e-ticket** is scanned within the **check-in window** → Checked-in (UC-02); the **grace period** passes → **No-show** (UC-02 EF-4, Increment 2); the **Manager** cancels as an exception → Cancelled |
 | Checked-in | **Front Staff** confirms the entry (UC-02 step 6) | final |
-| Expired | the **hold** ends with no payment verified; the table is released and the **Customer** notified (UC-01 EF-1) | a successful payment result arrives late while the table is still available → Confirmed (BRULE-17, Increment 2); otherwise final |
+| Expired | the **hold** ends with no payment verified; the table is released and the **Customer** notified (UC-01 EF-1) | a successful payment result arrives late while the table is still available → Confirmed (UC-10 EF-1, BRULE-17, Increment 2); otherwise final |
 | No-show | the **grace period** ends without a check-in; the table is shown as free, the fee is forfeited (BRULE-06) | final |
 | Cancelled | the **Customer** cancels during the **hold**, or the **Manager** cancels as an exception | final |
 | Transferred | later release: the booking is reassigned and its **e-ticket** invalidated | final |
