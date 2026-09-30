@@ -102,11 +102,11 @@ box(566, 330, 160, 124, "API Gateway", ["routes requests,", "verifies caller", "
 tab(566, 392, "REST")                    # the REST API that the Frontend calls (FTGO draws the gateway the same way)
 
 # ---------------- services (hexagon = one business capability; tabs = its APIs)
-hexagon("Table Availability Service", 930, 232, 132, 72, 36, ["per-round table status,", "15-minute holds,", "first lock wins"], "Table Status DB",
+hexagon("Table Availability Service", 930, 232, 132, 72, 36, ["read model of the table map:", "per-round table status", "(ADR-13)"], "Table Status DB",
         [("REST", "left", 0), ("gRPC", "right", 0)])
 hexagon("Concert Round Service", 1334, 262, 128, 88, 38, ["venue zone map, tables,", "table types; rounds,", "prices, check-in window,", "business parameters"], "Round DB",
         [("REST", "top", -30), ("gRPC", "left", 0)], tsize=16)
-hexagon("Booking Service", 972, 490, 142, 100, 46, ["booking lifecycle:", "hold, fee, customer", "profile, terms,", "confirmation, e-ticket,", "check-in, hold expiry"], "Booking DB",
+hexagon("Booking Service", 972, 490, 142, 100, 46, ["booking lifecycle: hold", "(first lock wins), fee,", "profile, terms,", "confirmation, e-ticket,", "check-in, hold expiry"], "Booking DB",
         [("REST", "left", 0), ("gRPC", "bottom", 68)], desc_dx=-34, db_at=(80, 4))
 hexagon("Payment Service", 990, 772, 128, 80, 38, ["payment requests,", "signed payment result", "(simulated gateway)"], "Payment DB",
         [("REST", "left", 0), ("gRPC", "top", -10)])
@@ -146,7 +146,7 @@ arrow("M726,404 C760,420 790,480 809,488")
 arrow("M726,446 C812,480 812,720 841,768")
 arrow("M660,454 L660,618")
 # service to service (gRPC)
-arrow("M1222,214 L1086,230", grpc=True, label=["initializeRoundTableStatus()", "getRoundTableStatus()", "countAvailableTables()"], lx=1150, ly=176, lsize=11)
+arrow("M1222,214 L1086,230", grpc=True, label=["createRoundTableStatus()", "getRoundTableStatus()", "countAvailableTables()"], lx=1150, ly=176, lsize=11)
 arrow("M1062,392 L1062,258", grpc=True, label=["holdTable(), releaseHold(),", "markTableBooked(),", "markTableOccupied()"], lx=1052, ly=346, lanchor="end", lsize=11)
 arrow("M1098,428 C1150,390 1168,300 1184,272", grpc=True, label=["getRound()", "getRoundPricing()", "getCheckInWindow()"], lx=1132, ly=432, lanchor="start", lsize=11)
 arrow("M980,592 L980,678", grpc=True, label="createPaymentRequest()", lx=970, ly=636, lanchor="end", lsize=11)

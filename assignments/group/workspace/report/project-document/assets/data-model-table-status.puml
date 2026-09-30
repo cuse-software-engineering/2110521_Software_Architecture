@@ -1,0 +1,36 @@
+' SEATS Table Status DB (project document Figure 6.4). Render as data-model-round.puml
+@startuml
+title <b>Table Status DB</b> — Table Availability Service (read model, ADR-13)
+scale 2
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 13
+skinparam titleFontSize 16
+skinparam classAttributeIconSize 0
+skinparam nodesep 40
+skinparam ranksep 50
+skinparam class {
+  BackgroundColor #F8FAFC
+  HeaderBackgroundColor #E2E8F0
+  BorderColor #334155
+  BorderThickness 1.2
+  ArrowColor #334155
+  ArrowThickness 1.2
+}
+skinparam arrowFontSize 11
+hide circle
+hide empty methods
+entity RoundTableStatus {
+  * roundId : String  (reference to the Round DB)
+  --
+  version : Integer  (grows on every change; ETag of the polled read)
+}
+entity TableStatus {
+  * tableNumber : Integer
+  --
+  status : AVAILABLE | HELD | BOOKED | OCCUPIED | NOT_FOR_SALE
+  bookingId : String  (reference to the Booking DB)
+  holdEndsAt : DateTime  (set by the Booking Service)
+}
+RoundTableStatus ||--|{ TableStatus : embeds, one per table of the round
+@enduml

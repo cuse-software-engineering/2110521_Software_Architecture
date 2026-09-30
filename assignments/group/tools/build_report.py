@@ -8,7 +8,7 @@ figures). That repository is found as $REQ_REPO, else the tree this repository i
 running header are replaced here: they carry this course, group SE 101 and the version.
 
 Usage (from the repository root):
-    python3 assignments/group/tools/build_report.py                          # 2.0 draft 21
+    python3 assignments/group/tools/build_report.py                          # 2.0 draft 22
     python3 assignments/group/tools/build_report.py --changelog              # the separate change-log document
     python3 assignments/group/tools/build_report.py --version "2.0" --status final
 Output: assignments/group/workspace/report/build/seats_project_document_v<version>.pdf (git-ignored)
@@ -28,7 +28,7 @@ OUT = GROUP / "workspace" / "report" / "build"
 
 TITLE = "Seating & Event Availability Tracking System (SEATS)"
 FORMER_NAME = "named Concert Table Reservation System (CTRS) in Deliverables #1 and #2"
-SUBTITLE = "Project Description, ADRs and Microservice Design"
+SUBTITLE = "Project Description, ADRs, Microservice Design and API Specification"
 COURSE = "2110521 Software Architecture"
 COURSE_TH = "2110521 วิศวกรรมสถาปัตยกรรมซอฟต์แวร์"
 GROUP_NAME = "SE 101"
@@ -155,7 +155,7 @@ class _Markdown(build_pdf.markdown.Markdown):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--version", default="2.0 draft 21", help="version label on the cover (default: %(default)s)")
+    ap.add_argument("--version", default="2.0 draft 22", help="version label on the cover (default: %(default)s)")
     ap.add_argument("--date", default="29 September 2026")
     ap.add_argument("--status", default="draft for review by the group")
     ap.add_argument("--changelog", action="store_true", help="build the separate change-log document (project-document/change-log/) instead")

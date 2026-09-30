@@ -1,0 +1,60 @@
+' SEATS Booking DB (project document Figure 6.5). Render as data-model-round.puml
+@startuml
+title <b>Booking DB</b> — Booking Service (source of truth of the hold, ADR-13)
+scale 2
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 13
+skinparam titleFontSize 16
+skinparam classAttributeIconSize 0
+skinparam nodesep 40
+skinparam ranksep 50
+skinparam class {
+  BackgroundColor #F8FAFC
+  HeaderBackgroundColor #E2E8F0
+  BorderColor #334155
+  BorderThickness 1.2
+  ArrowColor #334155
+  ArrowThickness 1.2
+}
+skinparam arrowFontSize 11
+hide circle
+hide empty methods
+entity CustomerProfile {
+  * customerId : String  (LINE user id, BRULE-12)
+  --
+  name : String
+  phone : String
+  consentAt : DateTime  (FR-10, BRULE-11)
+}
+entity Booking {
+  * id : String
+  --
+  customerId : String
+  roundId : String  (reference to the Round DB)
+  tableNumber : Integer
+  zoneId, zoneName, tableTypeId : String  (copied at hold time)
+  capacity : Integer
+  status : Held | Confirmed | Checked-in | Cancelled | Expired | No-show
+  holdEndsAt : DateTime
+  partySize : Integer
+  termsAccepted : Boolean
+  createdAt : DateTime
+  ..
+  unique index (roundId, tableNumber) where status is active
+}
+entity Fee {
+  packagePrice : Money
+  extraPersons : Integer
+  extraPersonFee : Money
+  fullTableFee : Money
+}
+entity StatusChange {
+  status : BookingStatus
+  at : DateTime
+  by : String  (customer, staff account or job)
+}
+CustomerProfile ||--o{ Booking : makes
+Booking ||--o| Fee : embeds, once the party size is set
+Booking ||--|{ StatusChange : history, appended on every transition
+@enduml

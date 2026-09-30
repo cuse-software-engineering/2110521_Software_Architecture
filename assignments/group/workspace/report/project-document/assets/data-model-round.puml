@@ -1,0 +1,83 @@
+' SEATS Round DB (project document Figure 6.3). Render: java -jar <plantuml.jar> -Playout=smetana -tpng <file>
+@startuml
+title <b>Round DB</b> — Concert Round Service
+scale 2
+skinparam shadowing false
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 13
+skinparam titleFontSize 16
+skinparam classAttributeIconSize 0
+skinparam nodesep 40
+skinparam ranksep 50
+skinparam class {
+  BackgroundColor #F8FAFC
+  HeaderBackgroundColor #E2E8F0
+  BorderColor #334155
+  BorderThickness 1.2
+  ArrowColor #334155
+  ArrowThickness 1.2
+}
+skinparam arrowFontSize 11
+hide circle
+hide empty methods
+entity ZoneMap {
+  * id : String
+  --
+  name : String
+  status : Draft | Active
+  imageUrl : String
+  createdAt : DateTime
+}
+entity Zone {
+  * id : String
+  --
+  name : String
+}
+entity ZoneMapTable {
+  * tableNumber : Integer
+  --
+  zoneId : String
+  tableTypeId : String
+  capacity : Integer
+  x, y : Integer
+}
+entity TableType {
+  * id : String
+  --
+  name : String
+  capacity : Integer
+  packageContent : String
+}
+entity Round {
+  * id : String
+  --
+  name, artist : String
+  status : Draft | Published
+  date : Date
+  doorsOpenAt, startAt : DateTime
+  bookingOpenAt : DateTime
+  zoneMapId : String
+  tablesNotForSale : Integer[]
+  checkInWindow : {opensAt, startAt, graceEndsAt}
+  parameters : BusinessParameters (snapshot)
+  createdAt : DateTime
+}
+entity PackagePrice {
+  zoneId : String
+  tableTypeId : String
+  packagePrice : Money
+  packageContent : String
+}
+entity BusinessParameters {
+  holdPeriodMinutes : Integer
+  checkInWindowHours : Integer
+  gracePeriodMinutes : Integer
+  extraPersonFee : Money
+}
+ZoneMap ||--o{ Zone : embeds
+Zone ||--o{ ZoneMapTable : embeds
+TableType ||--o{ ZoneMapTable : types
+ZoneMap ||--o{ Round : is used by
+Round ||--o{ PackagePrice : embeds
+BusinessParameters ||--o{ Round : in force at publish
+@enduml

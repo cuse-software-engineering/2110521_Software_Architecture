@@ -13,11 +13,12 @@ The ADRs follow the course template (Michael Nygard's format: Title, Context, De
 | ADR-05 | Interactive Floor Plan Rendering | Frontend | Accepted |
 | ADR-06 | Primary Database Engine | Backend | Accepted (revised after FB-D1-01) |
 | ADR-07 | Internal Role Authentication (**Front Staff**, **Manager**) | Frontend, Backend | Accepted |
-| ADR-08 | Table Hold and Concurrency Control | Backend | Accepted |
+| ADR-08 | Table Hold and Concurrency Control | Backend | Accepted; the lock moved to the Booking Service by ADR-13 |
 | ADR-09 | Table Status Updates in the MVP: Polling | Frontend, Backend | Accepted |
 | ADR-10 | **Customer** Notifications through the LINE Messaging API Only | Backend, External systems | Accepted |
 | ADR-11 | Simulated **Payment Gateway** for the MVP | Backend, External systems | Accepted |
 | ADR-12 | Communication: REST through the API Gateway, gRPC between Services | All three parts | Accepted |
+| ADR-13 | The Booking Owns the Hold; the Table Map Is a Read Model | Backend | Accepted |
 
 ## 4.1 ADR-01: Frontend Architecture & Client Channel
 
@@ -397,7 +398,7 @@ The Table Availability Service owns the status of every table of every round in 
 <td class="k">Status</td>
 <td markdown="block">
 
-Accepted on 2026-09-29. Supersedes the locking part of ADR-02 and the TTL consequence of ADR-06.
+Accepted on 2026-09-29. Supersedes the locking part of ADR-02 and the TTL consequence of ADR-06. Superseded in part on 2026-09-30 by ADR-13: the Booking Service owns the hold and the Table Availability Service keeps the read model; the timer job of this record stays.
 
 </td>
 </tr>
@@ -624,6 +625,58 @@ Accepted on 2026-09-29.
 - gRPC messages are binary and harder to inspect than JSON; debugging needs tools such as grpcurl and server reflection.
 - Every call is synchronous: when a service is down, the calls to it fail and so does the request that made them. Calls that can be delayed without harm, such as the LINE messages, are the first candidates for asynchronous messaging when a later ADR revisits it.
 - The services find each other by service names that the deployment resolves; how services are discovered is left to a later ADR.
+
+</td>
+</tr>
+</table>
+
+## 4.13 ADR-13: The Booking Owns the Hold; the Table Map Is a Read Model
+
+*Table 4.14 ADR-13 The Booking Owns the Hold; the Table Map Is a Read Model*
+
+<table class="adr" markdown="1">
+<tr markdown="1">
+<td class="k">Title</td>
+<td markdown="block">
+
+The Booking Owns the **Hold**; the Table Map Is a Read Model
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Context</td>
+<td markdown="block">
+
+ADR-08 put the lock in the Table Availability Service: holdTable() is a conditional update of the table's status, and the Booking Service writes its own Held record afterwards. One business fact, a table taken by a customer, is therefore written twice, in two databases, and kept consistent by retries and an idempotent releaseHold(). The domain model (Section 6.1) shows that the booking history already contains every fact the table map shows: a table is unavailable exactly when an active booking, Held, Confirmed or Checked-in, exists for it in that round. An audit trail of booking state changes is wanted for disputes at the door, and the minimum requirements of the course project include a service fed through a message broker. Options considered: keep the lock in the Table Availability Service (ADR-08); make the booking the single truth with a uniqueness rule and derive the table map as a read model, fed synchronously now and by events later; full event sourcing with an event store and state rebuilt by replay.
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Decision</td>
+<td markdown="block">
+
+The Booking Service owns the **hold**. A booking is created as Held by one insert that a unique partial index on (round, table, active status) in the Booking DB accepts for exactly one caller, which is **first lock wins** (BRULE-03, FR-08); every later transition is appended to the booking's history. The Table Availability Service keeps the read model of the table map, one document per round: createRoundTableStatus() creates it from the round when the round is published, and the Booking Service updates it after each transition with holdTable(), releaseHold(), markTableBooked() and markTableOccupied(). The read model never decides who gets a table. In the MVP the updates are synchronous gRPC calls; from Increment 2 they are events on a message broker that the Table Availability Service consumes. There is no event store: a booking stores its current state and its history.
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Status</td>
+<td markdown="block">
+
+Accepted on 2026-09-30. Supersedes the locking part of ADR-08; the 5-second hold-expiry job of ADR-08 stays.
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Consequences</td>
+<td markdown="block">
+
+- One source of truth: the invariant of BRULE-03 is a database constraint, tested directly under the concurrent holds of NFR-20, and no lock crosses a service boundary.
+- Every booking carries its own audit trail, and the table map can be rebuilt at any time from the bookings and the round.
+- The message broker of Increment 2 gets a real consumer, the read model, instead of being added for its own sake.
+- The map lags a booking change by one call in the MVP, or one event later; the customer who holds sees the result in the same request, other customers within the 2-second poll of ADR-09.
+- A failed update leaves the map stale until the Booking Service retries it; the updates are idempotent, and a stale map only costs a customer a refused hold (UC-01 AF-3), never a double booking.
+- The polled read stays with the Table Availability Service, so the Booking DB is not hit by the map polling.
 
 </td>
 </tr>

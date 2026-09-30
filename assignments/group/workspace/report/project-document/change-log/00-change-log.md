@@ -7,7 +7,7 @@
 | | |
 |---|---|
 | Document | Change Log of the Project Description, ADRs and Microservice Design of the Seating & Event Availability Tracking System (SEATS) |
-| Applies to | SEATS project document, version 2.0 draft 21, 30 September 2026 (its Section 0.2 lists the drafts) |
+| Applies to | SEATS project document, version 2.0 draft 22, 30 September 2026 (its Section 0.2 lists the drafts) |
 | Group | SE 101 |
 | Contents | Section 1.2: every change since version 1.1, with its type, section, description and source. Section 2.1: how each teacher comment and known issue of Deliverables #1 and #2 was resolved. Section 2.2: how to compare the versions. |
 
@@ -69,6 +69,8 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-48 | Modified | 0.1, 3, 5, A, B | The change log, the resolution of feedback and known issues, and how to compare the versions are this separate document; the operations-by-use-case matrix moves from Section 5.4 to Appendix A.1, with the step-by-step tables as A.2 (Section 5.5 becomes 5.4); the business rules move from Section 3.3 to Appendix B. | owner |
 | CH-49 | Modified, Added | 6, 1 to 5 | The glossary is split: Table 6.1 business terms, set in bold in the text and linked; Table 6.2 technology and project terms (API Gateway, REST, gRPC, Protocol Buffers, webhook, adapter, polling, WebSocket, LIFF, LINE Login, ID token, LINE Messaging API, Rich Menu, hosted checkout, session token, MongoDB, node-cron, idempotent, bounded context, MVP, Increment), plain in the text. LIFF, Rich Menu and hosted checkout moved from the business table and are no longer bold. | owner |
 | CH-50 | Added, Modified | 1.3, 2.1, 2.2, 2.3, 3.1, 5.1, 5.3, A | UC-09 Maintain Customer Profile (create with consent on the first booking, view and correct from My Bookings, BRULE-11) and UC-10 Pay the Full Table Fee (the payment steps and their Increment 2 flows) are use cases of their own, «included» by UC-01 at {Complete the Customer Profile} and {Pay the Full Table Fee}; UC-01 keeps the hold, the terms, the confirmation and the e-ticket, with steps 16 to 20 renumbered and AF-5 Profile Not Completed, EF-2 and EF-3 renumbered. Figure 2.1 shows the two «include» relationships and the Payment Gateway on UC-10. The scope table, the requirements' use-case column, the booking states, the matrix (ten use-case columns) and the trace tables (A.6, A.7) follow. | owner |
+| CH-51 | Added, Modified | 2, 6, C | The body keeps what the deliverables ask for: the domain model leaves Section 2 and opens the new Chapter 6 Domain Model and API Specification (6.1 domain model, 6.2 data model per service with Figures 6.3 to 6.5, 6.3 from model to contract, 6.4 the REST routes and gRPC methods of every service); the glossary becomes Appendix C (Tables C.1 and C.2). | owner |
+| CH-52 | Added, Modified | 4.8, 4.13, 5, 6, A | ADR-13: the Booking Service owns the hold through a unique index on active bookings per table per round, and the Table Availability Service keeps the read model of the table map, fed by gRPC calls in the MVP and by events from Increment 2; ADR-08's locking part is superseded, its timer job stays. initializeRoundTableStatus() is createRoundTableStatus(), the C of that service's CRUD, in Table 5.3, Figure 5.1, the contracts and the trace tables. | owner |
 
 # 2 Resolution of Feedback and Known Issues
 
@@ -101,5 +103,5 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 ## 2.2 How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft20 the earlier drafts and doc-v2.0-draft21 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft21 the earlier drafts and doc-v2.0-draft22 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".

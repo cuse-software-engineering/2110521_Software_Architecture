@@ -30,7 +30,7 @@ Table A.1 traces the ten use cases to the operations of Table 5.3: a cell names 
 |  | getRoundTables() | 5, AF-2 |  | 13 |  |  |  |  |  |  |  |
 |  | getRoundPricing() | 10–11 |  |  |  |  |  |  |  |  |  |
 |  | getCheckInWindow() | 13 | 2–4, S-1, AF-2, AF-3, AF-5, EF-1, EF-2 |  |  |  |  |  |  |  |  |
-| **Table Availability Service** | initializeRoundTableStatus() |  |  | 14–15, EF-2 |  |  |  |  |  |  |  |
+| **Table Availability Service** | createRoundTableStatus() |  |  | 14–15, EF-2 |  |  |  |  |  |  |  |
 |  | getRoundTableStatus() | 5, AF-2 | 7 | AF-3 | AF-1 | ✓ |  |  |  |  |  |
 |  | countAvailableTables() | 3, AF-2 |  |  |  |  |  |  |  |  |  |
 |  | holdTable() | 6–8, AF-3 |  |  |  |  |  |  |  |  |  |
@@ -84,7 +84,7 @@ Tables A.2 to A.8 are the evidence behind Table A.1: each row follows one step, 
 | 3, AF-2 | **Customer** | Concert Round Service: getUpcomingRounds(), with the status of each round | Table Availability Service: countAvailableTables(), for the sold-out status | — | FR-03 |
 | 4, AF-1 | **Customer** | Concert Round Service: getRound() | — | — | FR-03, FR-04 |
 | 5, AF-2 | **Customer** | Concert Round Service: getRoundTables()<br>Table Availability Service: getRoundTableStatus(), polled every 2 seconds | — | — | FR-05, FR-06 |
-| 6–8, AF-3 | **Customer** | Booking Service: createHeldBooking() | Concert Round Service: getRound(), to check that booking is open<br>Table Availability Service: holdTable() | Booking DB: booking Held until the end of the **hold**<br>Table Status DB: table held | FR-04, FR-07, FR-08 |
+| 6–8, AF-3 | **Customer** | Booking Service: createHeldBooking() | Concert Round Service: getRound(), to check that booking is open<br>Table Availability Service: holdTable() | Booking DB: booking Held until the end of the **hold** (one active booking per table per round, ADR-13)<br>Table Status DB: table held | FR-04, FR-07, FR-08 |
 | 9 | **Customer** | Booking Service: getBooking(), the booking summary and the remaining **hold** time | — | — | FR-07 |
 | 10–11 | **Customer** | Booking Service: setPartySize(), which computes the **full table fee** | Concert Round Service: getRoundPricing() | Booking DB: **party size** and **full table fee** | FR-09 |
 | 12 | **Customer** | Included use case UC-09 Maintain Customer Profile (Table A.6) | — | — | FR-10 |
@@ -120,7 +120,7 @@ Tables A.2 to A.8 are the evidence behind Table A.1: each row follows one step, 
 | 9–10 | **Manager** | Concert Round Service: updateRound(), with the **package price** and content of each **table type** in each **zone**; it answers with the tables for sale and the capacity of each **zone** | — | Round DB: **package prices** | FR-37 |
 | 11–12, S-1, EF-1 | **Manager** | Concert Round Service: validateRound() | — | — | FR-75 |
 | 13 | **Manager** | Concert Round Service: getRound(), getRoundTables(), the round as the **Customer** will see it | — | — | — |
-| 14–15, EF-2 | **Manager** | Concert Round Service: publishRound(); a retry finds the published round and does not create a second one (EF-2) | Table Availability Service: initializeRoundTableStatus() | Round DB: round Published<br>Table Status DB: every table for sale available | FR-34, FR-75 |
+| 14–15, EF-2 | **Manager** | Concert Round Service: publishRound(); a retry finds the published round and does not create a second one (EF-2) | Table Availability Service: createRoundTableStatus() | Round DB: round Published<br>Table Status DB: every table for sale available | FR-34, FR-75 |
 | AF-1 | **Manager** | Concert Round Service: updateRound(); the round stays Draft | — | Round DB: the round as entered | FR-34 |
 | AF-3 | **Manager** | Concert Round Service: getRound(), then updateRound(), which allows a Published round only the changes of AF-3 (BRULE-07) | Table Availability Service: getRoundTableStatus(), whose booked tables are the Confirmed bookings | Round DB: the changed fields | FR-34, FR-35 |
 
@@ -174,7 +174,7 @@ Tables A.2 to A.8 are the evidence behind Table A.1: each row follows one step, 
 
 # Appendix B Business Rules
 
-The business rules that the use cases (Section 2), the requirements (Section 3) and the domain model (Section 2.3) refer to. Each rule is a policy of the venue, not a design decision; the design realises it (for example BRULE-03 in ADR-08).
+The business rules that the use cases (Section 2), the requirements (Section 3) and the domain model (Section 6.1) refer to. Each rule is a policy of the venue, not a design decision; the design realises it (for example BRULE-03 in ADR-08).
 
 
 *Table B.1 Business rules*
@@ -194,3 +194,74 @@ The business rules that the use cases (Section 2), the requirements (Section 3) 
 | BRULE-12 | Identity: one LINE account is one customer. LINE Login is the customer's identity; there is no separate registration, and bookings and **e-tickets** are always tied to a LINE account. |
 | BRULE-16 | Terms before paying: before paying, the customer is shown and must accept the **booking terms** (full payment confirms the booking, the **check-in window**, the **grace period**, no refund for a **no-show**); the same terms are repeated in the confirmation message. |
 | BRULE-17 | Late payment: if a successful payment result arrives after the **hold** expired, the booking is confirmed anyway when the table is still available; if the table was taken meanwhile, the payment is refunded automatically through the gateway and the customer is told by LINE. |
+
+# Appendix C Glossary
+
+Table C.1 lists the business terms of this document: the words of the venue, its customers and its rules. In the text they are set in bold, and in the PDF each bold term links to its entry. Table C.2 lists the technology and project terms that the ADRs and the microservice design use; they are not set in bold in the text.
+
+*Table C.1 Business terms*
+
+| Term | Definition |
+|---|---|
+| Back-office | The staff web application of the venue, used on a desktop or a phone by the Front Staff and the Manager; the Owner reads it without changing anything. |
+| Booking | A Customer's reservation of one table for one concert round, the central record. Its states are Held, Confirmed, Checked-in, Expired, Cancelled and No-show; Transferred belongs to a later release. |
+| Booking reference | The signed reference of a booking encoded in the QR code of its e-ticket, valid only for its concert round and table; it is printed under the code so that it can be typed when a scan fails. |
+| Booking terms | The terms shown before payment and accepted by the Customer: full payment confirms the booking, the check-in window, the grace period, and no refund for a no-show (BRULE-16). |
+| Booking-open time | The time, set by the Manager for each concert round, from which its tables can be selected; before it the round is visible but not bookable (BRULE-07). |
+| Business parameters | The venue's settings that apply to every round opening for booking afterwards: hold period, grace period, check-in window and extra-person fee (FR-38). |
+| Check-in window | The period in which an e-ticket can be checked in: from 2 hours before the concert start to the end of the grace period (BRULE-04, BRULE-05). |
+| Concert round | One scheduled live performance on a given date and start time, featuring one artist, for which every table is sold in advance; it has a booking-open time and a fixed zone map. |
+| Customer | A LINE user who reserves a table for a concert night, for a party of 1 to 6 people. |
+| Customer profile | The Customer's name, phone and LINE user id, collected once with consent and pre-filled for later bookings (BRULE-11). |
+| Degraded mode | The payment mode used while the payment gateway is unreachable: the Customer transfers the full table fee to the venue's bank account and attaches the transfer slip, and the Manager confirms or rejects it (Increment 2). |
+| E-ticket | The electronic ticket with a QR code issued when a booking is confirmed; it carries the booking reference. |
+| Escalation | The hand-over of an invalid or duplicate ticket from the Front Staff to the Manager, who accepts or refuses entry (Increment 2). |
+| Extra-person fee | 600 THB for each person above the capacity of the table type, added to the full table fee at purchase (BRULE-09). |
+| First lock wins | The rule that, of several customers selecting the same table, only the first successful hold keeps it; the others are told that the table was just taken (BRULE-03). |
+| Front Staff | The venue staff who work the door on concert nights and check guests in with the back-office on a phone. |
+| Full table fee | The whole price of the booked package plus any extra-person fees, paid in advance and in full; there is no deposit and nothing is paid at the venue (BRULE-01). |
+| Grace period | The 30 minutes after the concert start during which a late Customer still gets the booked table (BRULE-05). |
+| Hold | The temporary, exclusive lock a Customer obtains on a table by selecting it; it lasts the hold period and is released automatically when no payment is confirmed (BRULE-02). |
+| Hold period | The 15 minutes a hold lasts from the selection of the table (BRULE-02). |
+| LINE Official Account | The venue's account on LINE; Customers who are its friends open the web app from its Rich Menu and receive its messages. |
+| LINE Platform | The external LINE services the system uses: LINE Login for the Customer's identity, LIFF and the Messaging API. |
+| Live view | The back-office screen that shows the tables and bookings of the current concert round as they change; the Owner reads it read-only. |
+| Manager | The venue manager who runs the back-office: zone maps, concert rounds and prices, the live view, and rulings on escalated tickets. |
+| No-show | A confirmed booking whose Customer has not checked in by the end of the grace period; the fee is not refunded and the table is resold by hand to walk-in guests (BRULE-06). |
+| Owner | The owner of the venue, who reads the back-office without changing anything. |
+| Package | A table type as sold: its capacity, contents and package price; "package" and "table type" are used interchangeably (BRULE-08). |
+| Package price | The price of a table type in a zone, maintained by the Manager for each round (BRULE-08). |
+| Party size | The number of guests of a booking, entered by the Customer; it determines the extra-person fee. |
+| Payment Gateway | The external payment service that takes the full table fee and reports the payment result by signed webhook: simulated in the MVP, Beam Checkout from Increment 2. |
+| Table type | The type of a table, for example a 2-person round table, a 4-person square table or a 6-person sofa, which fixes its capacity and its package. |
+| Transfer slip | The proof of a bank transfer attached by the Customer in degraded mode (Increment 2). |
+| Waitlist | A queue of customers for a sold-out round, planned for a later release; a no-show table is never offered to it. |
+| Walk-in | Guests without a booking; they can only take the tables of no-shows, seated and paid by hand at the venue (FR-72). |
+| Zone | A pricing area of the venue, for example Zone A near the stage and Zone B behind it. |
+| Zone map | The plan of the venue with its zones, tables and table types, drawn on an uploaded image of the venue and shown to the Customer as the real-time map of a concert round; the "floor plan" of ADR-02 and ADR-05. |
+
+*Table C.2 Technology and project terms*
+
+| Term | Definition |
+|---|---|
+| Adapter | A module of a service, or of the API Gateway, that talks to one external system (LINE Login, LINE Messaging, the Payment Gateway, Media Storage), so that the business logic never depends on the provider's API (ports and adapters, Section 5). |
+| API Gateway | The single public entry of the Backend: it authenticates the caller, checks its role and routes the request to the service that owns the operation (ADR-07, ADR-12). |
+| Bounded context | A part of the domain with its own model and vocabulary; each service owns one (Section 5.1). |
+| gRPC | Remote procedure calls over HTTP/2 with Protocol Buffers messages; the way the services call each other (ADR-12). |
+| Hosted checkout | The payment page of the Payment Gateway, opened inside the web app, where the Customer chooses a payment method and pays; no card data passes through the system (FR-71). |
+| ID token | The signed token that LINE Login gives the web app; the API Gateway verifies it and reads the LINE user id from it (FR-01, NFR-36). |
+| Idempotent | Said of an operation that can be repeated without changing the result, so that a retry is safe: releaseHold(), publishRound() and confirmBookingPayment() are idempotent (ADR-08, NFR-22). |
+| Increment | A planned build of the system: the MVP first, then Increment 2 (Section 1.3). |
+| LIFF | LINE Front-end Framework: the customer web app runs as a LIFF app inside LINE's in-app browser (ADR-01). |
+| LINE Login | LINE's sign-in (OpenID Connect); the Customer's identity is the LINE user id it returns (BRULE-12). |
+| LINE Messaging API | The API through which the Notification Service pushes messages to the Customer (ADR-10). |
+| MongoDB | The document database of every service (ADR-06); a zone map or a round is stored as one document. |
+| MVP | The first increment: the smallest system that runs the four business use cases end to end (Section 1.3). |
+| node-cron | The scheduler in the Booking Service that runs the hold-expiry job every 5 seconds (ADR-03, ADR-08). |
+| Polling | The web app asks the API Gateway for the table status every 2 seconds (ADR-09); the answer carries a version, so an unchanged map costs one small response. |
+| Protocol Buffers | The typed message format of gRPC; the .proto file of a service is the contract of its gRPC API. |
+| REST | HTTP requests with JSON bodies; the way the web apps call the API Gateway, the gateway calls the services, and the Payment Gateway sends its webhook (ADR-12). |
+| Rich Menu | The menu of the LINE Official Account from which the Customer opens the web app. |
+| Session token | The token that the Staff Account Service issues at sign-in and that the API Gateway checks on every back-office request (ADR-07). |
+| Webhook | A call that an external system makes to the API Gateway when something happens; the Payment Gateway reports every payment result by a signed webhook (NFR-38). |
+| WebSocket | A persistent connection over which the server pushes table status changes to the open maps; Increment 2 (ADR-09). |
