@@ -22,7 +22,7 @@ separately in [../received/teacher/](../received/teacher/).
 | KI-12 | Section numbering and page layout of D2 | D2 p2, p3, p6, p8 | Resolved (CH-18) |
 | KI-13 | Department name on both covers | D1 p1; D2 p1 | Resolved (CH-21) |
 | KI-14 | The ADRs do not yet meet the syllabus minimum technology requirements | D1 p26–32; D2 p7; syllabus item 17 | Partly resolved: REST and gRPC in ADR-12 (doc 2.0 draft 11, CH-34); broker, service discovery, second database open for Deliverable #3 |
-| KI-15 | The Service–Operations–Collaborators table misses operations that the use cases need | D2 p5, p7 | Resolved in doc 2.0 draft 11 (CH-35 to CH-38) |
+| KI-15 | The Service–Operations–Collaborators table misses operations that the use cases need | D2 p5, p7 | Resolved in doc 2.0 draft 11 and 12 (CH-35 to CH-39) |
 
 ## KI-01 Use case names in the diagram differ from the descriptions
 

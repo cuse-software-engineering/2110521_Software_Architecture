@@ -44,6 +44,7 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-36 | Added | 5.4 | Use case traceability: Tables 5.4 to 5.8 trace every MVP step of the four use cases, and the requirements not tied to one step, from the actor to the operation, its collaborations, the data stored and the requirements realised. | KI-15 |
 | CH-37 | Modified | 5.5 | Figure 5.1 redrawn for the MVP: the three parts as dashed boundaries; REST and gRPC tabs on the services and gRPC calls as purple arrows (ADR-12); the Staff Account Service and the Payment → Notification call added; the Increment 2 arrows removed; the payment webhook drawn along the top. | owner, KI-15 |
 | CH-38 | Modified | 1.3, 4.10 | Section 1.3 lists UC-04 EF-3 (image upload failure) in the MVP and states that Section 5 shows the MVP only. ADR-10 names the payment-failed notice among the messages in scope (FR-21), a correction of the record. | KI-15 |
+| CH-39 | Modified | 5.3, 5.4 | Each operation is one function: createZoneMap() and updateZoneMap() replace createOrUpdateZoneMap(), updateRound() replaces saveRoundAsDraft(), createCustomerProfile() and updateCustomerProfile() replace saveCustomerProfile(), defineTableType() replaces setTableType(), and getBookingTerms() is added for UC-01 step 13. The traceability tables follow the use cases step by step with one row per operation, including the steps without an operation and the retries of EF-2 and EF-5. | owner |
 
 # Appendix B Resolution of Feedback and Known Issues
 
@@ -69,10 +70,10 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 | KI-12 | Section numbering and page layout of Deliverable #2. | Resolved: CH-18 and the layout of this document |
 | KI-13 | Department name on both covers. | Resolved: CH-21 |
 | KI-14 | The ADRs do not yet meet the syllabus minimum technology requirements. | Partly resolved: REST and gRPC chosen in ADR-12 (CH-34); the message broker, service discovery and a second type of database stay open for Deliverable #3 |
-| KI-15 | The Service–Operations–Collaborators table misses operations that the use cases need. | Resolved: CH-35 to CH-38 |
+| KI-15 | The Service–Operations–Collaborators table misses operations that the use cases need. | Resolved: CH-35 to CH-39 |
 
 # Appendix C How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft10 the earlier drafts and doc-v2.0-draft11 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft11 the earlier drafts and doc-v2.0-draft12 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".

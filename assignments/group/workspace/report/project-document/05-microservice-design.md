@@ -44,7 +44,7 @@ Every service that the web apps use offers a REST API to the API Gateway, and ev
 
 ## 5.3 Service–Operations–Collaborators
 
-Operations are the business operations exposed by each service. Collaborators are the services or adapters that the service invokes to complete its own operations; an em dash means the service completes its work without calling anyone else. A call to another service is a gRPC call, and a call to an adapter stays inside the service (Section 5.2).
+Operations are the business operations exposed by each service; each operation is one function, so creating and updating a record are two operations. Collaborators are the services or adapters that the service invokes to complete its own operations; an em dash means the service completes its work without calling anyone else. A call to another service is a gRPC call, and a call to an adapter stays inside the service (Section 5.2).
 
 Note: the table lists only what the MVP builds. The operations and collaborators that Increment 2 and later increments add (Section 1.3) are not written here.
 
@@ -52,16 +52,16 @@ Note: the table lists only what the MVP builds. The operations and collaborators
 
 | Service | Operations | Collaborators |
 |---|---|---|
-| **Concert Round Service** | createOrUpdateZoneMap()<br>uploadZoneMapImage()<br>setTableType()<br>listZoneMaps()<br>getZoneMap()<br>validateZoneMap()<br>activateZoneMap()<br>getBusinessParameters()<br>updateBusinessParameters()<br>createRound()<br>saveRoundAsDraft()<br>validateRound()<br>previewRound()<br>publishRound()<br>editPublishedRound()<br>getUpcomingRounds()<br>getRound()<br>getRoundTables()<br>getRoundPricing()<br>getCheckInWindow() | **Table Availability Service**<br>initializeRoundTableStatus()<br>getRoundTableStatus()<br>countAvailableTables()<br>**Media Storage Adapter**<br>storeZoneMapImage() |
+| **Concert Round Service** | createZoneMap()<br>updateZoneMap()<br>uploadZoneMapImage()<br>defineTableType()<br>listZoneMaps()<br>getZoneMap()<br>validateZoneMap()<br>activateZoneMap()<br>getBusinessParameters()<br>updateBusinessParameters()<br>createRound()<br>updateRound()<br>editPublishedRound()<br>validateRound()<br>previewRound()<br>publishRound()<br>getUpcomingRounds()<br>getRound()<br>getRoundTables()<br>getRoundPricing()<br>getCheckInWindow() | **Table Availability Service**<br>initializeRoundTableStatus()<br>getRoundTableStatus()<br>countAvailableTables()<br>**Media Storage Adapter**<br>storeZoneMapImage() |
 | **Table Availability Service** | initializeRoundTableStatus()<br>getRoundTableStatus()<br>countAvailableTables()<br>holdTable()<br>releaseHold()<br>markTableBooked()<br>markTableOccupied() | — |
-| **Booking Service** | createHeldBooking()<br>getBooking()<br>setPartySize()<br>calculateTableFee()<br>getCustomerProfile()<br>saveCustomerProfile()<br>acceptBookingTerms()<br>startPayment()<br>confirmBookingPayment()<br>issueETicket()<br>getETicket()<br>cancelBooking()<br>getCustomerBookings()<br>expireUnpaidBookings()<br>verifyBookingReference()<br>checkInBooking()<br>getRoundBookings() | **Concert Round Service**<br>getRound()<br>getRoundPricing()<br>getCheckInWindow()<br>**Table Availability Service**<br>holdTable()<br>releaseHold()<br>markTableBooked()<br>markTableOccupied()<br>**Payment Service**<br>createPaymentRequest()<br>**Notification Service**<br>sendBookingConfirmation()<br>sendHoldExpiredNotice() |
+| **Booking Service** | createHeldBooking()<br>getBooking()<br>setPartySize()<br>calculateTableFee()<br>getCustomerProfile()<br>createCustomerProfile()<br>updateCustomerProfile()<br>getBookingTerms()<br>acceptBookingTerms()<br>startPayment()<br>confirmBookingPayment()<br>issueETicket()<br>getETicket()<br>getCustomerBookings()<br>cancelBooking()<br>expireUnpaidBookings()<br>verifyBookingReference()<br>checkInBooking()<br>getRoundBookings() | **Concert Round Service**<br>getRound()<br>getRoundPricing()<br>getCheckInWindow()<br>**Table Availability Service**<br>holdTable()<br>releaseHold()<br>markTableBooked()<br>markTableOccupied()<br>**Payment Service**<br>createPaymentRequest()<br>**Notification Service**<br>sendBookingConfirmation()<br>sendHoldExpiredNotice() |
 | **Payment Service** | createPaymentRequest()<br>receivePaymentResult()<br>getPaymentStatus() | **Payment Gateway Adapter**<br>createCheckoutSession()<br>verifyWebhookSignature()<br>**Booking Service**<br>confirmBookingPayment()<br>**Notification Service**<br>sendPaymentFailedNotice() |
 | **Notification Service** | sendBookingConfirmation()<br>sendHoldExpiredNotice()<br>sendPaymentFailedNotice()<br>retryFailedMessages() | **LINE Messaging Adapter**<br>pushLineMessage() |
 | **Staff Account Service** | signIn()<br>signOut()<br>createStaffAccount()<br>listStaffAccounts()<br>updateStaffAccount()<br>disableStaffAccount() | — |
 
 ## 5.4 Use Case Traceability
 
-Tables 5.4 to 5.8 check the design backwards from the use cases. Each row follows one or more steps of a use case: who invokes the operation (an actor, through the API Gateway, or another service), the service and operation that carry the step out, the collaborations the operation needs, the data it stores, and the requirements it realises. Only the flows that the MVP builds are listed (Section 1.3), and Table 5.8 covers the requirements that are not tied to one step. Every operation of Table 5.3 appears in at least one row, and every MVP requirement of Section 3.1 is realised by at least one row.
+Tables 5.4 to 5.8 check the design backwards from the use cases. Each row follows one step, or the consecutive steps served by one operation, of a use case: who invokes the operation (an actor, through the API Gateway, or a service), the service and operation that carry the step out, the collaborations the operation needs, the data it stores, and the requirements it realises. Steps in which the actor acts without the system, such as UC-02 step 5, are left out unless a rule applies to them. Only the flows that the MVP builds are listed (Section 1.3), and Table 5.8 covers the requirements that are not tied to one step. Every operation of Table 5.3 appears in at least one row, and every MVP requirement of Section 3.1 is realised by at least one row.
 
 <div class="trace" markdown="1">
 
@@ -69,49 +69,72 @@ Tables 5.4 to 5.8 check the design backwards from the use cases. Each row follow
 
 | Steps | Invoked by | Operation | Collaborations | Data stored | Requirements |
 |---|---|---|---|---|---|
-| 1–2, EF-5 | **Customer** | API Gateway: check the LINE ID token | LINE Login Adapter, which asks the **LINE Platform** | — | FR-01, FR-02 |
-| 3–4, AF-1, AF-2 | **Customer** | Concert Round Service: getUpcomingRounds(), getRound() | Table Availability Service: countAvailableTables() | — | FR-03, FR-04 |
+| 1–2, EF-5 | **Customer** | API Gateway: check the LINE ID token that LINE Login gave the **LIFF** app | LINE Login Adapter, which asks the **LINE Platform** | — | FR-01, FR-02 |
+| 3, AF-2 | **Customer** | Concert Round Service: getUpcomingRounds(), with the status of each round | Table Availability Service: countAvailableTables(), for the sold-out status | — | FR-03 |
+| 4, AF-1 | **Customer** | Concert Round Service: getRound() | — | — | FR-03, FR-04 |
 | 5, AF-2 | **Customer** | Concert Round Service: getRoundTables()<br>Table Availability Service: getRoundTableStatus(), polled every 2 seconds | — | — | FR-05, FR-06 |
-| 6–8, AF-3 | **Customer** | Booking Service: createHeldBooking() | Concert Round Service: getRound()<br>Table Availability Service: holdTable() | Booking DB: booking Held until the end of the **hold**<br>Table Status DB: table held | FR-04, FR-07, FR-08 |
-| 9–11 | **Customer** | Booking Service: setPartySize(), calculateTableFee() | Concert Round Service: getRoundPricing() | Booking DB: **party size** and **full table fee** | FR-09 |
-| 12, AF-7 | **Customer** | Booking Service: getCustomerProfile(), saveCustomerProfile() | — | Booking DB: **customer profile** with the consent | FR-10 |
-| 13–14 | **Customer** | Booking Service: acceptBookingTerms() | Concert Round Service: getCheckInWindow() | Booking DB: **booking terms** accepted | FR-12 |
-| 15–17 | **Customer** | Booking Service: startPayment() | Payment Service: createPaymentRequest() | — | FR-13 |
+| 6–8, AF-3 | **Customer** | Booking Service: createHeldBooking() | Concert Round Service: getRound(), to check that booking is open<br>Table Availability Service: holdTable() | Booking DB: booking Held until the end of the **hold**<br>Table Status DB: table held | FR-04, FR-07, FR-08 |
+| 9 | **Customer** | Booking Service: getBooking(), the booking summary and the remaining **hold** time | — | — | FR-07 |
+| 10 | **Customer** | Booking Service: setPartySize() | — | Booking DB: **party size** | FR-09 |
+| 11 | **Customer** | Booking Service: calculateTableFee() | Concert Round Service: getRoundPricing() | Booking DB: **full table fee** | FR-09 |
+| 12 | **Customer** | Booking Service: getCustomerProfile(), which tells whether a profile exists | — | — | FR-10 |
+| 12a, AF-7 | **Customer** | Booking Service: createCustomerProfile(), with the consent, the name and the phone; AF-7 is its validation | — | Booking DB: **customer profile** and consent | FR-10 |
+| 12b | **Customer** | Booking Service: updateCustomerProfile(), when the **Customer** corrects the pre-filled profile | — | Booking DB: **customer profile** | FR-10 |
+| 13 | **Customer** | Booking Service: getBookingTerms() | Concert Round Service: getCheckInWindow() | — | FR-12 |
+| 14 | **Customer** | Booking Service: acceptBookingTerms() | — | Booking DB: **booking terms** accepted | FR-12 |
+| 15 | **Customer** | Booking Service: startPayment() | Payment Service: createPaymentRequest() | Booking DB: payment started | FR-13 |
 | 15 | Booking Service | Payment Service: createPaymentRequest() | Payment Gateway Adapter: createCheckoutSession() | Payment DB: payment request | FR-13 |
-| 18–19, AF-5 | **Payment Gateway** | Payment Service: receivePaymentResult() | Payment Gateway Adapter: verifyWebhookSignature()<br>Booking Service: confirmBookingPayment(), when paid<br>Notification Service: sendPaymentFailedNotice(), when declined | Payment DB: payment result, processed once | FR-14, FR-16, FR-21 |
-| 19–20, 22 | Payment Service | Booking Service: confirmBookingPayment(), issueETicket() | Table Availability Service: markTableBooked()<br>Notification Service: sendBookingConfirmation() | Booking DB: booking Confirmed, **e-ticket** with the signed **booking reference**<br>Table Status DB: table booked | FR-16, FR-19, FR-20 |
+| 16–17 | **Customer** | No operation of SEATS: the **Customer** pays in the **hosted checkout** of the **Payment Gateway**, simulated in the MVP (ADR-11) | — | — | FR-13 |
+| 18, AF-5 | **Payment Gateway** | Payment Service: receivePaymentResult(), the signed webhook routed by the API Gateway; a duplicate result is ignored | Payment Gateway Adapter: verifyWebhookSignature()<br>Booking Service: confirmBookingPayment(), when paid<br>Notification Service: sendPaymentFailedNotice(), when declined | Payment DB: payment result, processed once | FR-14, FR-16, FR-21 |
+| 19 | Payment Service | Booking Service: confirmBookingPayment() | Table Availability Service: markTableBooked() | Booking DB: payment recorded, booking Confirmed<br>Table Status DB: table booked | FR-16 |
+| 20 | Booking Service | Booking Service: issueETicket(), at the end of confirmBookingPayment() | — | Booking DB: **e-ticket** with the signed **booking reference** | FR-19 |
 | 21, AF-5 | **Customer** | Payment Service: getPaymentStatus()<br>Booking Service: getBooking(), getETicket() | — | — | FR-14, FR-19 |
-| 22, EF-6, AF-5 | Booking Service, Payment Service | Notification Service: sendBookingConfirmation(), sendPaymentFailedNotice(); retryFailedMessages() on its own timer | LINE Messaging Adapter: pushLineMessage() | Notification DB: message and delivery result | FR-20, FR-21, FR-22 |
+| 22, S-1 | Booking Service | Notification Service: sendBookingConfirmation() | LINE Messaging Adapter: pushLineMessage() | Notification DB: message and delivery result | FR-20 |
 | AF-4, AF-6 | **Customer** | Booking Service: cancelBooking() | Table Availability Service: releaseHold() | Booking DB: booking Cancelled<br>Table Status DB: table available | FR-10, FR-11 |
+| AF-5 | Payment Service | Notification Service: sendPaymentFailedNotice() | LINE Messaging Adapter: pushLineMessage() | Notification DB: message and delivery result | FR-21 |
 | EF-1 | Time | Booking Service: expireUnpaidBookings(), every 5 seconds (ADR-08) | Table Availability Service: releaseHold()<br>Notification Service: sendHoldExpiredNotice() | Booking DB: booking Expired<br>Table Status DB: table available | FR-21, FR-23 |
+| EF-1, S-1 | Booking Service | Notification Service: sendHoldExpiredNotice() | LINE Messaging Adapter: pushLineMessage() | Notification DB: message and delivery result | FR-21 |
+| EF-6 | Notification Service, on its own timer | Notification Service: retryFailedMessages(), 3 times within 5 minutes | LINE Messaging Adapter: pushLineMessage() | Notification DB: delivery result | FR-22 |
 
 *Table 5.5 Traceability of Check In Using Digital QR Ticket*
 
 | Steps | Invoked by | Operation | Collaborations | Data stored | Requirements |
 |---|---|---|---|---|---|
-| 2–4, AF-2, AF-3, AF-5, EF-1, EF-2 | **Front Staff** | Booking Service: verifyBookingReference(), with the scanned or typed **booking reference** | Concert Round Service: getCheckInWindow() | — (verification changes nothing) | FR-24, FR-25, FR-26, FR-27 |
-| 5–6, AF-4, EF-5 | **Front Staff** | Booking Service: checkInBooking() | Table Availability Service: markTableOccupied() | Booking DB: booking Checked-in with the time and the staff account<br>Table Status DB: table occupied | FR-28 |
+| 2–4, S-1, AF-2, AF-3, AF-5, EF-1, EF-2 | **Front Staff** | Booking Service: verifyBookingReference(), with the **booking reference** scanned (step 2) or typed (AF-2); its answer is the result of step 4 or the reason of AF-3, AF-5, EF-1 and EF-2 | Concert Round Service: getCheckInWindow() | — (verification changes nothing) | FR-24, FR-25, FR-26, FR-27 |
+| 6, EF-5 | **Front Staff** | Booking Service: checkInBooking(); a retry finds the existing check-in and does not repeat it (EF-5) | Table Availability Service: markTableOccupied() | Booking DB: booking Checked-in with the time and the staff account<br>Table Status DB: table occupied | FR-28 |
 | 7 | **Manager** | Booking Service: getRoundBookings()<br>Table Availability Service: getRoundTableStatus(), polled every 2 seconds | — | — | FR-06, FR-42 |
+| AF-4 | **Front Staff** | No operation of SEATS: extra guests are handled by hand (BRULE-09) | — | — | — |
 
 *Table 5.6 Traceability of Create Concert Event*
 
 | Steps | Invoked by | Operation | Collaborations | Data stored | Requirements |
 |---|---|---|---|---|---|
-| 1–5, 8–10, AF-1 | **Manager** | Concert Round Service: createRound(), saveRoundAsDraft(); the **check-in window** follows from getBusinessParameters() | — | Round DB: round Draft with its schedule, tables for sale and **package prices** | FR-34, FR-37, FR-38 |
-| 6–7 | **Manager** | Concert Round Service: listZoneMaps(), getZoneMap() | — | Round DB: the round's **zone map** | FR-35 |
-| 11–13, EF-1 | **Manager** | Concert Round Service: validateRound(), previewRound() | — | — | FR-75 |
-| 14–15, EF-2 | **Manager** | Concert Round Service: publishRound() | Table Availability Service: initializeRoundTableStatus() | Round DB: round Published<br>Table Status DB: every table of the round available | FR-34, FR-75 |
-| AF-3 | **Manager** | Concert Round Service: getRound(), editPublishedRound() | Table Availability Service: getRoundTableStatus(), whose booked tables are the Confirmed bookings | Round DB: the changed fields | FR-34, FR-35 |
+| 1–2 | **Manager** | Concert Round Service: createRound() | — | Round DB: a new round, Draft | FR-34 |
+| 3–5 | **Manager** | Concert Round Service: updateRound(), with the concert details, the times and the **booking-open time**; it derives the **check-in window** from getBusinessParameters() | — | Round DB: schedule, **booking-open time**, **check-in window** | FR-34, FR-38 |
+| 6 | **Manager** | Concert Round Service: listZoneMaps(), the Active maps | — | — | FR-35 |
+| 7 | **Manager** | Concert Round Service: getZoneMap() | — | — | FR-35 |
+| 8 | **Manager** | Concert Round Service: updateRound(), with the **zone map** and the tables not for sale | — | Round DB: the round's **zone map** and tables for sale | FR-35 |
+| 9–10 | **Manager** | Concert Round Service: updateRound(), with the **package price** and content of each **table type** in each **zone**; it answers with the tables for sale and the capacity of each **zone** | — | Round DB: **package prices** | FR-37 |
+| 11–12, S-1, EF-1 | **Manager** | Concert Round Service: validateRound() | — | — | FR-75 |
+| 13 | **Manager** | Concert Round Service: previewRound() | — | — | — |
+| 14–15, EF-2 | **Manager** | Concert Round Service: publishRound(); a retry finds the published round and does not create a second one (EF-2) | Table Availability Service: initializeRoundTableStatus() | Round DB: round Published<br>Table Status DB: every table for sale available | FR-34, FR-75 |
+| AF-1 | **Manager** | Concert Round Service: updateRound(); the round stays Draft | — | Round DB: the round as entered | FR-34 |
+| AF-3 | **Manager** | Concert Round Service: getRound(), then editPublishedRound(), which allows only the changes of AF-3 (BRULE-07) | Table Availability Service: getRoundTableStatus(), whose booked tables are the Confirmed bookings | Round DB: the changed fields | FR-34, FR-35 |
 
 *Table 5.7 Traceability of Create Venue Zone Map*
 
 | Steps | Invoked by | Operation | Collaborations | Data stored | Requirements |
 |---|---|---|---|---|---|
-| 1–2, 4–7, AF-3, EF-2 | **Manager** | Concert Round Service: createOrUpdateZoneMap(), setTableType() | — | Round DB: **zone map** Draft with its **zones**, tables and **table types** | FR-37, FR-39 |
+| 1–2 | **Manager** | Concert Round Service: createZoneMap() | — | Round DB: a new **zone map**, Draft | FR-37 |
 | 3, EF-3 | **Manager** | Concert Round Service: uploadZoneMapImage() | Media Storage Adapter: storeZoneMapImage() | Cloud Object Storage: image of the venue<br>Round DB: its address | FR-39 |
-| 8–10, EF-1 | **Manager** | Concert Round Service: validateZoneMap(), getZoneMap() | — | — | FR-74 |
-| 11–12 | **Manager** | Concert Round Service: activateZoneMap() | — | Round DB: **zone map** Active | FR-74 |
-| AF-1 | **Manager** | Concert Round Service: listZoneMaps(), getZoneMap(), createOrUpdateZoneMap() | Table Availability Service: getRoundTableStatus() for the Published rounds that use the map | Round DB: the changed **zones** and tables | FR-37 |
+| 4 | **Manager** | Concert Round Service: updateZoneMap(), with the **zones** drawn and named | — | Round DB: **zones** | FR-37 |
+| 5–6 | **Manager** | Concert Round Service: updateZoneMap(), with each table's position, number, **table type** and capacity; defineTableType() for a **table type** the venue does not have yet | — | Round DB: tables and **table types** | FR-37, FR-39 |
+| 7 | **Manager** | Concert Round Service: getZoneMap(), with the number of tables and the capacity of each **zone** | — | — | FR-37 |
+| 8–9, S-1, EF-1 | **Manager** | Concert Round Service: validateZoneMap() | — | — | FR-74 |
+| 10 | **Manager** | Concert Round Service: getZoneMap(), the preview | — | — | — |
+| 11–12, EF-2 | **Manager** | Concert Round Service: activateZoneMap(); a retry finds the Active map and does not create a second one (EF-2) | — | Round DB: **zone map** Active | FR-74 |
+| AF-1 | **Manager** | Concert Round Service: listZoneMaps(), getZoneMap(), then updateZoneMap(), which allows only the changes of AF-1 | Table Availability Service: getRoundTableStatus(), for the Published rounds that use the map | Round DB: the changed **zones** and tables | FR-37 |
+| AF-3 | **Manager** | Concert Round Service: updateZoneMap(); the map stays Draft | — | Round DB: the map as entered | FR-37 |
 
 *Table 5.8 Traceability of the requirements not tied to one step*
 
@@ -120,7 +143,7 @@ Tables 5.4 to 5.8 check the design backwards from the use cases. Each row follow
 | **Business parameters** | **Manager** | Concert Round Service: getBusinessParameters(), updateBusinessParameters() | — | Round DB: the **business parameters**; a round uses the values in force at its **booking-open time** | FR-38 |
 | My Bookings | **Customer** | Booking Service: getCustomerBookings(), getETicket() | — | — | FR-40 |
 | **Live view** | **Manager**, **Owner** | Booking Service: getRoundBookings()<br>Table Availability Service: getRoundTableStatus() | — | — | FR-42 |
-| Staff accounts | **Manager** | Staff Account Service: createStaffAccount(), listStaffAccounts(), updateStaffAccount(), disableStaffAccount() | — | Staff Account DB: accounts, roles and password hashes | FR-65 |
+| Staff accounts | **Manager** | Staff Account Service: createStaffAccount(), listStaffAccounts(), updateStaffAccount() for the role, disableStaffAccount() | — | Staff Account DB: accounts, roles and password hashes | FR-65 |
 | Sign-in and roles | **Front Staff**, **Manager**, **Owner** | Staff Account Service: signIn(); the API Gateway checks the role of every request | — | — | FR-65, FR-66 |
 | Log out | All users | Staff Account Service: signOut(); a **Customer** logs out of LINE Login in the web app | — | — | FR-73 |
 
