@@ -99,6 +99,7 @@ actor(90, 615, "Time", "scheduled triggers", icon=False)
 box(280, 170, 196, 74, "Customer Web App", ["(LIFF, inside", "LINE Messenger)"], fill="#E3F0FC", stroke="#2B6CB0")
 box(280, 420, 196, 82, "Back-office Web App", ["rounds, live view,", "QR scan on phone"], fill="#E3F0FC", stroke="#2B6CB0")
 box(566, 330, 160, 124, "API Gateway", ["routes requests,", "verifies caller", "identity and role"], fill="#E6F4EA", stroke="#2F855A")
+tab(566, 392, "REST")                    # the REST API that the Frontend calls (FTGO draws the gateway the same way)
 
 # ---------------- services (hexagon = one business capability; tabs = its APIs)
 hexagon("Table Availability Service", 930, 232, 132, 72, 36, ["per-round table status,", "15-minute holds,", "first lock wins"], "Table Status DB",
@@ -131,8 +132,8 @@ arrow("M230,400 C252,402 256,448 274,452")
 arrow("M230,500 C252,500 256,478 274,476")
 # frontend to the gateway (REST over HTTPS) and to LINE Login
 arrow("M378,170 L378,20 L1789,20 L1789,36", label="LINE Login in the LIFF app", lx=1120, ly=9, lsize=11.5)
-arrow("M476,214 C512,226 520,330 560,352")
-arrow("M476,462 C506,460 520,436 560,430")
+arrow("M476,214 C512,226 520,330 545,388")
+arrow("M476,462 C506,460 520,436 545,396")
 # gateway: customer identity through its LINE Login Adapter
 arrow("M612,330 L612,67 L1490,67", label="verify ID token", lx=626, ly=56, lanchor="start", lsize=11.5)
 arrow("M1646,67 L1692,67")
@@ -169,7 +170,7 @@ text(lx + 14, ly + 18, "Legend (the MVP only)", 14, "bold", anchor="start")
 rows = [("part", "grey dashed outline: part of the system (Section 5.2)"),
         ("rest", "A → B: A invokes B by REST or HTTPS (JSON)"),
         ("grpc", "A → B: A invokes B by gRPC (ADR-12)"),
-        ("tabs", "REST / gRPC tab: an API the service offers"),
+        ("tabs", "REST / gRPC tab: an API the component offers"),
         ("hex", "hexagon: service; cylinder: its private database"),
         ("ad", "orange box: adapter, part of the component that uses it"),
         ("box", "red dashed box: external system")]
@@ -189,7 +190,7 @@ svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBo
 html = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <title>SEATS microservice architecture, version 2</title>
-<!-- Source of assets/architecture-diagram.png (project document v2.0, CH-37). Rendered with headless Chromium
+<!-- Source of assets/architecture-diagram.png (project document v2.0, CH-37, CH-40). Rendered with headless Chromium
      at 2x: the screenshot covers div.canvas. The MVP only; purple arrows are gRPC calls (ADR-12). -->
 <style>body {{ margin: 0; background: #fff; }} .canvas {{ width: {W}px; height: {H}px; }}</style>
 </head><body><div class="canvas">{svg}</div></body></html>
