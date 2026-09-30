@@ -7,7 +7,7 @@
 | | |
 |---|---|
 | Document | Change Log of the Project Description, ADRs and Microservice Design of the Seating & Event Availability Tracking System (SEATS) |
-| Applies to | SEATS project document, version 2.0 draft 33, 30 September 2026 (its Section 0.2 lists the drafts) |
+| Applies to | SEATS project document, version 2.0 draft 34, 30 September 2026 (its Section 0.2 lists the drafts) |
 | Group | SE 101 |
 | Contents | Section 1.2: every change since version 1.1, with its type, section, description and source. Section 2.1: how each teacher comment and known issue of Deliverables #1 and #2 was resolved. Section 2.2: how to compare the versions. |
 
@@ -83,6 +83,7 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-62 | Modified | D | Every screen of both web apps gets one page, Tables D.1 to D.16: the wireframe (beside the rows for a phone screen, across the top for a desktop window), then one row each for the use case steps, the main elements, the routes called and an example call with the gateway's answer. The summary tables and the back-office figures go. Reason: one concern per row reads faster, and the example shows the team the JSON of the route. | owner |
 | CH-63 | Modified | 6, 6.3 to 6.7 | Each service section links its .proto file in the code repository, 6.6 the three later protos, and 6.7 the OpenAPI document and the gateway's route table; Table 6.11 gains a Status column, generated from the OpenAPI document, with the HTTP answers of each route besides the 401 and 403 that every route with a role may give. Reason: a reader navigates from the document to the contract in one click, and the answers of a route are part of its contract. | owner |
 | CH-64 | Modified | 6.3 to 6.7 | The routes table is split for its two readers: Table 6.11 is the public REST API (route, web app, roles, body, answer, status) for the web apps, and Table 6.12 maps each route onto the gRPC method of its service for the gateway and service implementers; the service sections point to Table 6.12. Reason: eight columns at 10 pt served neither reader well. | owner |
+| CH-65 | Added | 4.1, 4.14 | ADR-14 Modular Monolith Mode for Development and Tests: every service keeps an API layer that its gRPC server wraps, and one composition root can run the gateway and the six services as one process with the calls in memory, through the Protocol Buffers serializers, for debugging and the in-process end-to-end tests; the microservices stay the deployment. Reason: the team tests the flows before scaling the services out. | owner |
 
 # 2 Resolution of Feedback and Known Issues
 
@@ -117,5 +118,5 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 ## 2.2 How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft32 the earlier drafts and doc-v2.0-draft33 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft33 the earlier drafts and doc-v2.0-draft34 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".

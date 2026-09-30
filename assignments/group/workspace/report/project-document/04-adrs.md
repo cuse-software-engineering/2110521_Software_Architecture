@@ -19,6 +19,7 @@ The ADRs follow the course template (Michael Nygard's format: Title, Context, De
 | ADR-11 | Simulated **Payment Gateway** for the MVP | Backend, External systems | Accepted |
 | ADR-12 | Communication: REST at the API Gateway, gRPC inside the Backend | All three parts | Accepted |
 | ADR-13 | The Booking Owns the Hold; the Table Map Is a Read Model | Backend | Accepted |
+| ADR-14 | Modular Monolith Mode for Development and Tests | Backend | Accepted |
 
 ## 4.1 ADR-01: Frontend Architecture & Client Channel
 
@@ -677,6 +678,64 @@ Accepted on 2026-09-30. Supersedes the locking part of ADR-08; the 5-second hold
 - The map lags a booking change by one call in the MVP, or one event later; the customer who holds sees the result in the same request, other customers within the 2-second poll of ADR-09.
 - A failed update leaves the map stale until the Booking Service retries it; the updates are idempotent, and a stale map only costs a customer a refused hold (UC-01 AF-3), never a double booking.
 - The polled read stays with the Table Availability Service, so the Booking DB is not hit by the map polling.
+
+</td>
+</tr>
+</table>
+
+## 4.14 ADR-14: Modular Monolith Mode for Development and Tests
+
+*Table 4.15 ADR-14 Modular Monolith Mode for Development and Tests*
+
+<table class="adr" markdown="1">
+<tr markdown="1">
+<td class="k">Title</td>
+<td markdown="block">
+
+Modular Monolith Mode for Development and Tests
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Context</td>
+<td markdown="block">
+
+The MVP runs as seven processes, the API Gateway and six services, which speak gRPC (ADR-12). Running or debugging one business flow, a **hold** or the publication of a **concert round**, means seven processes, their ports and their logs, and an end-to-end test needs all of them up. The rules of a service live in its domain module, which reaches the other services only through small client objects (Section 6.2, step 4), and the unit tests already replace those objects with stubs; what the unit tests cannot cover is a flow across services. The course requires the microservices, and the team wants to test the logic before scaling them out.
+
+Options considered: the flows tested only by hand against the seven processes; docker compose for every test; an in-process mode from the same code.
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Decision</td>
+<td markdown="block">
+
+A modular monolith mode for development and tests, beside the microservices, from the same code:
+
+- Every service keeps an API layer, one function per method of its .proto file that takes the request message and returns the response message with the caller passed explicitly; its gRPC server is a thin wrapper around it.
+- In monolith mode one process loads the API Gateway and the six services, and one composition root, the only module that knows every service, points the client objects of the gateway and of the services at the API layers of the other services. No service imports another service.
+- Every call still passes its request and its response through the Protocol Buffers serializer and deserializer of the method, in memory, so the contract, the defaults and the optional fields behave exactly as over gRPC; only the network is gone. Each service keeps its own store; nothing reads another service's data.
+- The end-to-end tests of the two Deliverable #3 flows run in this mode under the unit-test command; the smoke test against the seven processes stays.
+- The mode is never the deployment target: the MVP is deployed as the microservices of Section 5.
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Status</td>
+<td markdown="block">
+
+Accepted on 2026-09-30.
+
+</td>
+</tr>
+<tr markdown="1">
+<td class="k">Consequences</td>
+<td markdown="block">
+
+- A flow is debugged in one process with one log and one stack trace, and an end-to-end test runs in milliseconds without ports or containers, on every change.
+- The API layer is one more file per service, and the boundary between transport and rules is explicit: the gRPC server and the in-process client wrap the same functions.
+- In-process calls carry no deadline and never fail with UNAVAILABLE, so the timeouts, the retries and the failure handling of ADR-08 and ADR-12 are exercised only over gRPC; the smoke test against the seven processes therefore stays the check before a release.
+- The composition root is the one place that may depend on every service; that no service imports another is what keeps the split real. The caller's identity travels as a call context built by the same gateway code that fills the gRPC metadata, so the role checks hold in both modes.
 
 </td>
 </tr>
