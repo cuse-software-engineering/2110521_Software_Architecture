@@ -10,7 +10,7 @@
 | Product name | SEATS; Deliverables #1 and #2 called the system Concert Table Reservation System (CTRS) |
 | Course | 2110521 Software Architecture, Semester 1, Academic Year 2026 |
 | Group | SE 101 |
-| Version | 2.0 draft 16, 30 September 2026 |
+| Version | 2.0 draft 17, 30 September 2026 |
 | Status | Draft for review by the group; basis of the updated ADRs and microservice design of Deliverable #3 |
 | Previous version | 1.1: Deliverable #1 (version 1.0) and Deliverable #2 as submitted on 8 September 2026 |
 | Changes | Appendix A lists every change since version 1.1, Appendix B how each teacher comment and known issue was resolved, Appendix C how to compare the versions, and Appendix D the step-by-step trace behind Section 5.4 |
@@ -39,3 +39,4 @@
 | 2.0 draft 14 | 2026-09-30 | Watayut A. | Section 5.1 maps each service to its bounded context and subdomain. Change CH-41. | owner |
 | 2.0 draft 15 | 2026-09-30 | Watayut A. | Table 5.3 lists exposed operations only: the two timer jobs and the two internal steps are described below it; previewRound() and editPublishedRound() removed, listTableTypes() added. Change CH-42. | owner |
 | 2.0 draft 16 | 2026-09-30 | Watayut A. | Section 5.4 is a one-page matrix of operations by use case; the step-by-step trace tables move to Appendix D. Change CH-43. | owner |
+| 2.0 draft 17 | 2026-09-30 | Watayut A. | Table 5.1 lists every component of each part with its responsibility, the API it offers and the data it owns. Change CH-44. | owner |

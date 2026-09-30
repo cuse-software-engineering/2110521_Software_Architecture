@@ -49,6 +49,7 @@ Each change of version 2.0 has an identifier. The commits that made it start wit
 | CH-41 | Added | 5.1 | The services are mapped to the bounded contexts of the domain and to the core, supporting and generic subdomains, with the reason for keeping Table Availability and Booking as two services. | owner |
 | CH-42 | Modified | 5.3, 5.4 | Table 5.3 lists only the operations a service exposes: expireUnpaidBookings() and retryFailedMessages() are the jobs of a timer, and calculateTableFee() and issueETicket() are steps inside setPartySize() and confirmBookingPayment(); all four are described below the table. previewRound() is removed (the preview is getRound() and getRoundTables()), editPublishedRound() is folded into updateRound() (one operation per resource, rules by status), and listTableTypes() is added for the map editor. 55 operations; the traceability rows follow. | owner |
 | CH-43 | Modified, Added | 5.4, D | Section 5.4 is a one-page matrix of the operations by use case (Table 5.4), with a System-wide column for the functions not tied to one step; the step-by-step tables with the collaborations, the data stored and the requirements move to Appendix D (Tables D.1 to D.5) as the evidence. | owner |
+| CH-44 | Modified | 5.2 | Table 5.1 has one row per deployable component, grouped by part (two web apps, the API Gateway, six services, three external systems), with the responsibility, the API it offers (REST, gRPC or the provider's API) and the data it owns; the trust properties of the parts (untrusted Frontend, the gateway as the only public entry, private network, third parties) move to the paragraph above the table. | owner |
 
 # Appendix B Resolution of Feedback and Known Issues
 
@@ -79,7 +80,7 @@ The teacher feedback is kept as received in the group's workspace (received/teac
 # Appendix C How to See the Changes
 
 - **Redline.** tools/redline.py writes a page that shows every deleted and inserted word between version 1.1 and this version, paragraph by paragraph, under its section heading.
-- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft15 the earlier drafts and doc-v2.0-draft16 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
+- **Git.** The tag doc-v1.1-submitted holds the text as submitted, doc-v2.0-draft1 to doc-v2.0-draft16 the earlier drafts and doc-v2.0-draft17 this version; comparing the two tags on GitHub, or with git diff on the folder workspace/report/project-document, shows every change.
 - **Commits.** Every commit of this revision starts with the change identifiers it applies, for example "doc v2.0 CH-13..CH-17".
 
 # Appendix D Use Case Traceability, Step by Step

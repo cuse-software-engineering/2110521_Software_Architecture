@@ -26,15 +26,24 @@ The architecture diagram of Section 5.5 (Figure 5.1) is drawn in the ports-and-a
 
 ## 5.2 Parts of the System and Communication
 
-SEATS is divided into three parts: the Frontend, the Backend and the External systems (Table 5.1). Figure 5.1 draws their boundaries, and each ADR names the part it concerns (Table 4.1). How the parts communicate with each other, and how the services communicate inside the Backend, is decided in ADR-12 and summarised in Table 5.2.
+SEATS is divided into three parts: the Frontend, the Backend and the External systems. Figure 5.1 draws their boundaries, and each ADR names the part it concerns (Table 4.1). The Frontend runs in the phones and browsers of the **Customers**, the **Front Staff**, the **Manager** and the **Owner**; it is not trusted, and every request it sends is authenticated and checked in the Backend. The Backend runs on the servers that run SEATS; the API Gateway is the only component reachable from the internet, and the services with their databases sit on a private network behind it. The External systems are run by third parties, outside the control of SEATS, and are reached only through adapters, which are modules inside the component that uses them; the simulated gateway of the MVP (ADR-11) is built by the group but deployed and treated as an external system, so that the real gateway can replace it. Table 5.1 lists the components of each part, and Table 5.2 how they communicate (ADR-12).
 
-*Table 5.1 Parts of the system*
+*Table 5.1 Parts of the system and their components*
 
-| Part | Components | Where it runs, and who can reach it |
-|---|---|---|
-| Frontend | Customer Web App (a **LIFF** app inside LINE); Back-office Web App | In the phones and browsers of the **Customers**, the **Front Staff**, the **Manager** and the **Owner**. The Frontend is not trusted: every request it sends is authenticated and checked in the Backend. |
-| Backend | API Gateway; the Concert Round, Table Availability, Booking, Payment, Notification and Staff Account Services, each with its private database; the adapters to the external systems | On the servers that run SEATS. The API Gateway is the only component reachable from the internet; the services and their databases sit on a private network behind it. Each adapter is a module of the component that uses it. |
-| External systems | **LINE Platform** (LINE Login and the Messaging API); **Payment Gateway**; Cloud Object Storage for the image of the venue | Run by third parties, outside the control of SEATS. The simulated gateway of the MVP (ADR-11) is built by the group but deployed and treated as an external system, so that the real gateway can replace it. |
+| Part | Component | Responsibility | API it offers | Data it owns |
+|---|---|---|---|---|
+| **Frontend** | Customer Web App | The **LIFF** app inside LINE: **concert rounds**, the table map, the **hold**, the **customer profile**, the **booking terms**, the **hosted checkout** and My Bookings (UC-01) | None; it calls the API Gateway by REST | None |
+| | Back-office Web App | **Zone maps**, **concert rounds** and **business parameters** for the **Manager**, the **live view** for the **Manager** and the **Owner**, the QR scan and check-in for the **Front Staff** (UC-02 to UC-04) | None; it calls the API Gateway by REST | None |
+| **Backend** | API Gateway | The only public entry: authenticates the caller (the LINE ID token through the LINE Login Adapter, the staff session token), checks the role of the route (FR-66) and routes the request to the service that owns the operation | REST, for the Frontend and for the payment webhook | None |
+| | Concert Round Service | The venue and events context: **zone maps**, **table types**, **concert rounds**, **package prices** and **business parameters**; stores the image of the venue through the Media Storage Adapter | REST (**back-office** and customer reads), gRPC (reads for the Booking Service) | Round DB |
+| | Table Availability Service | The status of every table of every round, the 15-minute **hold** and **first lock wins** (ADR-08) | gRPC (every change and read by a service), REST (the polled read of the map, ADR-09) | Table Status DB |
+| | Booking Service | The booking from Held to Checked-in, the **customer profile**, the **booking terms**, the **e-ticket**, the check-in and the **live view**; its own job expires unpaid **holds** | REST (customer and staff flows), gRPC (payment confirmation) | Booking DB |
+| | Payment Service | Payment requests and results, reached through the Payment Gateway Adapter (ADR-11) | REST (the webhook and the payment status), gRPC (payment request) | Payment DB |
+| | Notification Service | LINE messages to the **Customer** through the LINE Messaging Adapter (ADR-10); its own job retries failed messages | gRPC | Notification DB |
+| | Staff Account Service | **Back-office** accounts, roles and sign-in (ADR-07) | REST | Staff Account DB |
+| **External systems** | **LINE Platform** | LINE Login and **LIFF** for the customer's identity, the Messaging API for push messages | The provider's API | — |
+| | **Payment Gateway** | The **hosted checkout**, the signed payment results and, from Increment 2, refunds; simulated in the MVP | The provider's API and its webhook | — |
+| | Cloud Object Storage | The image of the venue behind each **zone map** | The provider's API | — |
 
 *Table 5.2 Communication between and inside the parts (ADR-12)*
 
