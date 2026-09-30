@@ -1,6 +1,6 @@
 # 4 Architecture Decision Records (ADRs)
 
-The ADRs follow the course template (Michael Nygard's format: Title, Context, Decision, Status, Consequences); each ADR is a table of these five fields and starts on a new page. An accepted ADR is not rewritten when its decision changes: a new ADR supersedes it, and the old record keeps its text with a status that names its successor. Corrections to how a record is written, such as the teacher's comment on ADR-06 (FB-D1-01), are made in place and listed in the Change Log. The Part column names the part of the system that each decision concerns: the Frontend, the Backend or the External systems (Section 5.2).
+The ADRs follow the course template (Michael Nygard's format: Title, Context, Decision, Status, Consequences); each ADR is a table of these five fields and starts on a new page. An accepted ADR is not rewritten when its decision changes: a new ADR supersedes it, and the old record keeps its text with a status that names its successor. Corrections to how a record is written, such as the teacher's comment on ADR-06 (FB-D1-01), are made in place and listed in the change-log document. The Part column names the part of the system that each decision concerns: the Frontend, the Backend or the External systems (Section 5.2).
 
 *Table 4.1 Architecture decision records*
 

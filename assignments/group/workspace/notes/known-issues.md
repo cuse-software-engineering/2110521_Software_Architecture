@@ -3,7 +3,7 @@
 Inconsistencies found in [Deliverable-1.pdf](../../deliverables/report/Deliverable-1.pdf) (D1) and
 [Deliverable-2.pdf](../../deliverables/report/Deliverable-2.pdf) (D2), recorded 2026-09-29. They are **not fixed**: the
 submitted files stay as handed in for now. They are fixed in the project document, version 2.0 draft 1
-(workspace/report/project-document/, Appendix B there); the Status column names the change that fixes each one. Page numbers are PDF pages. Teacher feedback that asks for changes is kept
+(workspace/report/project-document/; its change-log document, Section 2, lists the resolutions); the Status column names the change that fixes each one. Page numbers are PDF pages. Teacher feedback that asks for changes is kept
 separately in [../received/teacher/](../received/teacher/).
 
 | ID | Issue | Where | Status |
@@ -210,5 +210,5 @@ operation, service, collaborator, where the data is stored. Missing in D2:
 - getDeliveryStatus() has no caller.
 
 Resolved in the project document 2.0 draft 11: Table 5.3 completed (CH-35) and checked by the traceability tables of
-Section 5.4 (CH-36), where every operation appears in at least one row and every MVP requirement is realised.
+Appendix A (CH-36), where every operation appears in at least one row and every MVP requirement is realised.
 

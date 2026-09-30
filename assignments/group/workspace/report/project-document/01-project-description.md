@@ -26,4 +26,4 @@ The system is built in increments, so that a first working version fits a build 
 | Increment 2 | Copy a round or a **zone map**; withdraw a published round; handle a **zone map** changed during editing. | UC-03 AF-2, AF-4, EF-3; UC-04 AF-2 |
 | Out of scope | Planned for a later release: reminders and the "on my way" grace extension, **waitlist**, booking transfer, reports and analytics, and seat-view photographs of the tables. | — |
 
-The product is named Seating & Event Availability Tracking System (SEATS); Deliverables #1 and #2 called it Concert Table Reservation System (CTRS). Requirements are identified as FR-nn (functional) and NFR-nn (non-functional), and business rules as BRULE-nn (Section 3).
+The product is named Seating & Event Availability Tracking System (SEATS); Deliverables #1 and #2 called it Concert Table Reservation System (CTRS). Requirements are identified as FR-nn (functional) and NFR-nn (non-functional), and business rules as BRULE-nn (Appendix B).

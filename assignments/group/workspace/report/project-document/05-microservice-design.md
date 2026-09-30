@@ -2,7 +2,7 @@
 
 ## 5.1 Scope of the Microservice Design
 
-This section presents the second version of the microservice architecture for the Seating & Event Availability Tracking System (SEATS). It defines the parts of the system and how they communicate (Section 5.2), lists the services with their operations and collaborators (Section 5.3), traces every step of the four use cases to the operations that carry it out (Section 5.4), and draws the architecture (Section 5.5). The section describes the MVP of Section 1.3 only: the operations, collaborations and components that Increment 2 and later increments add are not shown, and they are added to this section when those increments are designed.
+This section presents the second version of the microservice architecture for the Seating & Event Availability Tracking System (SEATS). It defines the parts of the system and how they communicate (Section 5.2), lists the services with their operations and collaborators (Section 5.3) and draws the architecture (Section 5.4); Appendix A traces every use case to the operations that carry it out. The section describes the MVP of Section 1.3 only: the operations, collaborations and components that Increment 2 and later increments add are not shown, and they are added to this section when those increments are designed.
 
 The architecture covers the four use cases end to end, including the alternative and exception flows that the MVP builds:
 
@@ -22,7 +22,7 @@ The services follow the bounded contexts of the domain, and each is named by the
 
 Table Availability and Booking stay two services although every booking state change has a matching table status change: the table status is also written by the Concert Round Service when a round is published, it is read by every open map, and its consistency with the booking is handled by ADR-08.
 
-The architecture diagram of Section 5.5 (Figure 5.1) is drawn in the ports-and-adapters style: every service is a hexagon whose business logic is reached only through the ports on its edges, a REST tab for the calls routed by the API Gateway and a gRPC tab for the calls of other services, and that reaches the external systems only through adapters. The API Gateway carries the REST tab that the Frontend calls: it is the only API that the web apps use. An arrow A → B means A invokes B; response paths are not drawn. The three dashed boundaries are the parts of Section 5.2. The **hosted checkout** page of the **Payment Gateway** is opened by the customer's browser inside the web app and is therefore not shown as a service call. The web apps read the table status by polling through the API Gateway (ADR-09), and the **Payment Gateway** is the simulated gateway of ADR-11.
+The architecture diagram of Section 5.4 (Figure 5.1) is drawn in the ports-and-adapters style: every service is a hexagon whose business logic is reached only through the ports on its edges, a REST tab for the calls routed by the API Gateway and a gRPC tab for the calls of other services, and that reaches the external systems only through adapters. The API Gateway carries the REST tab that the Frontend calls: it is the only API that the web apps use. An arrow A → B means A invokes B; response paths are not drawn. The three dashed boundaries are the parts of Section 5.2. The **hosted checkout** page of the **Payment Gateway** is opened by the customer's browser inside the web app and is therefore not shown as a service call. The web apps read the table status by polling through the API Gateway (ADR-09), and the **Payment Gateway** is the simulated gateway of ADR-11.
 
 ## 5.2 Parts of the System and Communication
 
@@ -49,7 +49,7 @@ SEATS is divided into three parts: the Frontend, the Backend and the External sy
 
 | From | To | How | Used for |
 |---|---|---|---|
-| Frontend | API Gateway | REST: JSON over HTTPS | Every operation that an actor invokes (Section 5.4) |
+| Frontend | API Gateway | REST: JSON over HTTPS | Every operation that an actor invokes (Appendix A) |
 | **Payment Gateway** | API Gateway | REST: signed webhook over HTTPS | Payment results |
 | API Gateway | Services | REST: JSON over HTTP on the private network | Each request goes to the service that owns the operation |
 | Service | Service | gRPC: Protocol Buffers over HTTP/2 | Every collaboration between services in Table 5.3 |
@@ -66,6 +66,8 @@ Operations are the business operations that a service exposes to the web apps (R
 
 Note: the table lists only what the MVP builds. The operations and collaborators that Increment 2 and later increments add (Section 1.3) are not written here.
 
+Two services also run a job on their own timer, which is not an operation: the hold-expiry job of the Booking Service sets every overdue Held booking to Expired every 5 seconds and calls releaseHold() and sendHoldExpiredNotice() (ADR-08, UC-01 EF-1), and the retry job of the Notification Service resends a failed message 3 times within 5 minutes (FR-22, UC-01 EF-6). Two steps are part of a larger operation: setPartySize() computes the **full table fee** (UC-01 steps 10–11), and confirmBookingPayment() issues the **e-ticket** (UC-01 steps 19–20). A Published round is changed with updateRound(), which then allows only the changes of UC-03 AF-3 (BRULE-07), and the preview of a round (UC-03 step 13) is the customer's own view, getRound() and getRoundTables().
+
 *Table 5.3 Service–Operations–Collaborators of the MVP*
 
 | Service | Operations | Collaborators |
@@ -77,79 +79,7 @@ Note: the table lists only what the MVP builds. The operations and collaborators
 | **Notification Service** | sendBookingConfirmation()<br>sendHoldExpiredNotice()<br>sendPaymentFailedNotice() | **LINE Messaging Adapter**<br>pushLineMessage() |
 | **Staff Account Service** | signIn()<br>signOut()<br>createStaffAccount()<br>listStaffAccounts()<br>updateStaffAccount()<br>disableStaffAccount() | — |
 
-Two services also run a job on their own timer, which is not an operation: the hold-expiry job of the Booking Service sets every overdue Held booking to Expired every 5 seconds and calls releaseHold() and sendHoldExpiredNotice() (ADR-08, UC-01 EF-1), and the retry job of the Notification Service resends a failed message 3 times within 5 minutes (FR-22, UC-01 EF-6). Two steps are part of a larger operation: setPartySize() computes the **full table fee** (UC-01 steps 10–11), and confirmBookingPayment() issues the **e-ticket** (UC-01 steps 19–20). A Published round is changed with updateRound(), which then allows only the changes of UC-03 AF-3 (BRULE-07), and the preview of a round (UC-03 step 13) is the customer's own view, getRound() and getRoundTables().
-
-## 5.4 Use Case Traceability
-
-Table 5.4 traces the eight use cases to the operations of Table 5.3: a cell names the steps and flows of the use case that the operation serves, whether the actor invokes it through the API Gateway or another service invokes it as a collaborator; for UC-05 to UC-08, which have no description, a tick marks the operations they use. Every operation has at least one cell, and the two jobs on a timer are listed below the operations. Appendix D gives the same trace step by step, with who invokes each operation, the collaborations it needs, the data it stores and the requirements it realises; only the flows that the MVP builds are traced (Section 1.3).
-
-<div class="matrix" markdown="1">
-
-*Table 5.4 Operations by use case*
-
-| Service | Operation | UC-01 | UC-02 | UC-03 | UC-04 | UC-05 | UC-06 | UC-07 | UC-08 |
-|---|---|---|---|---|---|---|---|---|---|
-| **Concert Round Service** | createZoneMap() |  |  |  | 1–2 |  |  |  |  |
-|  | updateZoneMap() |  |  |  | 4; 5–6; AF-1; AF-3 |  |  |  |  |
-|  | uploadZoneMapImage() |  |  |  | 3, EF-3 |  |  |  |  |
-|  | defineTableType() |  |  |  | 5–6 |  |  |  |  |
-|  | listTableTypes() |  |  |  | 5–6 |  |  |  |  |
-|  | listZoneMaps() |  |  | 6 | AF-1 |  |  |  |  |
-|  | getZoneMap() |  |  | 7 | 7; 10; AF-1 |  |  |  |  |
-|  | validateZoneMap() |  |  |  | 8–9, S-1, EF-1 |  |  |  |  |
-|  | activateZoneMap() |  |  |  | 11–12, EF-2 |  |  |  |  |
-|  | getBusinessParameters() |  |  | 3–5 |  |  |  | ✓ |  |
-|  | updateBusinessParameters() |  |  |  |  |  |  | ✓ |  |
-|  | createRound() |  |  | 1–2 |  |  |  |  |  |
-|  | updateRound() |  |  | 3–5; 8; 9–10; AF-1; AF-3 |  |  |  |  |  |
-|  | validateRound() |  |  | 11–12, S-1, EF-1 |  |  |  |  |  |
-|  | publishRound() |  |  | 14–15, EF-2 |  |  |  |  |  |
-|  | getUpcomingRounds() | 3, AF-2 |  |  |  |  |  |  |  |
-|  | getRound() | 4, AF-1; 6–8, AF-3 |  | 13; AF-3 |  |  |  |  |  |
-|  | getRoundTables() | 5, AF-2 |  | 13 |  |  |  |  |  |
-|  | getRoundPricing() | 10–11 |  |  |  |  |  |  |  |
-|  | getCheckInWindow() | 13 | 2–4, S-1, AF-2, AF-3, AF-5, EF-1, EF-2 |  |  |  |  |  |  |
-| **Table Availability Service** | initializeRoundTableStatus() |  |  | 14–15, EF-2 |  |  |  |  |  |
-|  | getRoundTableStatus() | 5, AF-2 | 7 | AF-3 | AF-1 | ✓ |  |  |  |
-|  | countAvailableTables() | 3, AF-2 |  |  |  |  |  |  |  |
-|  | holdTable() | 6–8, AF-3 |  |  |  |  |  |  |  |
-|  | releaseHold() | AF-4, AF-6; EF-1 |  |  |  |  |  |  |  |
-|  | markTableBooked() | 19–20 |  |  |  |  |  |  |  |
-|  | markTableOccupied() |  | 6, EF-5 |  |  |  |  |  |  |
-| **Booking Service** | createHeldBooking() | 6–8, AF-3 |  |  |  |  |  |  |  |
-|  | getBooking() | 9; 21, AF-5 |  |  |  |  |  |  |  |
-|  | setPartySize() | 10–11 |  |  |  |  |  |  |  |
-|  | getCustomerProfile() | 12 |  |  |  |  |  |  |  |
-|  | createCustomerProfile() | 12a, AF-7 |  |  |  |  |  |  |  |
-|  | updateCustomerProfile() | 12b |  |  |  |  |  |  |  |
-|  | getBookingTerms() | 13 |  |  |  |  |  |  |  |
-|  | acceptBookingTerms() | 14 |  |  |  |  |  |  |  |
-|  | startPayment() | 15 |  |  |  |  |  |  |  |
-|  | confirmBookingPayment() | 18, AF-5; 19–20 |  |  |  |  |  |  |  |
-|  | getETicket() | 21, AF-5 |  |  |  |  | ✓ |  |  |
-|  | getCustomerBookings() |  |  |  |  |  | ✓ |  |  |
-|  | cancelBooking() | AF-4, AF-6 |  |  |  |  |  |  |  |
-|  | verifyBookingReference() |  | 2–4, S-1, AF-2, AF-3, AF-5, EF-1, EF-2 |  |  |  |  |  |  |
-|  | checkInBooking() |  | 6, EF-5 |  |  |  |  |  |  |
-|  | getRoundBookings() |  | 7 |  |  | ✓ |  |  |  |
-| **Payment Service** | createPaymentRequest() | 15 |  |  |  |  |  |  |  |
-|  | receivePaymentResult() | 18, AF-5 |  |  |  |  |  |  |  |
-|  | getPaymentStatus() | 21, AF-5 |  |  |  |  |  |  |  |
-| **Notification Service** | sendBookingConfirmation() | 22, S-1 |  |  |  |  |  |  |  |
-|  | sendHoldExpiredNotice() | EF-1; EF-1, S-1 |  |  |  |  |  |  |  |
-|  | sendPaymentFailedNotice() | 18, AF-5; AF-5 |  |  |  |  |  |  |  |
-| **Staff Account Service** | signIn() |  |  |  |  |  |  |  | ✓ |
-|  | signOut() |  |  |  |  |  |  |  | ✓ |
-|  | createStaffAccount() |  |  |  |  |  |  |  | ✓ |
-|  | listStaffAccounts() |  |  |  |  |  |  |  | ✓ |
-|  | updateStaffAccount() |  |  |  |  |  |  |  | ✓ |
-|  | disableStaffAccount() |  |  |  |  |  |  |  | ✓ |
-| *Jobs on a timer (not operations)* | hold-expiry job of the Booking Service | EF-1 | | | | | | | |
-| | retry job of the Notification Service | EF-6 | | | | | | | |
-
-</div>
-
-## 5.5 Architecture Diagram
+## 5.4 Architecture Diagram
 
 ![SEATS microservice architecture, version 2](assets/architecture-diagram.png)
 
