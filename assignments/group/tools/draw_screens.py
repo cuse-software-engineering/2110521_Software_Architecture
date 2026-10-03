@@ -40,6 +40,8 @@ CSS = """
   .appbar .back { font-size: 20px; color: #444; font-weight: 400; }
   .appbar .right { margin-left: auto; font-weight: 700; font-size: 15px; }
   .appbar .more { margin-left: auto; font-size: 20px; color: #444; font-weight: 400; }
+  .appbar .brand { font-weight: 800; font-size: 12px; letter-spacing: -.02em; color: #222; flex: none; }
+  .appbar .avatar { width: 26px; height: 26px; border-radius: 50%; background: #555; display: inline-block; flex: none; }
   .appbar .right + .more { margin-left: 10px; }
   .topbar.phone-top { height: 36px; font-size: 14px; padding: 0 12px; gap: 10px; flex: none; }
   .topbar.phone-top .burger { font-size: 17px; font-weight: 400; }
@@ -242,14 +244,17 @@ def table_map(width=332, highlight="A12", tapped=True, compact=False, occupied=N
 
 # ---------------------------------------------------------------------------------------------------------- phone frame
 def phone(chrome, appbar, body, status_right="LTE 78%"):
-    """chrome: 'line' (LINE chat, no browser bar), 'liff' (LINE in-app browser: the app bar ends with the &#8942; menu of
-    the web app, which opens the two screens LINE's rich menu would open and Log out), 'staff' (the back-office on a
-    staff phone: the web app's top bar above the app bar, its sidebar behind the &#9776;)."""
+    """chrome: 'line' (LINE chat, no browser bar; the Official Account's picture before its name), 'liff' (LINE in-app
+    browser: the app bar carries the SEATS wordmark before the title and ends with the &#8942; menu of the web app,
+    which opens the two screens LINE's rich menu would open, and Log out), 'staff' (the back-office on a staff phone:
+    the web app's top bar above the app bar, its sidebar behind the &#9776;)."""
     bar = ""
     top = ""
     if chrome == "liff":
         bar = '<div class="browserbar"><span class="x">&#10005;</span><span class="url">liff.line.me/seats &middot; La Loy Bar</span><span>&#8942;</span></div>'
-        appbar = f'{appbar}<span class="more">&#8942;</span>'
+        back = '<span class="back">&#8249;</span>'   # the SEATS wordmark (the team's SVG logo) after the back chevron, before the title
+        brand = '<span class="brand">SEATS.</span>'
+        appbar = (back + brand + appbar[len(back):] if appbar.startswith(back) else brand + appbar) + '<span class="more">&#8942;</span>'
     elif chrome == "staff":
         bar = '<div class="browserbar"><span class="x">&#8592;</span><span class="url">seats-backoffice.example &middot; signed in as door1</span><span>&#8942;</span></div>'
         top = '<div class="topbar phone-top"><span class="burger">&#9776;</span>SEATS back-office<span class="who">signed in as door1</span></div>'
@@ -321,7 +326,7 @@ def c1():
             '<div>&#8226; your LINE profile name<br>&#8226; your LINE user ID</div>'
             '<div class="tiny" style="margin-top:6px">No separate registration: one LINE account is one customer.</div>'
             '<div class="btn primary small">Allow</div><div class="btn secondary small">Cancel</div></div>')
-    ph = phone("line", '<span class="back">&#8249;</span>La Loy Bar <span class="tiny" style="margin-left:6px">Official Account</span>', body)
+    ph = phone("line", '<span class="back">&#8249;</span><span class="avatar"></span>La Loy Bar <span class="tiny" style="margin-left:6px">Official Account</span>', body)
     return "C1", "Rich Menu and LINE Login", "UC-01 steps 1&ndash;2, EF-2", ph
 
 
