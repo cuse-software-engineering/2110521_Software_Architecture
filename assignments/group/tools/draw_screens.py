@@ -39,6 +39,10 @@ CSS = """
   .appbar { height: 48px; display: flex; align-items: center; gap: 10px; padding: 0 14px; border-bottom: 1px solid #bbb; font-weight: 600; font-size: 16px; background: #f5f5f5; box-sizing: border-box; }
   .appbar .back { font-size: 20px; color: #444; font-weight: 400; }
   .appbar .right { margin-left: auto; font-weight: 700; font-size: 15px; }
+  .appbar .more { margin-left: auto; font-size: 20px; color: #444; font-weight: 400; }
+  .appbar .right + .more { margin-left: 10px; }
+  .topbar.phone-top { height: 36px; font-size: 14px; padding: 0 12px; gap: 10px; flex: none; }
+  .topbar.phone-top .burger { font-size: 17px; font-weight: 400; }
   .content { padding: 12px 14px; font-size: 14px; line-height: 1.35; }
   .card { border: 1px solid #999; border-radius: 6px; padding: 10px 12px; margin: 10px 0; background: #fff; }
   .card.soft { background: #f4f4f4; border-style: dashed; }
@@ -238,15 +242,20 @@ def table_map(width=332, highlight="A12", tapped=True, compact=False, occupied=N
 
 # ---------------------------------------------------------------------------------------------------------- phone frame
 def phone(chrome, appbar, body, status_right="LTE 78%"):
-    """chrome: 'line' (LINE chat, no browser bar), 'liff' (LINE in-app browser), 'staff' (back-office on a staff phone)."""
+    """chrome: 'line' (LINE chat, no browser bar), 'liff' (LINE in-app browser: the app bar ends with the &#8942; menu of
+    the web app, which opens the two screens LINE's rich menu would open and Log out), 'staff' (the back-office on a
+    staff phone: the web app's top bar above the app bar, its sidebar behind the &#9776;)."""
     bar = ""
+    top = ""
     if chrome == "liff":
         bar = '<div class="browserbar"><span class="x">&#10005;</span><span class="url">liff.line.me/seats &middot; La Loy Bar</span><span>&#8942;</span></div>'
+        appbar = f'{appbar}<span class="more">&#8942;</span>'
     elif chrome == "staff":
         bar = '<div class="browserbar"><span class="x">&#8592;</span><span class="url">seats-backoffice.example &middot; signed in as door1</span><span>&#8942;</span></div>'
+        top = '<div class="topbar phone-top"><span class="burger">&#9776;</span>SEATS back-office<span class="who">signed in as door1</span></div>'
     app = f'<div class="appbar">{appbar}</div>' if appbar else ""
     return (f'<div class="phone"><div class="statusbar"><span>19:02</span><span>{status_right}</span></div>{bar}'
-            f'<div class="viewport">{app}{body}</div></div>')
+            f'<div class="viewport">{top}{app}{body}</div></div>')
 
 
 # ------------------------------------------------------------------------------------------------- desktop browser frame
