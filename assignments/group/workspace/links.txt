@@ -7,9 +7,6 @@ REPOSITORIES
   clone with: git clone --recurse-submodules <url>   (or: git submodule update --init after cloning)
 - SEATS implementation (the team works here: PRs, tests, deployments)
   https://github.com/cuse-software-engineering/SEATS
-- Requirements Engineering course (the earlier project; its PDF builder is reused by the document tools)
-  https://github.com/cuse-software-engineering/2110628_Requirement_Engineering
-  final hand-in = tag group_project_final
 
 DEPLOYMENTS (demo; the microservices themselves run with docker compose)
 - Backend, the monolith on Render (free plan)

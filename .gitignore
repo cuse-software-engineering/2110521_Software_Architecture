@@ -18,3 +18,7 @@ Thumbs.db
 
 # Working builds of the project document: draft PDF, redlines (regenerate with tools/build_report.py and tools/redline.py)
 assignments/group/workspace/report/build/
+
+# Python virtualenv and SQLite scratch databases of the messaging lab (assignments/individual/04)
+.venv/
+*.sqlite3

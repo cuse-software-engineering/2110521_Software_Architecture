@@ -1,0 +1,106 @@
+Deliverable-3 (Project progress 1) — due Fri 3 Oct 2026, both sections
+Brief: VDO < 5 min showing (a) one or more REST service(s) with CRUD and (b) one or more gRPC service(s) with CRUD,
+       plus the proposal document with updated ADRs and updated microservice design. 5 %, includes Git contribution.
+Source of truth: workspace/report/project-document/ (2.0 draft 24) — Table 5.3 operation names, Table 5.2 protocols,
+       ADR-12 (REST at the API Gateway only, gRPC inside the Backend), Figure 5.1, Chapter 6 API tables.
+
+4 persons
+- Will  (Watayut)
+- Peat CS
+- Peat SE
+- Natchy
+
+####################  1. What we demo
+
+Flows (2)
+- Create Zone Map + Create Round          (UC-04, UC-03: Manager, back-office)
+- Create Booking (hold a table)           (UC-01 steps 3-11: Customer)
+
+Services (3)
+- API Gateway                = the only REST API: the REST CRUD of the brief is its routes on zone maps and rounds,
+                               each route one gRPC call to the owning service (ADR-12)
+- Concert Round Service      = gRPC: zone maps, rounds, table types, parameters (CRUD); called by the gateway and Booking
+- Booking Service            = gRPC: customer flow (caller in metadata) + gRPC client of the two others
+- Table Availability Service = the gRPC service with CRUD   (round table status: create = C, get = R,
+                               hold / release / book = U, remove = D). Called by the other two and by the gateway (polled read).
+
+CRUD needs a delete, the use cases have none -> add two small functions and record them in the document (CH-40):
+- Concert Round Service: discardDraftRound(), discardDraftZoneMap()
+- Table Availability Service: removeRoundTableStatus() (when a draft round is discarded)
+
+Stubs for progress 1 (say so in the doc, section "implementation status")
+- Fake auth: gateway trusts a header (x-user = customer LINE id or staff account, x-role) — no LINE Login, no JWT yet
+- No payment, no notification, no staff-account service yet (Booking stops at "held" with party size + fee)
+- Storage: MongoDB per service in docker-compose (Mongoose model = the schema, ADR-06). In-memory Map only as a
+  fallback if Mongo costs time. No ER diagram: the Mongoose models are the schema.
+
+####################  2. Contracts first (day 1, before any code)
+
+- proto/ : one .proto per service = its whole API (every service is gRPC only)
+    - table_availability.proto  (Will)    CreateRoundTableStatus, GetRoundTableStatus, CountAvailableTables,
+                                          HoldTable, ReleaseHold, MarkTableBooked, MarkTableOccupied, RemoveRoundTableStatus
+    - concert_round.proto       (Natchy)  zone maps: Create / List / Get / Update / UploadImage / Validate / Activate / DiscardDraft;
+                                          rounds: Create / GetUpcoming / Get / GetTables / Update / Validate / Publish / DiscardDraft;
+                                          table types, business parameters; GetRoundPricing, GetCheckInWindow
+    - booking.proto             (Peat SE) CreateHeldBooking, GetBooking, SetPartySize, profile, terms, StartPayment, CancelBooking, …
+- gateway route table (gateway/src/routes.ts = docs/contracts.md): one REST route -> one gRPC method, roles per route (Will)
+- Will reviews the protos against Table 5.3 and Figure 5.1 (flow consistency), then everyone codes against them.
+
+####################  3. Who builds what
+
+- Will     : repo skeleton + docker-compose + README, proto review, API Gateway (REST routes -> gRPC calls, fake auth,
+             role check, status mapping, ETag), Table Availability Service (gRPC server), integration, video, document update
+- Peat SE  : Booking Service — gRPC server for the customer flow (booking.proto), gRPC client to Concert Round
+             (GetRound, GetRoundPricing, GetCheckInWindow) and Table Availability (HoldTable, ReleaseHold, …)
+- Natchy   : Concert Round Service — gRPC server for the CRUD of zone maps and rounds (concert_round.proto),
+             PublishRound -> CreateRoundTableStatus (gRPC)
+- Peat CS  : demo front: Postman collection + grpcurl script for every CRUD call (must-have);
+             the pages, if built, are the screens of Appendix D (C1-C9 customer, B1-B7 back-office) with their routes;
+             minimal Next.js pages for the two flows (nice-to-have, only if the Postman demo already works);
+             Playwright smoke test of the two flows
+
+Stack: TypeScript on Node.js (ADR-03; Express only in the gateway), @grpc/grpc-js + proto-loader with generated types
+       (ADR-12), Mongoose + MongoDB (ADR-06), docker-compose. Data model per service: docs/data-model.md -> model.ts -> proto -> gateway route.
+
+####################  4. Repo
+
+One repo, one folder per part (Git contribution is graded per person: everyone commits their own folder under
+their own name; PR per service into main, Will merges).
+- gateway/
+- services/concert-round/
+- services/booking/
+- services/table-availability/
+- proto/
+- demo/            (Postman collection, grpcurl script, video script)
+- frontend/        (only if built)
+- docker-compose.yml
+Repo: https://github.com/cuse-software-engineering/SEATS, checked out here as the submodule assignments/group/code (pushed 30 Sep: contracts incl. docs/openapi.yaml, gateway,
+      six services (payment / notification / staff-account are small in-memory skeletons), unit tests (`npm test`, 66),
+      demo scripts, smoke test, frontend/ (Vite + React: customer app :5173 = C1-C9, back-office :5174 = B1-B7 of
+      Appendix D, shared client typed from openapi.yaml) — `npm install && npm run dev && npm run smoke`,
+      `npm run dev:customer`, `npm run dev:backoffice`, `npm run dev:mono` (one process, ADR-14). Tests: `npm test` = unit
+      tests + the use case scenarios in-process (docs/test-traceability.md maps every MVP flow to its test), `npm run test:e2e`
+      = Playwright through the screens; see README.md, docs/team.md, docs/contracts.md, frontend/README.md).
+
+####################  5. Timeline
+
+Tue 30 Sep : contracts (.proto + route tables) done and reviewed; repo skeleton + compose up; services scaffolded
+Wed  1 Oct : every service runs alone with its own DB; gateway routes; Create Zone Map + Create Round end to end
+Thu  2 Oct : Create Booking end to end (gRPC hops visible in logs); Postman/grpcurl demo; smoke test;
+             record video; document: ADR-12 + Staff Account Service accepted by the group, CH-40 deletes,
+             "progress 1 implementation status" note; build PDF
+Fri  3 Oct : final check, submit video + PDF
+
+####################  6. Video (< 5 min, Will records; each member sends the commands of their part)
+
+0:00 architecture (Figure 5.1): three parts, REST only at the gateway, gRPC behind it, which service is which
+0:30 REST CRUD through the gateway on zone maps and rounds: create, read, update, delete draft; the gateway log shows
+     the gRPC call behind each route (ConcertRound/CreateZoneMap, …)
+2:00 Create Booking: hold a table -> logs show Booking -> Concert Round (gRPC) and Booking -> Table Availability (gRPC)
+3:30 gRPC CRUD on Table Availability with grpcurl: create, get, hold, release, remove (+ health check)
+4:30 Git: contributors graph / branches
+
+####################  7. Open points to settle in the group
+
+- accept ADR-12 (REST at the gateway only, gRPC inside; draft 24) and the Staff Account Service (draft 11/12)
+- who confirms the Peat CS / Peat SE / Natchy name mapping for the cover of the document
