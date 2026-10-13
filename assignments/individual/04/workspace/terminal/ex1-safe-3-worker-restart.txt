@@ -1,0 +1,5 @@
+(.venv) $ python rabbitmq/demo1_crash_ack.py worker --mode safe --run safe5
+2026-10-13T14:38:19.721+00:00 READY queue=lab.failure.crash.safe.safe5; processes one delivery then exits
+2026-10-13T14:38:19.721+00:00 RECEIVED id=a9af4c81-27d4-4ecc-9663-0ff0d719915e tag=1 redelivered=True
+2026-10-13T14:38:19.722+00:00 DB COMMITTED: applied=False, business_effect_count=1
+2026-10-13T14:38:19.722+00:00 ACK SENT

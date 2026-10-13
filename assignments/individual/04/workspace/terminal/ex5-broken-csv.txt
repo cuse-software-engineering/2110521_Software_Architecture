@@ -1,0 +1,2 @@
+(.venv) $ python evidence_to_csv.py evidence/ex5-broken-C1.jsonl evidence/ex5-broken-C2.jsonl evidence/ex5-broken-C3.jsonl --out evidence/ex5-broken.csv
+Wrote 24 rows to evidence/ex5-broken.csv

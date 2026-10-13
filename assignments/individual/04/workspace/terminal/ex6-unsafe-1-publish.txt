@@ -1,0 +1,3 @@
+(.venv) $ python kafka/ex6_crash_commit.py publish --topic lab.ex6.unsafe2
+%3|1791901291.760|FAIL|rdkafka#producer-1| [thrd:localhost:19092/bootstrap]: localhost:19092/bootstrap: Connect to ipv6#[::1]:19092 failed: Connection refused (after 0ms in state CONNECT)
+{"timestamp": "2026-10-13T14:21:32.817451+00:00", "kind": "published", "event_id": "f4371f0d-273b-4dee-99f0-8ece5b6392ea", "topic": "lab.ex6.unsafe2", "partition": 0, "offset": 0}

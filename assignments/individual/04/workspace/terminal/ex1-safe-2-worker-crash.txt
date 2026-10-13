@@ -1,0 +1,6 @@
+(.venv) $ python rabbitmq/demo1_crash_ack.py worker --mode safe --run safe5 --crash-before-ack
+2026-10-13T14:38:16.904+00:00 READY queue=lab.failure.crash.safe.safe5; processes one delivery then exits
+2026-10-13T14:38:16.904+00:00 RECEIVED id=a9af4c81-27d4-4ecc-9663-0ff0d719915e tag=1 redelivered=False
+2026-10-13T14:38:16.910+00:00 DB COMMITTED: applied=True, business_effect_count=1
+2026-10-13T14:38:16.910+00:00 INTENTIONAL CRASH: database committed, ACK NOT SENT (exit code 99)
+[process exited with code 99]

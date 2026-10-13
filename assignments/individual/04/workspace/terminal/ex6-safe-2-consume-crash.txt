@@ -1,0 +1,7 @@
+(.venv) $ python kafka/ex6_crash_commit.py consume --topic lab.ex6.safe2 --group lab.ex6.safe2 --mode safe --crash-before-commit --log evidence/ex6-safe.jsonl
+%3|1791901312.869|FAIL|ex6-worker#consumer-1| [thrd:localhost:19092/1]: localhost:19092/1: Connect to ipv6#[::1]:19092 failed: Connection refused (after 0ms in state CONNECT)
+{"timestamp": "2026-10-13T14:21:55.988205+00:00", "kind": "assigned", "consumer": "ex6-worker", "group": "lab.ex6.safe2", "partitions": [0]}
+{"timestamp": "2026-10-13T14:21:56.092033+00:00", "kind": "received", "consumer": "ex6-worker", "group": "lab.ex6.safe2", "topic": "lab.ex6.safe2", "partition": 0, "offset": 0, "key": "order-123", "event_id": "f56bb138-fd19-4f8d-b74c-eb5dbded6659", "order_id": "order-123", "sequence": 1, "payload": {"action": "create_order"}}
+{"timestamp": "2026-10-13T14:21:56.107947+00:00", "kind": "db_committed", "applied": true, "business_effect_count": 1, "consumer": "ex6-worker", "group": "lab.ex6.safe2", "topic": "lab.ex6.safe2", "partition": 0, "offset": 0, "key": "order-123", "event_id": "f56bb138-fd19-4f8d-b74c-eb5dbded6659", "order_id": "order-123", "sequence": 1, "payload": {"action": "create_order"}}
+{"timestamp": "2026-10-13T14:21:56.108721+00:00", "kind": "intentional_crash", "reason": "DB committed, Kafka offset NOT committed"}
+[process exited with code 99]

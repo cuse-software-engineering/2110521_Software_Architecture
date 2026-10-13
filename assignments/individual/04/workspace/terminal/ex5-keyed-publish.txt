@@ -1,0 +1,12 @@
+(.venv) $ python kafka/ex5_ordering.py publish --topic lab.ex5.keyed2 --mode keyed --log evidence/ex5-keyed-publisher.jsonl
+%3|1791901262.841|FAIL|rdkafka#producer-1| [thrd:localhost:19092/1]: localhost:19092/1: Connect to ipv6#[::1]:19092 failed: Connection refused (after 0ms in state CONNECT)
+%3|1791901263.292|FAIL|rdkafka#producer-1| [thrd:localhost:19092/bootstrap]: localhost:19092/bootstrap: Connect to ipv6#[::1]:19092 failed: Connection refused (after 0ms in state CONNECT)
+{"timestamp": "2026-10-13T14:21:03.795484+00:00", "kind": "published", "event_id": "8b04576a-be1f-447e-bac1-0b19f84fb6f2", "topic": "lab.ex5.keyed2", "partition": 1, "offset": 0}
+{"timestamp": "2026-10-13T14:21:03.795650+00:00", "kind": "published", "event_id": "d8e2f376-a762-426c-8f0e-8b04f4621aa1", "topic": "lab.ex5.keyed2", "partition": 1, "offset": 1}
+{"timestamp": "2026-10-13T14:21:03.795725+00:00", "kind": "published", "event_id": "62acf200-6c44-4ae6-8d50-2c83bbed2ca6", "topic": "lab.ex5.keyed2", "partition": 1, "offset": 2}
+{"timestamp": "2026-10-13T14:21:03.797183+00:00", "kind": "published", "event_id": "41423ec6-fddb-4b51-835d-cf82d9492056", "topic": "lab.ex5.keyed2", "partition": 2, "offset": 0}
+{"timestamp": "2026-10-13T14:21:03.797656+00:00", "kind": "published", "event_id": "84726680-8afe-44ba-b896-90e887a94444", "topic": "lab.ex5.keyed2", "partition": 2, "offset": 1}
+{"timestamp": "2026-10-13T14:21:03.798010+00:00", "kind": "published", "event_id": "50600378-e7dd-45d2-b0d8-efa8e951802d", "topic": "lab.ex5.keyed2", "partition": 2, "offset": 2}
+{"timestamp": "2026-10-13T14:21:03.798354+00:00", "kind": "published", "event_id": "1e4ef024-880b-4b52-b88d-fa53d02645ce", "topic": "lab.ex5.keyed2", "partition": 0, "offset": 0}
+{"timestamp": "2026-10-13T14:21:03.798478+00:00", "kind": "published", "event_id": "cf43f468-e3b6-4e35-b81c-cbe10ffcecb0", "topic": "lab.ex5.keyed2", "partition": 0, "offset": 1}
+{"timestamp": "2026-10-13T14:21:03.798551+00:00", "kind": "published", "event_id": "29b99e8e-cb16-433e-9132-6866f1c6eeec", "topic": "lab.ex5.keyed2", "partition": 0, "offset": 2}

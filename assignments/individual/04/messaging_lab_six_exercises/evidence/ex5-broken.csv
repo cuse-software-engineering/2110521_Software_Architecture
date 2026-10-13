@@ -1,0 +1,25 @@
+consumer,event_id,group,key,kind,next_offset,offset,order_id,partition,partitions,payload,sequence,source_file,timestamp,topic,unique_completed
+C2,,lab.ex5.broken2,,assigned,,,,,[1],,,evidence/ex5-broken-C2.jsonl,2026-10-13T14:21:15.587035+00:00,,
+C3,,lab.ex5.broken2,,assigned,,,,,[2],,,evidence/ex5-broken-C3.jsonl,2026-10-13T14:21:15.587256+00:00,,
+C1,,lab.ex5.broken2,,assigned,,,,,[0],,,evidence/ex5-broken-C1.jsonl,2026-10-13T14:21:15.587930+00:00,,
+C1,41b1577f-8233-4e49-b23f-95cc2b738f45,lab.ex5.broken2,order-123,received,,0,order-123,0,,"{""action"": ""Created""}",1,evidence/ex5-broken-C1.jsonl,2026-10-13T14:21:24.384005+00:00,lab.ex5.broken2,
+C1,41b1577f-8233-4e49-b23f-95cc2b738f45,lab.ex5.broken2,order-123,started,,0,order-123,0,,"{""action"": ""Created""}",1,evidence/ex5-broken-C1.jsonl,2026-10-13T14:21:24.384767+00:00,lab.ex5.broken2,
+C3,784553f1-e90e-409e-aa66-842efb9c135b,lab.ex5.broken2,order-123,received,,0,order-123,2,,"{""action"": ""Cancelled""}",3,evidence/ex5-broken-C3.jsonl,2026-10-13T14:21:24.384830+00:00,lab.ex5.broken2,
+C3,784553f1-e90e-409e-aa66-842efb9c135b,lab.ex5.broken2,order-123,started,,0,order-123,2,,"{""action"": ""Cancelled""}",3,evidence/ex5-broken-C3.jsonl,2026-10-13T14:21:24.385700+00:00,lab.ex5.broken2,
+C2,8243b111-57c8-479f-a8d2-d88d74f5db1e,lab.ex5.broken2,order-123,received,,0,order-123,1,,"{""action"": ""Updated""}",2,evidence/ex5-broken-C2.jsonl,2026-10-13T14:21:24.385951+00:00,lab.ex5.broken2,
+C2,8243b111-57c8-479f-a8d2-d88d74f5db1e,lab.ex5.broken2,order-123,started,,0,order-123,1,,"{""action"": ""Updated""}",2,evidence/ex5-broken-C2.jsonl,2026-10-13T14:21:24.386088+00:00,lab.ex5.broken2,
+C2,8243b111-57c8-479f-a8d2-d88d74f5db1e,lab.ex5.broken2,order-123,completed,,0,order-123,1,,"{""action"": ""Updated""}",2,evidence/ex5-broken-C2.jsonl,2026-10-13T14:21:25.386275+00:00,lab.ex5.broken2,
+C2,,lab.ex5.broken2,,committed,1,,,1,,,,evidence/ex5-broken-C2.jsonl,2026-10-13T14:21:25.393809+00:00,,
+C3,784553f1-e90e-409e-aa66-842efb9c135b,lab.ex5.broken2,order-123,completed,,0,order-123,2,,"{""action"": ""Cancelled""}",3,evidence/ex5-broken-C3.jsonl,2026-10-13T14:21:26.385918+00:00,lab.ex5.broken2,
+C3,,lab.ex5.broken2,,committed,1,,,2,,,,evidence/ex5-broken-C3.jsonl,2026-10-13T14:21:26.393148+00:00,,
+C1,41b1577f-8233-4e49-b23f-95cc2b738f45,lab.ex5.broken2,order-123,completed,,0,order-123,0,,"{""action"": ""Created""}",1,evidence/ex5-broken-C1.jsonl,2026-10-13T14:21:29.385113+00:00,lab.ex5.broken2,
+C1,,lab.ex5.broken2,,committed,1,,,0,,,,evidence/ex5-broken-C1.jsonl,2026-10-13T14:21:29.394215+00:00,,
+C3,,,,interrupted,,,,,,,,evidence/ex5-broken-C3.jsonl,2026-10-13T14:21:31.394176+00:00,,
+C3,,lab.ex5.broken2,,revoked,,,,,[2],,,evidence/ex5-broken-C3.jsonl,2026-10-13T14:21:31.394433+00:00,,
+C2,,,,interrupted,,,,,,,,evidence/ex5-broken-C2.jsonl,2026-10-13T14:21:31.395242+00:00,,
+C1,,,,interrupted,,,,,,,,evidence/ex5-broken-C1.jsonl,2026-10-13T14:21:31.395879+00:00,,
+C1,,lab.ex5.broken2,,revoked,,,,,[0],,,evidence/ex5-broken-C1.jsonl,2026-10-13T14:21:31.396252+00:00,,
+C2,,lab.ex5.broken2,,revoked,,,,,[1],,,evidence/ex5-broken-C2.jsonl,2026-10-13T14:21:31.396375+00:00,,
+C3,,,,summary,,,,,,,,evidence/ex5-broken-C3.jsonl,2026-10-13T14:21:31.397011+00:00,,1
+C1,,,,summary,,,,,,,,evidence/ex5-broken-C1.jsonl,2026-10-13T14:21:31.401340+00:00,,1
+C2,,,,summary,,,,,,,,evidence/ex5-broken-C2.jsonl,2026-10-13T14:21:31.409855+00:00,,1

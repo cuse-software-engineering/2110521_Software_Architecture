@@ -1,0 +1,4 @@
+(.venv) $ python rabbitmq/demo3_completion_order.py publish --run order5
+2026-10-13T14:38:50.105+00:00 CONFIRMED id=f01305d0-5164-4f24-9379-cadfa6386ea9 payload={'task': 'A', 'seconds': 5, 'sequence': 1}
+2026-10-13T14:38:50.106+00:00 CONFIRMED id=5c6ab3a6-6d85-4c26-ae83-56e502261c59 payload={'task': 'B', 'seconds': 1, 'sequence': 2}
+2026-10-13T14:38:50.108+00:00 CONFIRMED id=7beeca2d-60fe-4e89-82f3-abec01552ff2 payload={'task': 'C', 'seconds': 2, 'sequence': 3}

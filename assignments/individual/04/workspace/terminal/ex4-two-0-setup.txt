@@ -1,0 +1,4 @@
+(.venv) $ python kafka/ex4_groups.py setup --topic lab.ex4.two2
+%3|1791901150.880|FAIL|rdkafka#producer-1| [thrd:localhost:19092/bootstrap]: localhost:19092/bootstrap: Connect to ipv6#[::1]:19092 failed: Connection refused (after 0ms in state CONNECT)
+%3|1791901150.952|FAIL|rdkafka#producer-1| [thrd:localhost:19092/1]: localhost:19092/1: Connect to ipv6#[::1]:19092 failed: Connection refused (after 0ms in state CONNECT)
+{"timestamp": "2026-10-13T14:19:11.006643+00:00", "kind": "topic_ready", "topic": "lab.ex4.two2", "partitions": 4}

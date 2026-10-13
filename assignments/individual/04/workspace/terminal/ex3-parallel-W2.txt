@@ -1,0 +1,6 @@
+(.venv) $ python rabbitmq/demo3_completion_order.py worker --run order5 --name W2
+2026-10-13T14:38:40.556+00:00 READY W2 queue=lab.failure.order.order5; Ctrl+C to stop
+2026-10-13T14:38:50.107+00:00 W2 START C delay=2s redelivered=False
+2026-10-13T14:38:52.109+00:00 W2 DONE C elapsed=2.00s
+2026-10-13T14:38:55.932+00:00 Stopping consumer
+^C

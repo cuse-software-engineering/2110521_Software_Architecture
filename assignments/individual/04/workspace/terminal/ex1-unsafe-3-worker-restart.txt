@@ -1,0 +1,5 @@
+(.venv) $ python rabbitmq/demo1_crash_ack.py worker --mode unsafe --run unsafe5
+2026-10-13T14:38:08.189+00:00 READY queue=lab.failure.crash.unsafe.unsafe5; processes one delivery then exits
+2026-10-13T14:38:08.189+00:00 RECEIVED id=ee756d9b-8b89-4c13-9825-88f4cd1ea838 tag=1 redelivered=True
+2026-10-13T14:38:08.194+00:00 DB COMMITTED: applied=True, business_effect_count=2
+2026-10-13T14:38:08.194+00:00 ACK SENT

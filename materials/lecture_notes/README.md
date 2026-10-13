@@ -10,6 +10,9 @@ One folder per lecture. Each folder holds the original PDF, a Markdown transcrip
 | [microservice-patterns/](microservice-patterns/) | Introduction to Microservice Architecture (Richardson, Microservices Patterns ch. 1) | Pittipol Kantavat | 60 | [Intro_to_Microservice_Patterns-360766-17550117624043.md](microservice-patterns/md/Intro_to_Microservice_Patterns-360766-17550117624043.md) |
 | [rest/](rest/) | REST API | Nuengwong Tuaycharoen | 54 | [REST_2023-336264-16934100818671.md](rest/md/REST_2023-336264-16934100818671.md) |
 | [grpc/](grpc/) | gRPC | Nuengwong Tuaycharoen | 73 | [gRPC_2026-336264-17888710746387.md](grpc/md/gRPC_2026-336264-17888710746387.md) |
+| [interprocess-communication/](interprocess-communication/) | Interprocess Communication: RPI, service discovery and messaging (Richardson, Microservices Patterns ch. 3) | Wiwat Vatanawood, Duangdao Wichadakul, Nuengwong Tuaycharoen, Pittipol Kantavat | 77 | [Interprocess_Communication_ธีมเดิม_ล่าสุด-13578-17913032229622.md](interprocess-communication/md/Interprocess_Communication_ธีมเดิม_ล่าสุด-13578-17913032229622.md) |
+| [rabbitmq-practice/](rabbitmq-practice/) | Messaging with RabbitMQ (hands-on: hello world, work queues, pub/sub, routing, topics with Python/pika) | Duangdao Wichadakul | 28 | [RabbitMQ_Practice_2026_1-13578-17913034815264.md](rabbitmq-practice/md/RabbitMQ_Practice_2026_1-13578-17913034815264.md) |
+| [external-api-pattern/](external-api-pattern/) | External API Pattern: API gateway, BFF, gateway implementation (Richardson, Microservices Patterns ch. 8) | Pittipol Kantavat and course team | 67 | [9_External_API_Pattern_3_11_2020-5208-17917891450627.md](external-api-pattern/md/9_External_API_Pattern_3_11_2020-5208-17917891450627.md) |
 
 ## Adding a new deck
 

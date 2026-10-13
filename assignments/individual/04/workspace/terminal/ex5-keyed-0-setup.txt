@@ -1,0 +1,5 @@
+(.venv) $ python kafka/ex5_ordering.py setup --topic lab.ex5.keyed2
+%3|1791901245.132|FAIL|rdkafka#producer-1| [thrd:localhost:19092/bootstrap]: localhost:19092/bootstrap: Connect to ipv6#[::1]:19092 failed: Connection refused (after 0ms in state CONNECT)
+%3|1791901245.236|FAIL|rdkafka#producer-1| [thrd:localhost:19092/1]: localhost:19092/1: Connect to ipv6#[::1]:19092 failed: Connection refused (after 0ms in state CONNECT)
+%3|1791901245.288|FAIL|rdkafka#producer-1| [thrd:localhost:19092/bootstrap]: localhost:19092/bootstrap: Connect to ipv6#[::1]:19092 failed: Connection refused (after 0ms in state CONNECT)
+{"timestamp": "2026-10-13T14:20:45.380107+00:00", "kind": "topic_ready", "topic": "lab.ex5.keyed2", "partitions": 3}

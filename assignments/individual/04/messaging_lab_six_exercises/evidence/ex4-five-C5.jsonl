@@ -1,0 +1,4 @@
+{"timestamp": "2026-10-13T14:20:02.654524+00:00", "kind": "assigned", "consumer": "C5", "group": "lab.ex4.five2", "partitions": []}
+{"timestamp": "2026-10-13T14:20:14.418992+00:00", "kind": "interrupted", "consumer": "C5"}
+{"timestamp": "2026-10-13T14:20:14.419472+00:00", "kind": "revoked", "consumer": "C5", "group": "lab.ex4.five2", "partitions": []}
+{"timestamp": "2026-10-13T14:20:14.426938+00:00", "kind": "summary", "consumer": "C5", "unique_completed": 0}

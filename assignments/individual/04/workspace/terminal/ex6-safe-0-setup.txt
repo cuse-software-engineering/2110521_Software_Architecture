@@ -1,0 +1,2 @@
+(.venv) $ python kafka/ex6_crash_commit.py setup --topic lab.ex6.safe2
+{"timestamp": "2026-10-13T14:21:51.610561+00:00", "kind": "topic_ready", "topic": "lab.ex6.safe2", "partitions": 1}

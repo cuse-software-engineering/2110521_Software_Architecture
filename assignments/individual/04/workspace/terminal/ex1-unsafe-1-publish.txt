@@ -1,0 +1,2 @@
+(.venv) $ python rabbitmq/demo1_crash_ack.py publish --mode unsafe --run unsafe5
+2026-10-13T14:37:58.188+00:00 CONFIRMED id=ee756d9b-8b89-4c13-9825-88f4cd1ea838 payload={'action': 'create_order'}

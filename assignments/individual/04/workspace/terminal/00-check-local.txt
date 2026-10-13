@@ -1,0 +1,8 @@
+(.venv) $ python check_local.py
+PASS Python syntax
+PASS effect/deduplication/rollback: demo1_crash_ack.py
+PASS effect/deduplication/rollback: effects.py
+PASS seven command-line entry points
+PASS commit helper error handling
+PASS keyed and deliberately broken event plans
+Offline checks passed. Live broker integration is NOT tested here.

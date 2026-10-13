@@ -1,0 +1,6 @@
+(.venv) $ python rabbitmq/demo2_late_subscriber.py durable --run fanout5
+2026-10-13T14:38:28.618+00:00 READY durable queue=lab.failure.fanout.fanout5.saved; Ctrl+C to stop
+2026-10-13T14:38:28.618+00:00 DURABLE RECEIVED id=7f036349-039f-46a9-a3c2-bfb898546490 body={"event_id": "7f036349-039f-46a9-a3c2-bfb898546490", "order_id": "order-demo", "sequence": 1, "payload": {"text": "BEFORE"}}
+2026-10-13T14:38:35.281+00:00 DURABLE RECEIVED id=fbbacbbf-1274-44e0-89f1-b4f049a6e167 body={"event_id": "fbbacbbf-1274-44e0-89f1-b4f049a6e167", "order_id": "order-demo", "sequence": 1, "payload": {"text": "AFTER"}}
+2026-10-13T14:38:36.296+00:00 Stopping consumer
+^C

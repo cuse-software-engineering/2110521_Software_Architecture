@@ -1,0 +1,2 @@
+(.venv) $ python rabbitmq/demo2_late_subscriber.py setup --run fanout5
+2026-10-13T14:38:22.525+00:00 SETUP: durable queue lab.failure.fanout.fanout5.saved exists and is bound; no consumer yet

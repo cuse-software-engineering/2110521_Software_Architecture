@@ -1,0 +1,8 @@
+{"timestamp": "2026-10-13T14:21:15.587035+00:00", "kind": "assigned", "consumer": "C2", "group": "lab.ex5.broken2", "partitions": [1]}
+{"timestamp": "2026-10-13T14:21:24.385951+00:00", "kind": "received", "consumer": "C2", "group": "lab.ex5.broken2", "topic": "lab.ex5.broken2", "partition": 1, "offset": 0, "key": "order-123", "event_id": "8243b111-57c8-479f-a8d2-d88d74f5db1e", "order_id": "order-123", "sequence": 2, "payload": {"action": "Updated"}}
+{"timestamp": "2026-10-13T14:21:24.386088+00:00", "kind": "started", "consumer": "C2", "group": "lab.ex5.broken2", "topic": "lab.ex5.broken2", "partition": 1, "offset": 0, "key": "order-123", "event_id": "8243b111-57c8-479f-a8d2-d88d74f5db1e", "order_id": "order-123", "sequence": 2, "payload": {"action": "Updated"}}
+{"timestamp": "2026-10-13T14:21:25.386275+00:00", "kind": "completed", "consumer": "C2", "group": "lab.ex5.broken2", "topic": "lab.ex5.broken2", "partition": 1, "offset": 0, "key": "order-123", "event_id": "8243b111-57c8-479f-a8d2-d88d74f5db1e", "order_id": "order-123", "sequence": 2, "payload": {"action": "Updated"}}
+{"timestamp": "2026-10-13T14:21:25.393809+00:00", "kind": "committed", "consumer": "C2", "group": "lab.ex5.broken2", "partition": 1, "next_offset": 1}
+{"timestamp": "2026-10-13T14:21:31.395242+00:00", "kind": "interrupted", "consumer": "C2"}
+{"timestamp": "2026-10-13T14:21:31.396375+00:00", "kind": "revoked", "consumer": "C2", "group": "lab.ex5.broken2", "partitions": [1]}
+{"timestamp": "2026-10-13T14:21:31.409855+00:00", "kind": "summary", "consumer": "C2", "unique_completed": 1}

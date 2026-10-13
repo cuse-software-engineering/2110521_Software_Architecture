@@ -1,0 +1,8 @@
+(.venv) $ python kafka/ex4_groups.py consume --topic lab.ex4.five2 --group lab.ex4.five2 --name C5 --seconds 300 --log evidence/ex4-five-C5.jsonl
+%3|1791901196.468|FAIL|C5#consumer-1| [thrd:localhost:19092/1]: localhost:19092/1: Connect to ipv6#[::1]:19092 failed: Connection refused (after 0ms in state CONNECT)
+%3|1791901196.574|FAIL|C5#consumer-1| [thrd:GroupCoordinator]: GroupCoordinator: localhost:19092: Connect to ipv6#[::1]:19092 failed: Connection refused (after 0ms in state CONNECT)
+{"timestamp": "2026-10-13T14:20:02.654524+00:00", "kind": "assigned", "consumer": "C5", "group": "lab.ex4.five2", "partitions": []}
+{"timestamp": "2026-10-13T14:20:14.418992+00:00", "kind": "interrupted", "consumer": "C5"}
+{"timestamp": "2026-10-13T14:20:14.419472+00:00", "kind": "revoked", "consumer": "C5", "group": "lab.ex4.five2", "partitions": []}
+{"timestamp": "2026-10-13T14:20:14.426938+00:00", "kind": "summary", "consumer": "C5", "unique_completed": 0}
+^C

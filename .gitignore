@@ -22,3 +22,6 @@ assignments/group/workspace/report/build/
 # Python virtualenv and SQLite scratch databases of the messaging lab (assignments/individual/04)
 .venv/
 *.sqlite3
+
+# intermediate HTML of the messaging-lab report (regenerate with workspace/build_report.py)
+assignments/individual/04/workspace/report.html

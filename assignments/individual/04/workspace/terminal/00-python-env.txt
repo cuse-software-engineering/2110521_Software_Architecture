@@ -1,0 +1,4 @@
+(.venv) $ python --version && pip list | grep -E "pika|confluent"
+Python 3.13.8
+confluent-kafka 2.11.1
+pika            1.3.2

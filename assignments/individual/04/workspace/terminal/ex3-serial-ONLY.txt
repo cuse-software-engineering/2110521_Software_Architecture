@@ -1,0 +1,10 @@
+(.venv) $ python rabbitmq/demo3_completion_order.py worker --run serial5 --name ONLY
+2026-10-13T14:38:56.152+00:00 READY ONLY queue=lab.failure.order.serial5; Ctrl+C to stop
+2026-10-13T14:38:56.352+00:00 ONLY START A delay=5s redelivered=False
+2026-10-13T14:39:01.359+00:00 ONLY DONE A elapsed=5.01s
+2026-10-13T14:39:01.361+00:00 ONLY START B delay=1s redelivered=False
+2026-10-13T14:39:02.362+00:00 ONLY DONE B elapsed=1.00s
+2026-10-13T14:39:02.363+00:00 ONLY START C delay=2s redelivered=False
+2026-10-13T14:39:04.366+00:00 ONLY DONE C elapsed=2.00s
+2026-10-13T14:39:04.905+00:00 Stopping consumer
+^C

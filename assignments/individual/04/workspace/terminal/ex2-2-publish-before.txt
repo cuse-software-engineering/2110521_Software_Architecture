@@ -1,0 +1,2 @@
+(.venv) $ python rabbitmq/demo2_late_subscriber.py publish --run fanout5 --message BEFORE
+2026-10-13T14:38:22.666+00:00 CONFIRMED id=7f036349-039f-46a9-a3c2-bfb898546490 payload={'text': 'BEFORE'}

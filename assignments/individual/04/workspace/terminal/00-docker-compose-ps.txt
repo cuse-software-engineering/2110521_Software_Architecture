@@ -1,0 +1,4 @@
+(.venv) $ docker compose ps
+NAME                           IMAGE                       COMMAND                  SERVICE    CREATED             STATUS                       PORTS
+messaging-six-lab-kafka-1      apache/kafka:4.1.2          "/__cacert_entrypoin…"   kafka      About an hour ago   Up About an hour (healthy)   127.0.0.1:19092->9092/tcp
+messaging-six-lab-rabbitmq-1   rabbitmq:4.3.6-management   "docker-entrypoint.s…"   rabbitmq   About an hour ago   Up About an hour (healthy)   4369/tcp, 5671/tcp, 15671/tcp, 15691-15692/tcp, 25672/tcp, 127.0.0.1:5673->5672/tcp, 127.0.0.1:15673->15672/tcp
