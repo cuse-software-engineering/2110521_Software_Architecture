@@ -1,0 +1,6 @@
+$ curl -s http://localhost:8001/routes | python3 -c "import sys,json; [print(f\"{r['name']:12} paths={r['paths']} protocols={r['protocols']} strip_path={r['strip_path']}\") for r in json.load(sys.stdin)['data']]"
+rest-route   paths=['/rest'] protocols=['http', 'https'] strip_path=True
+lb-route     paths=['/lb'] protocols=['http', 'https'] strip_path=True
+http1-route  paths=['/http1'] protocols=['http', 'https'] strip_path=True
+grpc-route   paths=['/helloworld.Greeter'] protocols=['grpc', 'grpcs'] strip_path=False
+[exit 0]

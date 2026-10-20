@@ -1,0 +1,3 @@
+$ docker run -d -p 1337:1337 --network=kong-net -e DB_ADAPTER=postgres -e DB_HOST=kong-database -e DB_URI=postgresql://kong:kong@kong-database:5432/konga -e KONGA_HOOK_TIMEOUT=120000 -e NODE_ENV=production --name konga pantsel/konga
+a0ad70d291c46c08128914dc2d436e1a6d37ec6bef9a1da1abb00e0540cb347a
+[exit 0]

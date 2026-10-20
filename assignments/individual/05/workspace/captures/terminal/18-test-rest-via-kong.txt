@@ -1,0 +1,4 @@
+$ curl -s 'http://10.0.10.51:8000/rest/account?username=nraboy'; echo; curl -s -X POST http://10.0.10.51:8000/rest/account -H 'Content-Type: application/json' -d '{"username":"watayut","password":"secret","twitter":"@watayut"}'; echo
+{"username":"nraboy","password":"1234","twitter":"@nraboy"}
+{"username":"watayut","password":"secret","twitter":"@watayut"}
+[exit 0]

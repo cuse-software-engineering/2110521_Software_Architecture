@@ -1,0 +1,6 @@
+$ docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'
+NAMES           IMAGE           STATUS                             PORTS
+konga           pantsel/konga   Up 15 seconds                      0.0.0.0:1337->1337/tcp, [::]:1337->1337/tcp
+kong            kong:2.8        Up 38 seconds (health: starting)   0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp, 127.0.0.1:8001->8001/tcp, 127.0.0.1:8444->8444/tcp, 0.0.0.0:8443->8443/tcp, [::]:8443->8443/tcp, 127.0.0.1:9080-9081->9080-9081/tcp
+kong-database   postgres:9.6    Up 4 minutes                       0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+[exit 0]

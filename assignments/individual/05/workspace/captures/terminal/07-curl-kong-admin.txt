@@ -1,0 +1,11 @@
+$ curl -s -i http://localhost:8001/ | head -c 700
+HTTP/1.1 200 OK
+Date: Tue, 20 Oct 2026 15:36:35 GMT
+Content-Type: application/json; charset=utf-8
+Connection: keep-alive
+Access-Control-Allow-Origin: *
+Content-Length: 11139
+X-Kong-Admin-Latency: 0
+Server: kong/2.8.5
+
+{"tagline":"Welcome to kong","hostname":"9ef022dfbbfe","lua_version":"LuaJIT 2.1.0-beta3","version":"2.8.5","configuration":{"admin_access_log":"/dev/stdout","admin_error_log":"/dev/stderr","status_access_log":"off","nginx_main_daemon":"off","log_level":"notice","nginx_main_worker_processes":"auto","admin_listeners":[{"ip":"0.0.0.0","port":8001,"http2":false,"proxy_protocol":false,"deferred":false,"reuseport":false,"ssl":false,"backlog=%d+":false,"bind":false,"listener[exit 0]

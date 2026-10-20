@@ -1,0 +1,9 @@
+$ curl -s -i 'http://10.0.10.51:8000/rest/account?username=nraboy' | head -1; curl -s 'http://10.0.10.51:8000/rest/account?username=nraboy'; echo; echo '--- with Basic Auth bob:bob1234 ---'; curl -s -i -u bob:bob1234 'http://10.0.10.51:8000/rest/account?username=nraboy' | head -1; curl -s -u bob:bob1234 'http://10.0.10.51:8000/rest/account?username=nraboy'; echo
+HTTP/1.1 401 Unauthorized
+{
+  "message":"Unauthorized"
+}
+--- with Basic Auth bob:bob1234 ---
+HTTP/1.1 200 OK
+{"username":"nraboy","password":"1234","twitter":"@nraboy"}
+[exit 0]

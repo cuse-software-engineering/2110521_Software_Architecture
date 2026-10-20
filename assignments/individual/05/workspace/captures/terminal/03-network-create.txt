@@ -1,0 +1,3 @@
+$ docker network create kong-net
+4be2d4435d3725222eff98aa7d17faf1291c2b8afedd8566e18a28d41dccaed9
+[exit 0]

@@ -1,0 +1,4 @@
+$ curl -s http://localhost:8001/upstreams/http-upstream/targets | python3 -c "import sys,json; [print(t['target'], 'weight', t['weight']) for t in json.load(sys.stdin)['data']]"
+10.0.10.51:8082 weight 100
+10.0.10.51:8081 weight 100
+[exit 0]

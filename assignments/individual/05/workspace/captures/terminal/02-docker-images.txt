@@ -1,0 +1,5 @@
+$ docker images | grep -E 'REPOSITORY|postgres|kong|konga'
+kong:2.8               34bbeaf6ee4c        151MB         36.5MB        
+pantsel/konga:latest   c8172b75607d        776MB          146MB        
+postgres:9.6           caddd35b05cd        294MB         73.6MB        
+[exit 0]

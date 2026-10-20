@@ -1,0 +1,5 @@
+$ docker -v && node -v && npm -v
+Docker version 29.8.0-1, build 88096ef00576baf72a9cb45caa45c0544c40e0a7
+v24.21.0
+11.19.0
+[exit 0]

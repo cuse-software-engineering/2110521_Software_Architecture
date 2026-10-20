@@ -1,0 +1,11 @@
+$ curl -s -i http://10.0.10.51:8000/http1 | head -1; curl -s http://10.0.10.51:8000/http1; echo; echo '--- with apikey header ---'; curl -s -i -H 'apikey: bob-secret-key-123' http://10.0.10.51:8000/http1 | head -1; curl -s -H 'apikey: bob-secret-key-123' http://10.0.10.51:8000/http1; echo '--- with apikey query ---'; curl -s 'http://10.0.10.51:8000/http1?apikey=bob-secret-key-123'
+HTTP/1.1 401 Unauthorized
+{
+  "message":"No API key found in request"
+}
+--- with apikey header ---
+HTTP/1.1 200 OK
+Hello World from Service1
+--- with apikey query ---
+Hello World from Service1
+[exit 0]

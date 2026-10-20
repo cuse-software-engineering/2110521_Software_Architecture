@@ -1,0 +1,5 @@
+$ curl -s http://10.0.10.51:8081/; curl -s http://10.0.10.51:8082/; curl -s 'http://10.0.10.51:3000/account?username=nraboy'; echo
+Hello World from Service1
+Hello World from Service2
+{"username":"nraboy","password":"1234","twitter":"@nraboy"}
+[exit 0]

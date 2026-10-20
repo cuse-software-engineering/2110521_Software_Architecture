@@ -1,0 +1,3 @@
+$ docker run -d --name kong-database --network=kong-net -p 5432:5432 -e POSTGRES_USER=kong -e POSTGRES_DB=kong -e POSTGRES_PASSWORD=kong postgres:9.6
+a78fe6d47fae5ef4cc9e313061324ad0ef5affc2b127af7176ebad080fd4d55f
+[exit 0]

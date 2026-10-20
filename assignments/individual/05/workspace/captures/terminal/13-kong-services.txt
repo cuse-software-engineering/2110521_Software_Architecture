@@ -1,0 +1,6 @@
+$ curl -s http://localhost:8001/services | python3 -c "import sys,json; [print(f\"{s['name']:14} {s['protocol']}://{s['host']}:{s['port']}\") for s in json.load(sys.stdin)['data']]"
+httpservice1   http://10.0.10.51:8081
+restservice    http://10.0.10.51:3000
+lbservice      http://http-upstream:80
+grpcservice    grpc://10.0.10.51:50051
+[exit 0]

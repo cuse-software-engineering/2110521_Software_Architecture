@@ -1,0 +1,7 @@
+$ curl -s http://localhost:8001/plugins | python3 -c "
+import sys,json,urllib.request
+svc={s['id']:s['name'] for s in json.load(urllib.request.urlopen('http://localhost:8001/services'))['data']}
+[print(p['name'], '-> service', svc.get(p['service']['id'])) for p in json.load(sys.stdin)['data']]"
+basic-auth -> service restservice
+key-auth -> service httpservice1
+[exit 0]

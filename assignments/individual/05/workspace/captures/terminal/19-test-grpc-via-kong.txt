@@ -1,0 +1,5 @@
+$ cd SimplegRPC/node && grpcurl -plaintext -import-path . -proto helloworld.proto -d '{"name":"Watayut"}' localhost:9080 helloworld.Greeter/SayHello
+{
+  "message": "Hello Watayut"
+}
+[exit 0]

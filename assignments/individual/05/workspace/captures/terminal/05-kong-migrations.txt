@@ -1,0 +1,63 @@
+$ docker run --rm --network=kong-net -e KONG_DATABASE=postgres -e KONG_PG_HOST=kong-database -e KONG_PG_PASSWORD=kong kong:2.8 kong migrations bootstrap
+2026/10/20 15:35:36 [warn] ulimit is currently set to "1024". For better performance set it to at least "4096" using "ulimit -n"
+Bootstrapping database...
+migrating core on database 'kong'...
+core migrated up to: 000_base (executed)
+core migrated up to: 003_100_to_110 (executed)
+core migrated up to: 004_110_to_120 (executed)
+core migrated up to: 005_120_to_130 (executed)
+core migrated up to: 006_130_to_140 (executed)
+core migrated up to: 007_140_to_150 (executed)
+core migrated up to: 008_150_to_200 (executed)
+core migrated up to: 009_200_to_210 (executed)
+core migrated up to: 010_210_to_211 (executed)
+core migrated up to: 011_212_to_213 (executed)
+core migrated up to: 012_213_to_220 (executed)
+core migrated up to: 013_220_to_230 (executed)
+core migrated up to: 014_230_to_270 (executed)
+core migrated up to: 015_270_to_280 (executed)
+migrating acl on database 'kong'...
+acl migrated up to: 000_base_acl (executed)
+acl migrated up to: 002_130_to_140 (executed)
+acl migrated up to: 003_200_to_210 (executed)
+acl migrated up to: 004_212_to_213 (executed)
+migrating acme on database 'kong'...
+acme migrated up to: 000_base_acme (executed)
+migrating basic-auth on database 'kong'...
+basic-auth migrated up to: 000_base_basic_auth (executed)
+basic-auth migrated up to: 002_130_to_140 (executed)
+basic-auth migrated up to: 003_200_to_210 (executed)
+migrating bot-detection on database 'kong'...
+bot-detection migrated up to: 001_200_to_210 (executed)
+migrating hmac-auth on database 'kong'...
+hmac-auth migrated up to: 000_base_hmac_auth (executed)
+hmac-auth migrated up to: 002_130_to_140 (executed)
+hmac-auth migrated up to: 003_200_to_210 (executed)
+migrating ip-restriction on database 'kong'...
+ip-restriction migrated up to: 001_200_to_210 (executed)
+migrating jwt on database 'kong'...
+jwt migrated up to: 000_base_jwt (executed)
+jwt migrated up to: 002_130_to_140 (executed)
+jwt migrated up to: 003_200_to_210 (executed)
+migrating key-auth on database 'kong'...
+key-auth migrated up to: 000_base_key_auth (executed)
+key-auth migrated up to: 002_130_to_140 (executed)
+key-auth migrated up to: 003_200_to_210 (executed)
+migrating oauth2 on database 'kong'...
+oauth2 migrated up to: 000_base_oauth2 (executed)
+oauth2 migrated up to: 003_130_to_140 (executed)
+oauth2 migrated up to: 004_200_to_210 (executed)
+oauth2 migrated up to: 005_210_to_211 (executed)
+migrating rate-limiting on database 'kong'...
+rate-limiting migrated up to: 000_base_rate_limiting (executed)
+rate-limiting migrated up to: 003_10_to_112 (executed)
+rate-limiting migrated up to: 004_200_to_210 (executed)
+migrating response-ratelimiting on database 'kong'...
+response-ratelimiting migrated up to: 000_base_response_rate_limiting (executed)
+migrating session on database 'kong'...
+session migrated up to: 000_base_session (executed)
+session migrated up to: 001_add_ttl_index (executed)
+43 migrations processed
+43 executed
+Database is up-to-date
+[exit 0]

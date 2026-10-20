@@ -1,0 +1,7 @@
+[WED] section วันพุธ
+
+โจทย์ Assignment มีดังนี้
+
+ติดตั้งและใช้งาน KONG เป็น API Gateway เพื่อไปใช้กับ REST/gRPC Services ในโจทย์ที่ผ่านมา และทำ
+การ Capture หน้าจอแสดง services และ routes ที่ใช้ (กรณีที่ Services อยู่ที่ localhost ให้ใช้ ip address
+ของตนแทน โดยตรวจดู ip address ได้ใช้คำสั่ง ipconfig ที่ cmd window)
