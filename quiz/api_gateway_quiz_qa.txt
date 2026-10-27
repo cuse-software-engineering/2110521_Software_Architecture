@@ -1,0 +1,74 @@
+API Gateway Quiz - Q&A Summary
+================================
+
+Q1. Which one is NOT the place we implement the authentication function?
+    a) Explicitly implement the edge function services
+    b) API gateway
+    c) At the backend Microservices
+    d) Client-side app
+A1. d) Client-side app
+    (Authentication is done at the edge / API gateway or backend services, never trusted to the client.)
+
+Q2. Which one is NOT a drawback of using API gateway for external API pattern?
+    a) Encapsulation of an internal structure of the application might be violated
+    b) The client development teams will have additional modules under their control.
+    c) A risk that the API gateway becomes a development bottleneck.
+    d) A highly available component that must be developed, deployed, and managed.
+A2. a) Encapsulation of an internal structure of the application might be violated
+    (Encapsulating the internal structure is actually the main benefit of an API gateway.)
+
+Q3. Which one is NOT supported by KONG API gateway?
+    a) API composition
+    b) Authentication
+    c) Request Logging
+    d) Routing mapping
+A3. a) API composition
+    (Kong supports routing, authentication, and request logging via plugins, but does not aggregate responses from multiple services.)
+
+Q4. What one is NOT the problem for the client app outside firewall to connect to microservices?
+    a) Higher Latency
+    b) Lower bandwidth internet
+    c) Single API request
+    d) Unstable API risk
+A4. c) Single API request
+    (A single request is the goal of using a gateway; the problems are many round trips over high-latency, low-bandwidth internet and unstable service APIs.)
+
+Q5. Which one is NOT an API gateway responsibility?
+    a) Protocol translation
+    b) Request routing mapping
+    c) Message broking
+    d) API composition
+A5. c) Message broking
+    (Brokering messages between services is the job of a message broker, not the gateway.)
+
+Q6. Which one relates to the external API ownership model that the client teams own their API module layers and common layers?
+    a) Backends for frontends pattern
+    b) API composition pattern
+    c) Web API pattern
+    d) API gateway pattern
+A6. a) Backends for frontends pattern
+    (Each client team owns its own API module / gateway, with a shared common layer for cross-cutting concerns.)
+
+Q7. In designing an API gateway, which option is INCORRECT about using synchronous vs. asynchronous I/O?
+    a) A synchronous I/O API gateway is heavyweight because a number of concurrent threads will be created.
+    b) In asynchronous I/O API gateway, the single loop event thread is still blocked until the event handler finishes its job.
+    c) The drawback of asynchronous I/O is that the callback-based programming model is much more complex.
+    d) Designing and implementing a synchronous I/O is more straightforward than an asynchronous I/O.
+A7. b) In asynchronous I/O API gateway, the single loop event thread is still blocked until the event handler finishes its job.
+    (The event loop is non-blocking; it registers a callback and continues processing other events.)
+
+Q8. Which one effectively helps the API gateway be more reliable?
+    a) Avoid implement edge functions in the gateway
+    b) Most of them do not implement HTTP method-based routing.
+    c) Run multiple instance of gateway behind a load balancer
+    d) Use backends for frontend pattern to separate the gateways
+A8. c) Run multiple instance of gateway behind a load balancer
+    (Redundancy provides high availability; if one instance fails, traffic is routed to the others.)
+
+Q9. What is NOT a duty of the Edge function?
+    a) Metrics collection
+    b) Rate limiting
+    c) Data aggregation
+    d) Caching
+A9. c) Data aggregation
+    (That is API composition. Edge functions cover authentication, authorization, rate limiting, caching, metrics collection, and request logging.)

@@ -1,0 +1,126 @@
+Which one does not relate to REST?
+
+Pick a choice:
+ The most popular REST IDL is the Open API Specification.
+ Often in the form of an XML document or JSON object
+ Uses the HTTP verbs (method) for manipulating resources.
+ Binary messages in the Protocol Buffers format using HTTP/2
+1 point
+2
+Which one is not a characteristic of the invocation-based IPC mechanism?
+
+Pick a choice:
+ Clients may block waiting for a response.
+ A client may send requests to many services in a command.
+ The client assumes that the response will arrive in a timely fashion.
+ A client sends a request and service sends back a response.
+1 point
+3
+Which one is incorrect about the Circuit breaker pattern?
+
+Pick a choice:
+ Relating to design your services to prevent partial failures.
+ Included in the five groups of communication patterns under Discovery topic.
+ We need to decide how your services should recover from an unresponsive remote service.
+ Developing Robust RPI Proxies are needed.
+1 point
+4
+Which one is not a benefit of using gRPC?
+
+Pick a choice:
+ Appropriate for an API with a rich set of update operations.
+ Takes less work for JavaScript clients comparison to REST/JSON-based APIs
+ Bidirectional streaming enables both RPI and messaging styles of communication.
+ Enables interoperability between clients and services written in a wide range of languages.
+1 point
+5
+If we would like our kitchen microservices to cook for specific food types, which kind of queue that we can use in RabbitMQ?
+
+Pick a choice:
+ Queue with with exchange type is direct with the use of wildcard keys
+ Queue with with exchange type is headers with the use of wildcard keys
+ Queue with with exchange type is direct with the use of routing keys
+ Queue with exchange type is fanout
+1 point
+6
+Which one in these following options is not asynchronous interaction style?
+
+Pick a choice:
+ Request/response
+ Publish/subscribe
+ One-way notifications
+ Publish/async responses
+1 point
+7
+If all workers are inteterested in the same thing, which kind of queue that we SHOULD use?
+
+
+Pick a choice:
+ Queue with echange type is topic
+ Worker queue
+ Queue with exchange type is fanout
+ Queue with exchange type is direct
+1 point
+8
+Which one in these following options is not synchronous communication mechanisms?
+
+Pick a choice:
+ AMQP
+ HTTP
+ gRPC
+ REST
+1 point
+9
+Why fair-dispatching is introduced in RabbitMQ?
+
+Pick a choice:
+ Different consumers may work on different speed.
+ Producer may produce too much messages
+ We need work queue that works as round-robin
+ Several producers may compete to produce the messages
+1 point
+10
+Which issue in the following options is not necessary for an Asynchronous messaging pattern?
+
+Pick a choice:
+ Which type will be used between a point-to-point channel or a publish-subscribe channel?
+ How to design the Circuit breaker pattern when a service is not respond?
+ Which is better between Brokerless vs broker-based architectures?
+ What kinds of messages will be used?
+1 point
+11
+What is not a characteristic of Brokerless architecture in an Asynchronous messaging pattern?
+
+Pick a choice:
+ Higher network traffic and latency comparison to Broker-based architecture.
+ Services must use one of the discovery mechanisms.
+ Availability is reduced comparison to Broker-based architecture.
+ Higher operational complexity comparison to Broker-based architecture.
+1 point
+12
+Which kind of applications that you may decide to use RabbitMQ over Kafka and WHY? Please give an application as the example.
+
+Compose an answer
+
+1 point
+13
+From this command,
+
+docker run -d --name some-rabbit -p 5672:5672 -p 8080:15672 rabbitmq:3
+
+Which choic is INCORRECT?
+
+Pick a choice:
+ The container name is rabbitmq:3
+ 8080 is public port to access the rabbitmq management
+ We start RabbitMQ with its default ports
+ We are starting RabbitMQ as a detached mode
+1 point
+14
+What is INCORRECT about RabbitMQ?
+
+Pick a choice:
+ RabbitMQ queue types enable the flexibility of message handing
+ RabbitMQ is a message broker
+ RabbitMQ's based protocol is AMQP
+ RabbitMQ supports the replay messages
