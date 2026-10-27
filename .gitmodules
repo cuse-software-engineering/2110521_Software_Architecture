@@ -1,3 +1,6 @@
 [submodule "assignments/group/code"]
 	path = assignments/group/code
 	url = https://github.com/cuse-software-engineering/SEATS
+[submodule "assignments/individual/06/swarch-ai4swarch"]
+	path = assignments/individual/06/swarch-ai4swarch
+	url = https://github.com/Watayut/swarch-ai4swarch.git

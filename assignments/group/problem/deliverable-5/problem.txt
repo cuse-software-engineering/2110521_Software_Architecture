@@ -1,0 +1,4 @@
+Submit your project progress including these:
+
+VDO Clip [<5min] to describe how to manage Service Discovery & Non-Functional Requirement
+Your project proposal document with updated ADRs, revised microservice design, and diagrams

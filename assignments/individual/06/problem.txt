@@ -1,0 +1,7 @@
+GenAI for ADR generation
+
+Instruction
+
+ให้นิสิตทำตามขั้นตอนในแบบฝึกหัดนี้: https://github.com/lab-cursor/swarch-ai4swarch/
+
+เมื่อเสร็จแล้วให้นำ URL ของ repository ของนิสิตมาส่งเป็นคำตอบ
